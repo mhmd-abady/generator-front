@@ -155,6 +155,7 @@ export default function MetersTable({
       striped
       hoverable
       emptyMessage="No meters found"
+      sx={{ '& .MuiTableCell-root': { color: colors.text }, '& .MuiTableHead-root .MuiTableCell-root': { color: colors.labelText } }}
     />
   );
 }

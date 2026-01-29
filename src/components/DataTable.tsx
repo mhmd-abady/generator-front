@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material";
 import { useTheme as useAppTheme } from "../context/ThemeContext";
 
 interface Column<T> {
@@ -35,6 +36,7 @@ interface DataTableProps<T> {
   striped?: boolean;
   hoverable?: boolean;
   maxHeight?: string | number;
+  sx?: SxProps<Theme>;
 }
 
 function DataTableComponent<T extends Record<string, any>>({
@@ -48,6 +50,7 @@ function DataTableComponent<T extends Record<string, any>>({
   striped = true,
   hoverable = true,
   maxHeight,
+  sx,
 }: DataTableProps<T>) {
   const { colors } = useAppTheme();
   const muiTheme = useTheme();
@@ -74,18 +77,21 @@ function DataTableComponent<T extends Record<string, any>>({
 
   return (
     <Paper
-      sx={{
-        p: { xs: 1.5, sm: 2, md: 2.5 },
-        borderRadius: "12px",
-        background: `linear-gradient(135deg, ${colors.darker}99 0%, ${colors.darker}66 100%)`,
-        backdropFilter: "blur(10px)",
-        border: `1px solid ${colors.border}33`,
-        boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 ${colors.border}22`,
-        transition: "all 0.3s ease",
-        "&:hover": {
-          boxShadow: `0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 ${colors.border}33`,
+      sx={[
+        {
+          p: { xs: 1.5, sm: 2, md: 2.5 },
+          borderRadius: "12px",
+          background: `linear-gradient(135deg, ${colors.darker}99 0%, ${colors.darker}66 100%)`,
+          backdropFilter: "blur(10px)",
+          border: `1px solid ${colors.border}33`,
+          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 ${colors.border}22`,
+          transition: "all 0.3s ease",
+          "&:hover": {
+            boxShadow: `0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 ${colors.border}33`,
+          },
         },
-      }}
+        sx as any,
+      ]}
     >
       {/* Header Section */}
       {(title || actions) && (
