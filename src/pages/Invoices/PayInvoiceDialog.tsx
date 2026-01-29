@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -7,29 +8,25 @@ import {
   Stack,
   TextField,
   Alert,
+  useMediaQuery,
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { mapRoleToReceiverType } from "../../utils/paymentReceiver";
-
-// use your existing payments API
 import { createPayment } from "../../api/payments";
+import { useTheme } from "../../context/ThemeContext";
 
-export default function PayInvoiceDialog({
-  open,
-  onClose,
-  invoiceId,
-  subscriberId,
-  remainingBalance,
-  onSuccess,
-}: {
+const PayInvoiceDialog = (props: {
   open: boolean;
   onClose: () => void;
   invoiceId: number;
   subscriberId: number;
   remainingBalance: number;
   onSuccess: () => void;
-}) {
+}) => {
+  const { open, onClose, invoiceId, subscriberId, remainingBalance, onSuccess } = props;
+  const { colors } = useTheme();
+  const isMobile = useMediaQuery('(max-width:600px)');
   const { user } = useAuth();
 
   const receiverType = useMemo(() => {
@@ -78,38 +75,136 @@ export default function PayInvoiceDialog({
     }
   };
 
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Pay Invoice #{invoiceId}</DialogTitle>
+  const fieldSx = {
+    '& .MuiOutlinedInput-root': {
+      background: colors.darker,
+      borderRadius: '8px',
+      border: `1px solid ${colors.border}`,
+      '& input': { color: colors.text },
+      '&.Mui-focused': { boxShadow: `0 0 0 2px ${colors.primary}22` },
+    },
+    '& .MuiInputLabel-root': { color: colors.labelText },
+  };
 
-      <DialogContent>
-        <Stack spacing={2} mt={1}>
-          {error && <Alert severity="error">{error}</Alert>}
+  const buttonSx = {
+    borderRadius: '8px',
+    fontWeight: 600,
+    textTransform: 'none',
+    px: 3,
+    py: 1.5,
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      transform: 'translateY(-1px)',
+      boxShadow: `0 4px 12px ${colors.primary}33`,
+    },
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      fullScreen={isMobile}
+      PaperProps={{
+        sx: {
+          borderRadius: isMobile ? 0 : '12px',
+          background: `linear-gradient(135deg, ${colors.darker}99 0%, ${colors.darker}66 100%)`,
+          backdropFilter: 'blur(10px)',
+          border: `1px solid ${colors.border}33`,
+          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3)`,
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`,
+          color: '#fff',
+          fontWeight: 700,
+          textAlign: 'center',
+          py: 2,
+        }}
+      >
+        Pay Invoice #{invoiceId}
+      </DialogTitle>
+
+      <DialogContent sx={{ p: 3 }}>
+        <Stack spacing={3}>
+          {error && (
+            <Alert
+              severity="error"
+              sx={{
+                borderRadius: '8px',
+                background: `${colors.error}22`,
+                color: colors.error,
+                border: `1px solid ${colors.error}44`,
+              }}
+            >
+              {error}
+            </Alert>
+          )}
 
           <TextField
             label="Remaining Balance"
-            value={remainingBalance}
+            value={`$${remainingBalance.toFixed(2)}`}
             disabled
+            fullWidth
+            sx={fieldSx}
           />
 
           <TextField
-            label="Amount"
+            label="Payment Amount"
             type="number"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            inputProps={{ min: 0, max: remainingBalance }}
+            inputProps={{ min: 0, max: remainingBalance, step: 0.01 }}
+            fullWidth
+            sx={fieldSx}
+            helperText={`Maximum: $${remainingBalance.toFixed(2)}`}
           />
         </Stack>
       </DialogContent>
 
-      <DialogActions>
-        <Button onClick={onClose} disabled={loading}>
+      <DialogActions sx={{ p: 3, pt: 0, gap: 2, justifyContent: 'center' }}>
+        <Button
+          onClick={onClose}
+          disabled={loading}
+          sx={{
+            ...buttonSx,
+            color: colors.textSubtle,
+            borderColor: colors.border,
+            '&:hover': {
+              ...buttonSx['&:hover'],
+              background: `${colors.textSubtle}11`,
+            },
+          }}
+          variant="outlined"
+        >
           Cancel
         </Button>
-        <Button variant="contained" onClick={submit} disabled={loading}>
-          {loading ? "Paying..." : "Pay"}
+        <Button
+          variant="contained"
+          onClick={submit}
+          disabled={loading}
+          sx={{
+            ...buttonSx,
+            background: `linear-gradient(135deg, ${colors.secondary} 0%, ${colors.primary} 100%)`,
+            color: '#fff',
+            '&:hover': {
+              ...buttonSx['&:hover'],
+              background: `linear-gradient(135deg, ${colors.secondary}cc 0%, ${colors.primary}cc 100%)`,
+            },
+            '&:disabled': {
+              background: colors.textSubtle,
+              color: colors.text,
+            },
+          }}
+        >
+          {loading ? "Processing..." : "Pay Now"}
         </Button>
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default PayInvoiceDialog;

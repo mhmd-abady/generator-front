@@ -10,7 +10,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   useMediaQuery,
 } from "@mui/material";
 import { useState } from "react";

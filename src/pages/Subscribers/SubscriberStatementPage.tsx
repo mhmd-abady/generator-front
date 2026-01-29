@@ -5,7 +5,6 @@ import {
   TextField,
   Button,
   Skeleton,
-  Box,
   useMediaQuery,
   useTheme as useMuiTheme,
 } from "@mui/material";
