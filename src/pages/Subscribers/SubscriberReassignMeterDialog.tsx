@@ -15,7 +15,6 @@ import { useState } from "react";
 
 export default function SubscriberReassignMeterDialog({
   open,
-  meterId,
   currentSubscriberId,
   onClose,
   onConfirm,

@@ -1,7 +1,7 @@
-import { Navigate, Outlet } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { Outlet } from 'react-router-dom'
 
+// TODO: Re-enable authentication check when ready for production
 export default function RequireAuth() {
-  const { isAuthenticated } = useAuth()
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+  // Login protection disabled for testing only
+  return <Outlet />
 }

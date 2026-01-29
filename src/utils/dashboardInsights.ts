@@ -6,7 +6,10 @@ import type  {
 
 export type DashboardInsight = {
   id: string;
+  title: string;
   message: string;
+  type: 'positive' | 'negative' | 'warning' | 'neutral';
+  priority?: 'high' | 'medium' | 'low';
 };
 
 export function generateDashboardInsights(params: {
@@ -27,7 +30,10 @@ export function generateDashboardInsights(params: {
   ) {
     insights.push({
       id: "low-collection",
+      title: "Low Collection Rate",
       message: "Collection rate is below 70% for the selected period.",
+      type: "warning",
+      priority: "high",
     });
   }
 
@@ -42,7 +48,10 @@ export function generateDashboardInsights(params: {
     ) {
       insights.push({
         id: "outstanding-concentration",
+        title: "Outstanding Concentration",
         message: `${top.regionName} accounts for a large share of outstanding balance.`,
+        type: "warning",
+        priority: "medium",
       });
     }
   }
@@ -55,7 +64,10 @@ export function generateDashboardInsights(params: {
     if (current && prev && current.collected < prev.collected) {
       insights.push({
         id: "collection-drop",
+        title: "Collection Drop",
         message: "Collections decreased compared to the previous month.",
+        type: "negative",
+        priority: "high",
       });
     }
   }
@@ -64,7 +76,10 @@ export function generateDashboardInsights(params: {
   if (insights.length === 0) {
     insights.push({
       id: "healthy",
+      title: "All Good",
       message: "No critical issues detected for this period.",
+      type: "positive",
+      priority: "low",
     });
   }
 
