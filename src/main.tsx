@@ -6,18 +6,34 @@ import { CssBaseline } from '@mui/material'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { LoadingProvider } from './context/LoadingContext'
+import LoadingScreen from './components/LoadingScreen'
+import { useLoading } from './context/LoadingContext'
 
 const queryClient = new QueryClient()
+
+function AppWithLoading() {
+  const { isLoading } = useLoading()
+  
+  return (
+    <>
+      <LoadingScreen isVisible={isLoading} />
+      <App />
+    </>
+  )
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ThemeProvider>
-          <AuthProvider>
-            <CssBaseline />
-            <App />
-          </AuthProvider>
+          <LoadingProvider>
+            <AuthProvider>
+              <CssBaseline />
+              <AppWithLoading />
+            </AuthProvider>
+          </LoadingProvider>
         </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>

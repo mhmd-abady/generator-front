@@ -1,4 +1,6 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { useLoading } from "./context/LoadingContext";
 import RequireAuth from "./auth/RequireAuth";
 import Login from "./auth/Login";
 import Dashboard from "./pages/Dashboard/Index";
@@ -16,10 +18,47 @@ import ExchangeRatePage from "./pages/Settings/ExchangeRatePage";
 import SettingsPage from "./pages/Settings/SettingsPage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
 import ReportsPage from "./pages/Reports/ReportsPage";
-// check invoices pages
-//check meter readings pages
 
 export default function App() {
+  const location = useLocation();
+  const { showLoading, hideLoading } = useLoading();
+
+  // Show loading only on window refresh
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Show loading immediately when refresh starts
+      showLoading();
+      sessionStorage.setItem('isRefreshing', 'true');
+    };
+
+    const handleLoad = () => {
+      // Small delay to ensure loading screen is visible
+      setTimeout(() => {
+        sessionStorage.removeItem('isRefreshing');
+        hideLoading();
+      }, 500);
+    };
+
+    // Check if this is a refresh and show loading immediately
+    const isRefreshing = sessionStorage.getItem('isRefreshing');
+    if (isRefreshing) {
+      showLoading();
+      // Auto-hide after a reasonable time if load event doesn't fire
+      setTimeout(() => {
+        sessionStorage.removeItem('isRefreshing');
+        hideLoading();
+      }, 2000);
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("load", handleLoad);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("load", handleLoad);
+    };
+  }, [showLoading, hideLoading]);
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
