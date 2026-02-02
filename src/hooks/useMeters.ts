@@ -1,12 +1,33 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchMeters, createMeter, type CreateMeterDto } from "../api/meters";
+import {
+  fetchMeters,
+  fetchMetersByFilters,
+  fetchMetersByBox,
+  createMeter,
+  type CreateMeterDto,
+} from "../api/meters";
 
-export function useMeters() {
+export function useMeters(filters?: {
+  neighborhoodId?: number;
+  regionId?: number;
+  boxId?: number;
+}) {
   const qc = useQueryClient();
 
   const metersQuery = useQuery({
-    queryKey: ["meters"],
-    queryFn: fetchMeters,
+    queryKey: ["meters", filters],
+    queryFn: () => {
+      if (filters?.boxId) return fetchMetersByBox(filters.boxId);
+
+      if (filters) {
+        const { neighborhoodId, regionId } = filters;
+        if (neighborhoodId || regionId) {
+          return fetchMetersByFilters({ neighborhoodId, regionId });
+        }
+      }
+
+      return fetchMeters();
+    },
   });
 
   const createMutation = useMutation({

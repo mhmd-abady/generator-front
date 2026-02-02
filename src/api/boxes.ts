@@ -4,6 +4,7 @@ export type Box = {
   id: number;
   code: string;
   neighborhoodId: number;
+  regionId?: number;
 };
 
 export const fetchBoxes = async (): Promise<Box[]> => {
@@ -16,6 +17,15 @@ export const fetchBoxesByNeighborhood = async (
 ): Promise<Box[]> => {
   const res = await api.get<Box[]>(
     `/boxes/by-neighborhood/${neighborhoodId}`
+  );
+  return res.data;
+};
+
+export const fetchBoxesByRegion = async (
+  regionId?: number
+):Promise<Box[]> =>{
+  const res = await api.get<Box[]>(
+    `/boxes/by-region/${regionId}`
   );
   return res.data;
 };

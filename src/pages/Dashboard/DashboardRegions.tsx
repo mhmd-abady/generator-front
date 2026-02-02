@@ -56,6 +56,7 @@ export default function DashboardRegions({
           <TableHead>
             <TableRow>
               <TableCell>Region</TableCell>
+              <TableCell align="right">Invoices</TableCell>
               <TableCell align="right">Invoiced</TableCell>
               <TableCell align="right">Collected</TableCell>
               <TableCell align="right">Outstanding</TableCell>
@@ -65,6 +66,9 @@ export default function DashboardRegions({
             {rows.map((r) => (
               <TableRow key={r.regionId}>
                 <TableCell>{r.regionName}</TableCell>
+                <TableCell align="right">
+                  {r.invoicesCount ?? "—"}
+                </TableCell>
                 <TableCell align="right">
                   {r.totalInvoiced.toLocaleString()}
                 </TableCell>

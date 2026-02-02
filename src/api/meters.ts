@@ -56,3 +56,14 @@ export const fetchMetersByBox = async (boxId: number) => {
   const res = await api.get(`/meters/by-box/${boxId}`);
   return res.data;
 };
+
+export const fetchMetersByFilters = async (params: {
+  neighborhoodId?: number;
+  regionId?: number;
+}): Promise<Meter[]> => {
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== null)
+  );
+  const res = await api.get<Meter[]>(`/meters/by-filters`, { params: cleanParams });
+  return res.data;
+};

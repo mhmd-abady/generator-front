@@ -21,6 +21,7 @@ export type RegionBreakdownRow = {
   totalInvoiced: number;
   totalCollected: number;
   totalOutstanding: number;
+  invoicesCount?: number;
 };
 
 export type PeriodStatus = {

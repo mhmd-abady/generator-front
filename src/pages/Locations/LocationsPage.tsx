@@ -45,20 +45,26 @@ export default function LocationsPage() {
   const [editing, setEditing] = useState<Region | Neighborhood | null>(null);
   const [name, setName] = useState("");
 
+  const [selectedNeighborhood, setSelectedNeighborhood] =
+    useState<Neighborhood | null>(null);
   const [boxOpen, setBoxOpen] = useState(false);
-const [editingBox, setEditingBox] = useState<Box | null>(null);
-const [boxCode, setBoxCode] = useState("");
-const [selectedBox, setSelectedBox] = useState<Box | null>(null);
-/* ================= handlers ================= */
-const [selectedNeighborhood, setSelectedNeighborhood] =
-  useState<Neighborhood | null>(null);
-const {
-  boxes,
-  isLoading: boxesLoading,
-  createBox,
-  updateBox,
-  deleteBox,
-} = useBoxes(selectedNeighborhood?.id);  
+  const [editingBox, setEditingBox] = useState<Box | null>(null);
+  const [boxCode, setBoxCode] = useState("");
+  const [selectedBox, setSelectedBox] = useState<Box | null>(null);
+
+  const { boxes, isLoading: boxesLoading, createBox, updateBox, deleteBox } =
+    useBoxes(selectedNeighborhood?.id);
+
+  const resetBoxDialog = () => {
+    setEditingBox(null);
+    setBoxCode("");
+  };
+
+  const closeBoxDialog = () => {
+    setBoxOpen(false);
+    resetBoxDialog();
+  };
+
   const submitRegion = () => {
     if (!name.trim()) return;
 
@@ -87,6 +93,24 @@ const {
     setOpen(null);
   };
 
+  const submitBox = () => {
+    if (!boxCode.trim() || !selectedNeighborhood) return;
+
+    if (editingBox) {
+      updateBox.mutate({
+        id: editingBox.id,
+        dto: { code: boxCode, neighborhoodId: selectedNeighborhood.id },
+      });
+    } else {
+      createBox.mutate({
+        code: boxCode,
+        neighborhoodId: selectedNeighborhood.id,
+      });
+    }
+
+    closeBoxDialog();
+  };
+
   return (
     <DashboardLayout>
       <Stack direction="row" spacing={2}>
@@ -99,6 +123,8 @@ const {
                 setEditing(null);
                 setName("");
                 setOpen("region");
+                setSelectedBox(null);
+                resetBoxDialog();
               }}
             >
               <Add />
@@ -108,13 +134,15 @@ const {
           <List>
             {regions.map((r) => (
               <ListItemButton
-  key={r.id}
-  selected={r.id === selectedRegion?.id}
-  onClick={() => {
-    setSelectedRegion(r);
-    setSelectedNeighborhood(null);
-  }}
->
+                key={r.id}
+                selected={r.id === selectedRegion?.id}
+                onClick={() => {
+                  setSelectedRegion(r);
+                  setSelectedNeighborhood(null);
+                  setSelectedBox(null);
+                  resetBoxDialog();
+                }}
+              >
                 <ListItemText primary={r.name} />
                 <IconButton
                   size="small"
@@ -133,6 +161,12 @@ const {
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteRegion.mutate(r.id);
+                    setSelectedRegion((prev) =>
+                      prev?.id === r.id ? null : prev
+                    );
+                    setSelectedNeighborhood(null);
+                    setSelectedBox(null);
+                    resetBoxDialog();
                   }}
                 >
                   <Delete fontSize="small" />
@@ -146,8 +180,7 @@ const {
         <Paper sx={{ flex: 1, p: 2 }}>
           <Stack direction="row" justifyContent="space-between">
             <Typography fontWeight={600}>
-              Neighborhoods{" "}
-              {selectedRegion && `— ${selectedRegion.name}`}
+              Neighborhoods {selectedRegion && `- ${selectedRegion.name}`}
             </Typography>
 
             <Button
@@ -182,96 +215,122 @@ const {
                   .filter((n) => n.regionId === selectedRegion.id)
                   .map((n) => (
                     <TableRow
-  key={n.id}
-  hover
-  selected={n.id === selectedNeighborhood?.id}
-  onClick={() => setSelectedNeighborhood(n)}
->
-  <TableCell>{n.name}</TableCell>
-  <TableCell align="right">
-    <IconButton size="small" onClick={(e) => {
-      e.stopPropagation();
-      setEditing(n);
-      setName(n.name);
-      setOpen("hood");
-    }}>
-      <Edit fontSize="small" />
-    </IconButton>
+                      key={n.id}
+                      hover
+                      selected={n.id === selectedNeighborhood?.id}
+                      onClick={() => {
+                        setSelectedNeighborhood(n);
+                        setSelectedBox(null);
+                        resetBoxDialog();
+                      }}
+                    >
+                      <TableCell>{n.name}</TableCell>
+                      <TableCell align="right">
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditing(n);
+                            setName(n.name);
+                            setOpen("hood");
+                          }}
+                        >
+                          <Edit fontSize="small" />
+                        </IconButton>
 
-    <IconButton
-      size="small"
-      color="error"
-      onClick={(e) => {
-        e.stopPropagation();
-        deleteNeighborhood.mutate(n.id);
-      }}
-    >
-      <Delete fontSize="small" />
-    </IconButton>
-
-  </TableCell>
-</TableRow>
-
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNeighborhood.mutate(n.id);
+                            setSelectedNeighborhood((prev) =>
+                              prev?.id === n.id ? null : prev
+                            );
+                            setSelectedBox(null);
+                            resetBoxDialog();
+                          }}
+                        >
+                          <Delete fontSize="small" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
                   ))}
               </TableBody>
             </Table>
           )}
         </Paper>
 
+        {/* ================= BOXES ================= */}
         <Paper sx={{ width: 320, p: 2 }}>
-  <Stack direction="row" justifyContent="space-between" alignItems="center">
-    <Typography fontWeight={600}>
-      Boxes {selectedNeighborhood && `— ${selectedNeighborhood.name}`}
-    </Typography>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography fontWeight={600}>
+              Boxes {selectedNeighborhood && `- ${selectedNeighborhood.name}`}
+            </Typography>
+            <Button
+              variant="contained"
+              size="small"
+              startIcon={<Add />}
+              disabled={!selectedNeighborhood}
+              onClick={() => {
+                resetBoxDialog();
+                setBoxOpen(true);
+              }}
+            >
+              Add Box
+            </Button>
+          </Stack>
 
-  </Stack>
+          <Divider sx={{ my: 1 }} />
 
-  <Divider sx={{ my: 1 }} />
+          {!selectedNeighborhood ? (
+            <Typography color="text.secondary">
+              Select a neighborhood to view boxes
+            </Typography>
+          ) : boxesLoading ? (
+            <Typography>Loading...</Typography>
+          ) : boxes.length === 0 ? (
+            <Typography color="text.secondary">No boxes</Typography>
+          ) : (
+            <List>
+              {boxes.map((b) => (
+                <ListItemButton
+                  key={b.id}
+                  onClick={() => setSelectedBox(b)}
+                >
+                  <ListItemText primary={b.code} />
 
-  {!selectedNeighborhood ? (
-    <Typography color="text.secondary">
-      Select a neighborhood to view boxes
-    </Typography>
-  ) : boxesLoading ? (
-    <Typography>Loading...</Typography>
-  ) : boxes.length === 0 ? (
-    <Typography color="text.secondary">No boxes</Typography>
-  ) : (
-    <List>
-     {boxes.map((b) => (
-  <ListItemButton
-    key={b.id}
-    onClick={() => setSelectedBox(b)}
-  >
-    <ListItemText primary={b.code} />
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingBox(b);
+                      setBoxCode(b.code);
+                      setBoxOpen(true);
+                    }}
+                  >
+                    <Edit fontSize="small" />
+                  </IconButton>
 
-         <IconButton
-  size="small"
-  onClick={(e) => {
-    e.stopPropagation();
-    setEditingBox(b);
-    setBoxCode(b.code);
-    setBoxOpen(true);
-  }}
->
-            <Edit fontSize="small" />
-          </IconButton>
-
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => deleteBox.mutate(b.id)}
-          >
-            <Delete fontSize="small" />
-          </IconButton>
-        </ListItemButton>
-      ))}
-    </List>
-  )}
-</Paper>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteBox.mutate(b.id);
+                      setSelectedBox((prev) => (prev?.id === b.id ? null : prev));
+                    }}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
+                </ListItemButton>
+              ))}
+            </List>
+          )}
+        </Paper>
       </Stack>
-      
-      {/* ================= DIALOG ================= */}
+
+      {/* ================= DIALOGS ================= */}
       <Dialog open={!!open} onClose={() => setOpen(null)}>
         <DialogTitle>
           {open === "region"
@@ -304,57 +363,34 @@ const {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={boxOpen} onClose={() => setBoxOpen(false)} maxWidth="xs" fullWidth>
-  <DialogTitle>
-    {editingBox ? "Edit Box" : "Add Box"}
-  </DialogTitle>
+      <Dialog open={boxOpen} onClose={closeBoxDialog} maxWidth="xs" fullWidth>
+        <DialogTitle>{editingBox ? "Edit Box" : "Add Box"}</DialogTitle>
 
-  <DialogContent>
-    <TextField
-      label="Box Code"
-      value={boxCode}
-      onChange={(e) => setBoxCode(e.target.value)}
-      fullWidth
-      autoFocus
-    />
-  </DialogContent>
+        <DialogContent>
+          <TextField
+            label="Box Code"
+            value={boxCode}
+            onChange={(e) => setBoxCode(e.target.value)}
+            fullWidth
+            autoFocus
+          />
+        </DialogContent>
 
-  <DialogActions>
-    <Button onClick={() => setBoxOpen(false)}>Cancel</Button>
-    <Button
-      variant="contained"
-      onClick={() => {
-        if (!boxCode.trim() || !selectedNeighborhood) return;
+        <DialogActions>
+          <Button onClick={closeBoxDialog}>Cancel</Button>
+          <Button variant="contained" onClick={submitBox}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        if (editingBox) {
-          updateBox.mutate({
-            id: editingBox.id,
-            dto: { code: boxCode },
-          });
-        } else {
-          createBox.mutate({
-            code: boxCode,
-            neighborhoodId: selectedNeighborhood.id,
-          });
-        }
-
-        setBoxOpen(false);
-      }}
-    >
-      Save
-    </Button>
-  </DialogActions>
-
-
-</Dialog>
-  {selectedBox && (
-  <BoxMetersDialog
-  open={!!selectedBox}
-  box={selectedBox}
-  onClose={() => setSelectedBox(null)}
-/>
-
-)}
+      {selectedBox && (
+        <BoxMetersDialog
+          open={!!selectedBox}
+          box={selectedBox}
+          onClose={() => setSelectedBox(null)}
+        />
+      )}
     </DashboardLayout>
   );
 }
