@@ -23,8 +23,8 @@ export function useUnpaidInvoices(subscriberId: number) {
 
 
 // src/hooks/useInvoices.ts
-/*export function useInvoices(subscriberId: number) {
-  return useQuery<Invoice[]>({
+export function useInvoices(subscriberId: number) {
+  const query = useQuery<Invoice[]>({
     queryKey: ["invoices", "all", subscriberId],
     queryFn: () =>
       fetchInvoices({
@@ -32,7 +32,12 @@ export function useUnpaidInvoices(subscriberId: number) {
       }),
     enabled: !!subscriberId,
   });
-}*/
+
+  return {
+    invoices: query.data ?? [],
+    isLoading: query.isLoading,
+  };
+}
 
 import { fetchInvoiceById } from "../api/invoices";
 

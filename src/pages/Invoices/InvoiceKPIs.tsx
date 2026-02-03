@@ -1,21 +1,21 @@
 import { Paper, Typography, Stack, Skeleton, Box } from "@mui/material";
-import type { DashboardOverview } from "../../api/dashboard";
 import Grid from "@material-ui/core/Grid";
 import ReceiptIcon from "@mui/icons-material/Receipt";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
-import PersonIcon from "@mui/icons-material/Person";
-import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
-import GridOnIcon from "@mui/icons-material/GridOn";
+import type { Invoice } from "../../api/invoices";
 
-interface KPIProps {
+const KPIBox = ({
+  label,
+  value,
+  loading,
+  icon: Icon,
+}: {
   label: string;
   value?: number;
   loading: boolean;
   icon: React.ElementType;
-}
-
-const KPIBox = ({ label, value, loading, icon: Icon }: KPIProps) => (
+}) => (
   <Paper
     sx={{
       p: 2.5,
@@ -23,7 +23,6 @@ const KPIBox = ({ label, value, loading, icon: Icon }: KPIProps) => (
       border: "1px solid #e0e0e0",
       borderRadius: 2,
       transition: "all 0.3s ease",
-      height: "100%",
       "&:hover": {
         boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
         transform: "translateY(-4px)",
@@ -67,61 +66,44 @@ const KPIBox = ({ label, value, loading, icon: Icon }: KPIProps) => (
   </Paper>
 );
 
-export default function DashboardKPIs({
-  overview,
+export default function InvoiceKPIs({
+  invoices,
   loading,
 }: {
-  overview?: DashboardOverview;
+  invoices: Invoice[];
   loading: boolean;
 }) {
+  const totalInvoiced = invoices.reduce((sum, i) => sum + i.totalDue, 0);
+  const totalPaid = invoices.reduce((sum, i) => sum + i.amountPaid, 0);
+  const totalOutstanding = invoices.reduce(
+    (sum, i) => sum + i.remainingBalance,
+    0
+  );
+
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={6} md={4}>
         <KPIBox
           label="Total Invoiced"
-          value={overview?.totalInvoiced}
+          value={totalInvoiced}
           loading={loading}
           icon={ReceiptIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={6} md={4}>
         <KPIBox
-          label="Total Collected"
-          value={overview?.totalCollected}
+          label="Total Paid"
+          value={totalPaid}
           loading={loading}
-          icon={MonetizationOnIcon}
+          icon={CheckCircleIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={6} md={4}>
         <KPIBox
-          label="Outstanding"
-          value={overview?.totalOutstanding}
+          label="Total Outstanding"
+          value={totalOutstanding}
           loading={loading}
           icon={PendingActionsIcon}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
-        <KPIBox
-          label="Subscribers"
-          value={overview?.subscribersCount}
-          loading={loading}
-          icon={PersonIcon}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
-        <KPIBox
-          label="Meters"
-          value={overview?.metersCount}
-          loading={loading}
-          icon={EnergySavingsLeafIcon}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
-        <KPIBox
-          label="Boxes"
-          value={overview?.boxesCount}
-          loading={loading}
-          icon={GridOnIcon}
         />
       </Grid>
     </Grid>

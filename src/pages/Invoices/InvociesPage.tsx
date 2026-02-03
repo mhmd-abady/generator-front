@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
 import InvoicesTable from "./InvoicesTable";
+import InvoiceKPIs from "./InvoiceKPIs";
 import { useAllInvoices } from "../../hooks/useInvoices";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRegions, fetchNeighborhoodsByRegion } from "../../api/locations";
@@ -56,13 +57,11 @@ export default function InvoicesPage() {
   return (
     <DashboardLayout>
       <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" fontWeight={600}>
-          Invoices
-        </Typography>
-      </Paper>
-
-      <Paper sx={{ p: 2 }}>
-        <Stack direction="row" spacing={2} flexWrap="wrap">
+        <Stack direction="row" spacing={2} flexWrap="wrap" alignItems="center">
+          <Typography variant="h6" fontWeight={600}>
+            Invoices
+          </Typography>
+          <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ flex: 1 }}>
           <TextField
             select
             size="small"
@@ -178,8 +177,15 @@ export default function InvoicesPage() {
               </MenuItem>
             ))}
           </TextField>
+          </Stack>
         </Stack>
       </Paper>
+
+      {isLoading ? (
+        <Skeleton height={120} />
+      ) : (
+        <InvoiceKPIs invoices={data ?? []} loading={isLoading} />
+      )}
 
       {isLoading ? (
         <Skeleton height={300} />
