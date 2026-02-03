@@ -9,6 +9,11 @@ import {
   Tab,
   TextField,
   Box,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -46,15 +51,15 @@ function StatCard({ label, value, icon, loading }: StatCardProps) {
     <Paper
       sx={{
         p: 2.5,
-        background: "linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)",
-        border: "1px solid #e0e0e0",
+        background: "linear-gradient(135deg, #fefefe 0%, #ffffff 100%)",
+        border: "1px solid #f0f0f0",
         borderRadius: 2,
         transition: "all 0.3s ease",
         height: "100%",
         "&:hover": {
-          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
           transform: "translateY(-4px)",
-          borderColor: "#bdbdbd",
+          borderColor: "#e0e0e0",
         },
       }}
     >
@@ -64,7 +69,7 @@ function StatCard({ label, value, icon, loading }: StatCardProps) {
             sx={{
               p: 1,
               borderRadius: 1.5,
-              background: "#e8e8e8",
+              background: "#f5f5f5",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -227,6 +232,7 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
           <Tab label="Meters" />
           <Tab label="Payments" />
           <Tab label="Invoices" />
+          <Tab label="Invoices History" />
         </Tabs>
       </Paper>
 
@@ -308,6 +314,31 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
           loading={invoices.isLoading}
           onView={(invoiceId) => navigate(`/invoices/${invoiceId}`)}
         />
+      )}
+
+      {tab === 4 && (
+        <Paper sx={{ p: 2 }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Invoice #</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell align="right">Amount</TableCell>
+                <TableCell align="right">Received</TableCell>
+                <TableCell align="right">Remaining</TableCell>
+                <TableCell>Receiver</TableCell>
+                <TableCell>Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  No data yet — waiting for backend fields (date, receiver, history).
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
       )}
       <SubscriberReassignMeterDialog
         open={!!reassignMeterId}

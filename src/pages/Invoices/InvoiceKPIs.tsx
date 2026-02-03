@@ -19,14 +19,14 @@ const KPIBox = ({
   <Paper
     sx={{
       p: 2.5,
-      background: "linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)",
-      border: "1px solid #e0e0e0",
+      background: "linear-gradient(135deg, #fefefe 0%, #ffffff 100%)",
+      border: "1px solid #f0f0f0",
       borderRadius: 2,
       transition: "all 0.3s ease",
       "&:hover": {
-        boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+        boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
         transform: "translateY(-4px)",
-        borderColor: "#bdbdbd",
+        borderColor: "#e0e0e0",
       },
     }}
   >
@@ -36,7 +36,7 @@ const KPIBox = ({
           sx={{
             p: 1,
             borderRadius: 1.5,
-            background: "#e8e8e8",
+            background: "#f5f5f5",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
