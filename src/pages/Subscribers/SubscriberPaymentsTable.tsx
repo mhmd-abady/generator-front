@@ -41,32 +41,18 @@ const isAdmin = user?.role === "ADMIN";
         <Table size="small">
           <TableHead>
             <TableRow>
-                <TableCell align="right">Actions</TableCell>
-
               <TableCell>Date</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>Invoice</TableCell>
               <TableCell>Receiver</TableCell>
               <TableCell>Status</TableCell>
+                <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {payments.map((p) => (
              <TableRow key={p.id}>
-  <TableCell align="right">
-    {isAdmin && !p.isReversed && (
-      <IconButton
-        size="small"
-        color="error"
-        title="Reverse payment"
-        onClick={() => onReverse(p.id)}
-      >
-        <UndoIcon fontSize="small" />
-      </IconButton>
-    )}
-  </TableCell>
-
   <TableCell>
     {new Date(p.paidAt).toLocaleDateString()}
   </TableCell>
@@ -94,6 +80,19 @@ const isAdmin = user?.role === "ADMIN";
       <Chip size="small" label="REVERSED" color="error" />
     ) : (
       <Chip size="small" label="OK" color="success" />
+    )}
+  </TableCell>
+
+  <TableCell align="right">
+    {isAdmin && !p.isReversed && (
+      <IconButton
+        size="small"
+        color="error"
+        title="Reverse payment"
+        onClick={() => onReverse(p.id)}
+      >
+        <UndoIcon fontSize="small" />
+      </IconButton>
     )}
   </TableCell>
 </TableRow>
