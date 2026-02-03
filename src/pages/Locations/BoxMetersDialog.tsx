@@ -2,14 +2,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Typography,
 } from "@mui/material";
 import { useBoxMeters } from "../../hooks/useBoxMeters";
+import MetersTable from "../Meters/MetersTable";
 
 type Props = {
   box: { id: number; code: string };
@@ -20,38 +16,17 @@ type Props = {
 export default function BoxMetersDialog({ box, open, onClose }: Props) {
   const { data, isLoading } = useBoxMeters(box.id);
 
-
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Meters — Box {box.code}</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+      <DialogTitle>Meters - Box {box.code}</DialogTitle>
 
       <DialogContent>
         {isLoading ? (
           <Typography>Loading…</Typography>
         ) : !data || data.length === 0 ? (
-          <Typography color="text.secondary">
-            No meters in this box
-          </Typography>
+          <Typography color="text.secondary">No meters in this box</Typography>
         ) : (
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Meter</TableCell>
-                <TableCell>Subscriber</TableCell>
-                <TableCell>Phone</TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {data.map((m: any) => (
-                <TableRow key={m.id}>
-                  <TableCell>{m.number}</TableCell>
-                  <TableCell>{m.subscriber?.fullName || "—"}</TableCell>
-                  <TableCell>{m.subscriber?.phone || "—"}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <MetersTable rows={data} />
         )}
       </DialogContent>
     </Dialog>

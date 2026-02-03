@@ -27,6 +27,9 @@ export default function SubscriberDetails() {
   const subscriberId = Number(id);
   const navigate = useNavigate();
   const { subscriber, isLoading } = useSubscriberDetails(subscriberId);
+  const meters =
+    subscriber?.meters ??
+    (subscriber?.meter ? [subscriber.meter] : undefined);
   const [reassignMeterId, setReassignMeterId] = useState<number | null>(null);
 const payments = usePayments(subscriberId);
 const invoices = useUnpaidInvoices(subscriberId);
@@ -74,7 +77,7 @@ const [reversePaymentId, setReversePaymentId] = useState<number | null>(null);
 
       <SubscriberMeters
         onReassign={(meterId) => setReassignMeterId(meterId)}
-        meters={subscriber?.meters}
+        meters={meters}
         loading={isLoading}
       />
       <SubscriberPaymentsTable
@@ -84,7 +87,7 @@ const [reversePaymentId, setReversePaymentId] = useState<number | null>(null);
 />
 
 
-      {<SubscriberPayments payments={subscriber?.payments} loading={isLoading} />}
+      {/* {<SubscriberPayments payments={subscriber?.payments} loading={isLoading} />} */}
       <SubscriberInvoicesTable
   invoices={invoices.invoices}
   loading={invoices.isLoading}

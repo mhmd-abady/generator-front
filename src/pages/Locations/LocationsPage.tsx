@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useState } from "react";
@@ -27,7 +28,10 @@ import { useNeighborhoods } from "../../hooks/useNeighborhoods";
 import type { Region, Neighborhood } from "../../api/locations";
 import { useBoxes } from "../../hooks/useBoxes";
 import type { Box } from "../../api/boxes";
-import BoxMetersDialog from "./BoxMetersDialog";
+import { useMeters } from "../../hooks/useMeters";
+import MetersTable from "../Meters/MetersTable";
+import { useBoxMeters } from "../../hooks/useBoxMeters";
+import MeterFormDialog from "../Meters/MeterFormDialog";
 
 export default function LocationsPage() {
   const { regions, createRegion, updateRegion, deleteRegion } = useRegions();
@@ -51,9 +55,20 @@ export default function LocationsPage() {
   const [editingBox, setEditingBox] = useState<Box | null>(null);
   const [boxCode, setBoxCode] = useState("");
   const [selectedBox, setSelectedBox] = useState<Box | null>(null);
+  const [meterDialogOpen, setMeterDialogOpen] = useState(false);
 
   const { boxes, isLoading: boxesLoading, createBox, updateBox, deleteBox } =
-    useBoxes(selectedNeighborhood?.id);
+    useBoxes(selectedNeighborhood?.id, selectedRegion?.id);
+  const metersQuery = useMeters({
+    regionId: selectedRegion?.id,
+    neighborhoodId: selectedNeighborhood?.id,
+  });
+  const boxMetersQuery = useBoxMeters(selectedBox?.id);
+
+  const meters = selectedBox ? boxMetersQuery.data : metersQuery.meters;
+  const metersLoading = selectedBox
+    ? boxMetersQuery.isLoading
+    : metersQuery.isLoading;
 
   const resetBoxDialog = () => {
     setEditingBox(null);
@@ -296,6 +311,7 @@ export default function LocationsPage() {
               {boxes.map((b) => (
                 <ListItemButton
                   key={b.id}
+                  selected={b.id === selectedBox?.id}
                   onClick={() => setSelectedBox(b)}
                 >
                   <ListItemText primary={b.code} />
@@ -329,6 +345,41 @@ export default function LocationsPage() {
           )}
         </Paper>
       </Stack>
+
+      {/* =============== METERS TABLE (filtered by selected region/hood/box) =============== */}
+      <Paper sx={{ mt: 2, p: 2 }}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={1}
+        >
+          <Typography fontWeight={600}>
+            Meters
+            {selectedBox
+              ? ` - Box ${selectedBox.code}`
+              : selectedNeighborhood
+              ? ` - Neighborhood ${selectedNeighborhood.name}`
+              : selectedRegion
+              ? ` - Region ${selectedRegion.name}`
+              : ""}
+              <Button
+              sx={{ml:13}}
+              variant="contained"
+              size="small"
+              startIcon={<Add />}
+              onClick={() => setMeterDialogOpen(true)}
+            >
+              Add Meter
+            </Button>
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            {metersLoading && <CircularProgress size={20} />}
+            
+          </Stack>
+        </Stack>
+        <MetersTable rows={meters ?? []} disablePaper />
+      </Paper>
 
       {/* ================= DIALOGS ================= */}
       <Dialog open={!!open} onClose={() => setOpen(null)}>
@@ -384,13 +435,11 @@ export default function LocationsPage() {
         </DialogActions>
       </Dialog>
 
-      {selectedBox && (
-        <BoxMetersDialog
-          open={!!selectedBox}
-          box={selectedBox}
-          onClose={() => setSelectedBox(null)}
-        />
-      )}
+      <MeterFormDialog
+        open={meterDialogOpen}
+        onClose={() => setMeterDialogOpen(false)}
+      />
+
     </DashboardLayout>
   );
 }

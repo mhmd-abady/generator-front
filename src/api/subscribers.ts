@@ -14,6 +14,20 @@ export type Subscriber = {
   address?: string;
   createdAt: string;
 
+  /* In some endpoints backend returns a single `meter`, in others a `meters` array */
+  meter?: {
+    id: number;
+    number: string;
+    ampere?: number;
+    boxId: number;
+    subscriberId: number;
+    box?: {
+      id: number;
+      code: string;
+      neighborhood?: { id: number; name: string };
+    };
+  };
+
   meters?: {
     id: number;
     number: string;
@@ -22,6 +36,7 @@ export type Subscriber = {
       id: number;
       code: string;
       neighborhoodId: number;
+      neighborhood?: { id: number; name: string };
     };
   }[];
 

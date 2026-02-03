@@ -10,12 +10,21 @@ import {
   Button,
 } from "@mui/material";
 
+type MeterRow = {
+  id: number;
+  number: string;
+  box?: {
+    code?: string;
+    neighborhood?: { name?: string };
+  };
+};
+
 export default function SubscriberMeters({
   meters,
   loading,
   onReassign,
 }: {
-  meters?: any[];
+  meters?: MeterRow[];
   loading: boolean;
   onReassign: (meterId: number) => void;
 }) {
