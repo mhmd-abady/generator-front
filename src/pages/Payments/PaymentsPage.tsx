@@ -10,6 +10,7 @@ import { useAllPayments } from "../../hooks/usePayments";
 import SubscriberPaymentsTable from "../Subscribers/SubscriberPaymentsTable";
 import ReversePaymentDialog from "../Subscribers/ReversePaymentDialog";
 import { usePayments } from "../../hooks/usePayments";
+import PaymentKPIs from "./PaymentKPIs";
 
 export default function PaymentsPage() {
   const { data, isLoading } = useAllPayments();
@@ -24,6 +25,12 @@ export default function PaymentsPage() {
           Payments
         </Typography>
       </Paper>
+
+      {isLoading ? (
+        <Skeleton height={120} />
+      ) : (
+        <PaymentKPIs payments={data ?? []} loading={isLoading} />
+      )}
 
       {isLoading ? (
         <Skeleton height={300} />
