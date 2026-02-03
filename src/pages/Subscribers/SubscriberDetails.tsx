@@ -50,18 +50,18 @@ function StatCard({ label, value, icon, loading }: StatCardProps) {
   return (
     <Paper
       sx={{
-        p: 2.5,
+        p: 2,
         background: "linear-gradient(135deg, #fefefe 0%, #ffffff 100%)",
         border: "1px solid #f0f0f0",
         borderRadius: 2,
         height: "100%",
       }}
     >
-      <Stack spacing={1.5}>
+      <Stack spacing={1.2}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Box
             sx={{
-              p: 1,
+              p: 0.9,
               borderRadius: 1.5,
               background: "#f5f5f5",
               display: "flex",
@@ -71,19 +71,19 @@ function StatCard({ label, value, icon, loading }: StatCardProps) {
           >
             {icon}
           </Box>
-          <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          <Typography variant="caption" color="text.secondary" fontWeight={500} sx={{ fontSize: "0.75rem" }}>
             {label}
           </Typography>
         </Box>
         {loading ? (
-          <Skeleton width={100} height={32} />
+          <Skeleton width={90} height={32} />
         ) : (
           <Typography
             variant="h5"
             fontWeight={700}
             sx={{
               color: "#333333",
-              fontSize: "1.75rem",
+              fontSize: "1.5rem",
             }}
           >
             {value.toLocaleString()}
@@ -141,7 +141,7 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
 
   return (
     <DashboardLayout>
-      <Paper sx={{ p: 2, mb: 2, minHeight: 180 }}>
+      <Paper sx={{ p: 2, mb: 2, minHeight: 140 }}>
         {isLoading ? (
           <Skeleton height={80} />
         ) : (
@@ -153,7 +153,7 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
               flexWrap: "wrap",
             }}
           >
-            <Box sx={{ minWidth: 240 }}>
+            <Box sx={{ minWidth: 200 }}>
               <Stack spacing={0.5} alignItems="flex-start">
                 <Typography variant="h6" fontWeight={600}>
                   {subscriber?.fullName}
@@ -172,12 +172,13 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
             <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
               <Grid
                 container
-                spacing={2}
+                spacing={1.5}
                 justifyContent="center"
                 alignItems="center"
-                sx={{ maxWidth: 900 }}
+                sx={{ maxWidth: 800 }}
+                wrap="nowrap"
               >
-                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
+                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
                   <StatCard
                     label="Total Invoiced"
                     value={stats.totalDue}
@@ -185,7 +186,7 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
+                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
                   <StatCard
                     label="Total Paid"
                     value={stats.totalPaid}
@@ -193,7 +194,7 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
+                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
                   <StatCard
                     label="Outstanding"
                     value={stats.outstanding}
@@ -201,7 +202,7 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }}>
+                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
                   <StatCard
                     label="Invoices Count"
                     value={stats.invoicesCount}
@@ -288,18 +289,12 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
       )}
 
       {tab === 2 && (
-        <Stack spacing={1}>
-          <Stack direction="row" justifyContent="flex-end">
-            <Button variant="contained" onClick={() => setOpenPayment(true)}>
-              Add Payment
-            </Button>
-          </Stack>
-          <SubscriberPaymentsTable
-            payments={payments.payments}
-            loading={payments.isLoading}
-            onReverse={(id) => setReversePaymentId(id)}
-          />
-        </Stack>
+        <SubscriberPaymentsTable
+          payments={payments.payments}
+          loading={payments.isLoading}
+          onReverse={(id) => setReversePaymentId(id)}
+          onAddPayment={() => setOpenPayment(true)}
+        />
       )}
 
       {tab === 3 && (

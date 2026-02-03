@@ -8,28 +8,52 @@ import {
   Chip,
   Typography,
   Skeleton,
+  Box,
+  IconButton,
 } from "@mui/material";
 import type { Payment } from "../../api/payments";
-import { IconButton } from "@mui/material";
 import UndoIcon from "@mui/icons-material/Undo";
+import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../../context/AuthContext";
 
 export default function SubscriberPaymentsTable({
   payments,
   loading,
   onReverse,
+  onAddPayment,
 }: {
   payments?: Payment[];
   loading: boolean;
   onReverse: (paymentId: number) => void;
+  onAddPayment?: () => void;
 }) {
     const { user } = useAuth();
 const isAdmin = user?.role === "ADMIN";
   return (
     <Paper sx={{ p: 2 }}>
-      <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-        Payments
-      </Typography>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+        <Typography variant="subtitle1" fontWeight={600}>
+          Payments
+        </Typography>
+        {onAddPayment && (
+          <IconButton
+            onClick={onAddPayment}
+            sx={{
+              ml: '25px',
+              border: "2px solid #055205d7",
+              borderRadius: 1,
+              width: 32,
+              height: 32,
+              "&:hover": {
+                background: "#055205d7",
+                borderColor: "#02b90b",
+              },
+            }}
+          >
+            <AddIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        )}
+      </Box>
 
       {loading ? (
         <Skeleton height={160} />
