@@ -22,13 +22,7 @@ const KPIBox = ({ label, value, loading, icon: Icon }: KPIProps) => (
       background: "linear-gradient(135deg, #fefefe 0%, #ffffff 100%)",
       border: "1px solid #f0f0f0",
       borderRadius: 2,
-      transition: "all 0.3s ease",
       height: "100%",
-      "&:hover": {
-        boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-        transform: "translateY(-4px)",
-        borderColor: "#e0e0e0",
-      },
     }}
   >
     <Stack spacing={1.5}>
