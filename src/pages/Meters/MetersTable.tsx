@@ -34,7 +34,7 @@ export default function MetersTable({
             <TableCell>{m.subscriber?.fullName}</TableCell>
             <TableCell>{m.subscriber?.phone}</TableCell>
             <TableCell>{m.box?.code}</TableCell>
-            <TableCell>{m.ampere ?? "—"}</TableCell>
+            <TableCell>{m.ampere ?? "-"}</TableCell>
           </TableRow>
         ))}
       </TableBody>

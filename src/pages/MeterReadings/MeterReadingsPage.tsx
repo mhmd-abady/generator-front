@@ -63,10 +63,77 @@ export default function MeterReadingsPage() {
   return (
     <DashboardLayout>
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" justifyContent="space-between">
+        <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
           <Typography variant="h6" fontWeight={600}>
             Meter Readings
           </Typography>
+
+          <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1, mx: 2 }}>
+            <TextField
+              select
+              size="small"
+              label="Month"
+              value={month}
+              onChange={(e) => setMonth(Number(e.target.value))}
+            >
+              {Array.from({ length: 12 }).map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              size="small"
+              label="Year"
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
+            />
+
+            <TextField
+              select
+              size="small"
+              label="Region"
+              value={regionId ?? "all"}
+              onChange={(e) => {
+                const v = e.target.value;
+                setRegionId(v === "all" ? undefined : Number(v));
+                setNeighborhoodId(undefined);
+              }}
+              sx={{ minWidth: 180 }}
+            >
+              <MenuItem value="all">All Regions</MenuItem>
+              {regionsQuery.data?.map((r) => (
+                <MenuItem key={r.id} value={r.id}>
+                  {r.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              select
+              size="small"
+              label="Neighborhood"
+              disabled={!regionId}
+              value={neighborhoodId ?? "all"}
+              onChange={(e) => {
+                const v = e.target.value;
+                setNeighborhoodId(v === "all" ? undefined : Number(v));
+              }}
+              sx={{ minWidth: 200 }}
+            >
+              <MenuItem value="all">All Neighborhoods</MenuItem>
+              {neighborhoodsQuery.data?.map((n) => (
+                <MenuItem key={n.id} value={n.id}>
+                  {n.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            {isPeriodClosed && (
+              <Chip label="Period Closed" color="error" size="small" />
+            )}
+          </Stack>
 
           <Button
             variant="contained"
@@ -78,75 +145,6 @@ export default function MeterReadingsPage() {
           >
             {unlocked ? "Lock 🔒" : "Unlock 🔓"}
           </Button>
-        </Stack>
-      </Paper>
-
-      <Paper sx={{ p: 2 }}>
-        <Stack direction="row" spacing={2}>
-          <TextField
-            select
-            size="small"
-            label="Month"
-            value={month}
-            onChange={(e) => setMonth(Number(e.target.value))}
-          >
-            {Array.from({ length: 12 }).map((_, i) => (
-              <MenuItem key={i + 1} value={i + 1}>
-                {i + 1}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            size="small"
-            label="Year"
-            value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
-          />
-
-          <TextField
-            select
-            size="small"
-            label="Region"
-            value={regionId ?? "all"}
-            onChange={(e) => {
-              const v = e.target.value;
-              setRegionId(v === "all" ? undefined : Number(v));
-              setNeighborhoodId(undefined);
-            }}
-            sx={{ minWidth: 180 }}
-          >
-            <MenuItem value="all">All Regions</MenuItem>
-            {regionsQuery.data?.map((r) => (
-              <MenuItem key={r.id} value={r.id}>
-                {r.name}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            select
-            size="small"
-            label="Neighborhood"
-            disabled={!regionId}
-            value={neighborhoodId ?? "all"}
-            onChange={(e) => {
-              const v = e.target.value;
-              setNeighborhoodId(v === "all" ? undefined : Number(v));
-            }}
-            sx={{ minWidth: 200 }}
-          >
-            <MenuItem value="all">All Neighborhoods</MenuItem>
-            {neighborhoodsQuery.data?.map((n) => (
-              <MenuItem key={n.id} value={n.id}>
-                {n.name}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          {isPeriodClosed && (
-            <Chip label="Period Closed" color="error" size="small" />
-          )}
         </Stack>
       </Paper>
 

@@ -6,6 +6,7 @@ import {
   Skeleton,
   TextField,
   MenuItem,
+  InputAdornment,
 } from "@mui/material";
 import { useState } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -15,12 +16,14 @@ import MeterFormDialog from "./MeterFormDialog";
 import { useRegions } from "../../hooks/useRegions";
 import { useNeighborhoods } from "../../hooks/useNeighborhoods";
 import { useBoxes } from "../../hooks/useBoxes";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function MetersPage() {
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
   const [boxId, setBoxId] = useState<number | undefined>();
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const { regions } = useRegions();
   const { neighborhoods, isLoading: hoodsLoading } = useNeighborhoods(regionId);
@@ -33,6 +36,23 @@ export default function MetersPage() {
     regionId,
     neighborhoodId,
     boxId,
+  });
+
+  const filtered = (meters ?? []).filter((m) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    const box = m.box?.code?.toLowerCase() ?? "";
+    const meterNumber = m.number?.toLowerCase() ?? "";
+    const subscriber = m.subscriber?.fullName?.toLowerCase() ?? "";
+    const phone = m.subscriber?.phone?.toLowerCase() ?? "";
+    const ampere = m.ampere !== undefined && m.ampere !== null ? String(m.ampere) : "";
+    return (
+      box.includes(q) ||
+      meterNumber.includes(q) ||
+      subscriber.includes(q) ||
+      phone.includes(q) ||
+      ampere.includes(q)
+    );
   });
 
   return (
@@ -48,7 +68,7 @@ export default function MetersPage() {
           </Button>
         </Stack>
 
-        <Stack direction="row" spacing={2} mt={2}>
+        <Stack direction="row" spacing={2} mt={2} flexWrap="wrap">
           <TextField
             select
             size="small"
@@ -112,13 +132,29 @@ export default function MetersPage() {
               </MenuItem>
             ))}
           </TextField>
+
+          <TextField
+            size="small"
+            label="Search"
+            placeholder="Box, meter, subscriber, phone, ampere"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ minWidth: 260 }}
+          />
         </Stack>
       </Paper>
 
       {isLoading ? (
         <Skeleton height={300} />
       ) : (
-        <MetersTable rows={meters ?? []} />
+        <MetersTable rows={filtered} />
       )}
 
       <MeterFormDialog open={open} onClose={() => setOpen(false)} />

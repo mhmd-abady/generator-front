@@ -66,6 +66,12 @@ const [fixesOpen, setFixesOpen] = useState(false);
             <Typography>
               Remaining: {data!.remainingBalance}
             </Typography>
+            <Typography>
+              Fixes Amount: {data!.fixesAmount ?? "—"}
+            </Typography>
+            {data!.fixesNote && (
+              <Typography>Fixes Note: {data!.fixesNote}</Typography>
+            )}
             <Typography>Status: {data!.status}</Typography>
 
             <Divider />

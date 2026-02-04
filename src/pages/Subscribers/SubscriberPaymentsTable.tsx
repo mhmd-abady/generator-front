@@ -21,14 +21,17 @@ export default function SubscriberPaymentsTable({
   loading,
   onReverse,
   onAddPayment,
+  showSubscriberColumn = false,
 }: {
   payments?: Payment[];
   loading: boolean;
   onReverse: (paymentId: number) => void;
   onAddPayment?: () => void;
+  showSubscriberColumn?: boolean;
 }) {
-    const { user } = useAuth();
-const isAdmin = user?.role === "ADMIN";
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
+
   return (
     <Paper sx={{ p: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
@@ -39,7 +42,7 @@ const isAdmin = user?.role === "ADMIN";
           <IconButton
             onClick={onAddPayment}
             sx={{
-              ml: '25px',
+              ml: "25px",
               border: "2px solid #055205d7",
               borderRadius: 1,
               width: 32,
@@ -68,59 +71,59 @@ const isAdmin = user?.role === "ADMIN";
               <TableCell>Date</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>Invoice</TableCell>
+              {showSubscriberColumn && <TableCell>Subscriber</TableCell>}
               <TableCell>Receiver</TableCell>
               <TableCell>Status</TableCell>
-                <TableCell align="right">Actions</TableCell>
+              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {payments.map((p) => (
-             <TableRow key={p.id}>
-  <TableCell>
-    {new Date(p.paidAt).toLocaleDateString()}
-  </TableCell>
+              <TableRow key={p.id}>
+                <TableCell>
+                  {new Date(p.paidAt).toLocaleDateString()}
+                </TableCell>
 
-  <TableCell
-    sx={{
-      color: p.amount >= 0 ? "success.main" : "error.main",
-      fontWeight: 500,
-    }}
-  >
-    {p.amount >= 0 ? "+" : ""}
-    {p.amount}
-  </TableCell>
+                <TableCell
+                  sx={{
+                    color: p.amount >= 0 ? "success.main" : "error.main",
+                    fontWeight: 500,
+                  }}
+                >
+                  {p.amount >= 0 ? "+" : ""}
+                  {p.amount}
+                </TableCell>
 
-  <TableCell>
-    {p.invoiceId ? `#${p.invoiceId}` : "—"}
-  </TableCell>
+                <TableCell>{p.invoiceId ? `#${p.invoiceId}` : "—"}</TableCell>
 
-  <TableCell>
-    {p.receiver?.username ?? "—"}
-  </TableCell>
+                {showSubscriberColumn && (
+                  <TableCell>{p.subscriber?.fullName ?? "—"}</TableCell>
+                )}
 
-  <TableCell>
-    {p.isReversed ? (
-      <Chip size="small" label="REVERSED" color="error" />
-    ) : (
-      <Chip size="small" label="OK" color="success" />
-    )}
-  </TableCell>
+                <TableCell>{p.receiver?.username ?? "—"}</TableCell>
 
-  <TableCell align="right">
-    {isAdmin && !p.isReversed && (
-      <IconButton
-        size="small"
-        color="error"
-        title="Reverse payment"
-        onClick={() => onReverse(p.id)}
-      >
-        <UndoIcon fontSize="small" />
-      </IconButton>
-    )}
-  </TableCell>
-</TableRow>
+                <TableCell>
+                  {p.isReversed ? (
+                    <Chip size="small" label="REVERSED" color="error" />
+                  ) : (
+                    <Chip size="small" label="OK" color="success" />
+                  )}
+                </TableCell>
 
+                <TableCell align="right">
+                  {isAdmin && !p.isReversed && (
+                    <IconButton
+                      size="small"
+                      color="error"
+                      title="Reverse payment"
+                      onClick={() => onReverse(p.id)}
+                    >
+                      <UndoIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>

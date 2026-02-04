@@ -9,6 +9,8 @@ export type Invoice = {
   amountPaid: number;
   remainingBalance: number;
   status: "ISSUED" | "PARTIALLY_PAID" | "PAID" | "CANCELLED";
+  fixesAmount?: number;
+  fixesNote?: string;
   meter?: {
     number: string;
     subscriber?: {
@@ -46,6 +48,8 @@ export type InvoiceDetails = {
   remainingBalance: number;
   status: string;
   exchangeRate: number;
+  fixesAmount?: number;
+  fixesNote?: string;
 
   meter: {
     number: string;

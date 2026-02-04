@@ -24,7 +24,10 @@ export type Subscriber = {
     box?: {
       id: number;
       code: string;
+      neighborhoodId?: number;
+      regionId?: number;
       neighborhood?: { id: number; name: string };
+      region?: { id: number; name: string };
     };
   };
 
@@ -37,6 +40,8 @@ export type Subscriber = {
       code: string;
       neighborhoodId: number;
       neighborhood?: { id: number; name: string };
+      regionId?: number;
+      region?: { id: number; name: string };
     };
   }[];
 

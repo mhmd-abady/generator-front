@@ -12,6 +12,12 @@ export type Payment = {
   subscriberId: number;
   invoiceId?: number;
 
+  subscriber?: {
+    id: number;
+    fullName: string;
+    phone?: string;
+  };
+
   receiverType: "COLLECTOR" | "EMPLOYEE" | "OWNER";
   receiver: {
     id: number;
