@@ -17,6 +17,7 @@ import { useRegions } from "../../hooks/useRegions";
 import { useNeighborhoods } from "../../hooks/useNeighborhoods";
 import { useBoxes } from "../../hooks/useBoxes";
 import SearchIcon from "@mui/icons-material/Search";
+import type { Meter } from "../../api/meters";
 
 export default function MetersPage() {
   const [regionId, setRegionId] = useState<number | undefined>();
@@ -38,7 +39,7 @@ export default function MetersPage() {
     boxId,
   });
 
-  const filtered = (meters ?? []).filter((m) => {
+  const filtered = (meters ?? []).filter((m: Meter) => {
     const q = search.trim().toLowerCase();
     if (!q) return true;
     const box = m.box?.code?.toLowerCase() ?? "";

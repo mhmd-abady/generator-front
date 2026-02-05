@@ -67,6 +67,9 @@ const [fixesOpen, setFixesOpen] = useState(false);
               Remaining: {data!.remainingBalance}
             </Typography>
             <Typography>
+              Previous Balance: {data!.previousBalance ?? "—"}
+            </Typography>
+            <Typography>
               Fixes Amount: {data!.fixesAmount ?? "â€”"}
             </Typography>
             {data!.fixesNote && (
@@ -139,3 +142,5 @@ const [fixesOpen, setFixesOpen] = useState(false);
     </DashboardLayout>
   );
 }
+
+

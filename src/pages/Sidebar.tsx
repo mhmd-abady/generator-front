@@ -15,6 +15,7 @@ import {
   Payments,
   BarChart,
   Settings,
+  AssignmentTurnedIn,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -33,6 +34,7 @@ export default function Sidebar() {
     { label: "Invoices", icon: <Receipt />, path: "/invoices" },
     { label: "Tariffs", icon: <Receipt />, path: "/tariffs" },
     { label: "Payments", icon: <Payments />, path: "/payments" },
+    { label: "Collector Tasks", icon: <AssignmentTurnedIn />, path: "/collector-tasks" },
     { label: "Reports", icon: <BarChart />, path: "/reports" },
     { label: "Exchange Rate", icon: <Settings />, path: "/settings" }
   ];

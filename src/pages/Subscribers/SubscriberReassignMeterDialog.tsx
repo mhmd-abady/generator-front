@@ -7,6 +7,7 @@ import {
   TextField,
   MenuItem,
   Stack,
+  Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSubscribers } from "../../api/subscribers";
@@ -40,6 +41,9 @@ export default function SubscriberReassignMeterDialog({
 
       <DialogContent>
         <Stack spacing={2} mt={1}>
+          <Typography variant="body2" color="text.secondary">
+            Meter ID: {meterId}
+          </Typography>
           <TextField
             select
             label="New Subscriber"

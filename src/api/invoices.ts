@@ -8,7 +8,12 @@ export type Invoice = {
   totalDue: number;
   amountPaid: number;
   remainingBalance: number;
+  previousBalance?: number;
   status: "ISSUED" | "PARTIALLY_PAID" | "PAID" | "CANCELLED";
+  createdAt?: string;
+  previousReading?: number;
+  currentReading?: number;
+  consumptionKwh?: number;
   fixesAmount?: number;
   fixesNote?: string;
   meter?: {
@@ -46,8 +51,13 @@ export type InvoiceDetails = {
   totalDue: number;
   amountPaid: number;
   remainingBalance: number;
+  previousBalance?: number;
   status: string;
   exchangeRate: number;
+  createdAt?: string;
+  previousReading?: number;
+  currentReading?: number;
+  consumptionKwh?: number;
   fixesAmount?: number;
   fixesNote?: string;
 
@@ -57,6 +67,11 @@ export type InvoiceDetails = {
       id: number;
       fullName: string;
       phone: string;
+    };
+    box?: {
+      code?: string;
+      neighborhood?: { id: number; name: string };
+      region?: { id: number; name: string };
     };
   };
 

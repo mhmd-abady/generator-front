@@ -1,5 +1,15 @@
 import { api } from "./axios";
 
+export type InvoiceSummary = {
+  id: number;
+  month: number;
+  year: number;
+  totalDue: number;
+  amountPaid: number;
+  remainingBalance: number;
+  previousBalance?: number;
+};
+
 export type SubscriberPayment = {
   id: number;
   amount: number;
@@ -29,6 +39,7 @@ export type Subscriber = {
       neighborhood?: { id: number; name: string };
       region?: { id: number; name: string };
     };
+    invoices?: InvoiceSummary[];
   };
 
   meters?: {
@@ -43,6 +54,7 @@ export type Subscriber = {
       regionId?: number;
       region?: { id: number; name: string };
     };
+    invoices?: InvoiceSummary[];
   }[];
 
   payments?: SubscriberPayment[];

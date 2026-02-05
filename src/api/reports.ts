@@ -26,6 +26,7 @@ export type AgingRow = {
   subscriber: { id: number; fullName: string; phone: string };
   region: { id: number; name: string };
   neighborhood: { id: number; name: string };
+  totalPreviousBalance?: number;
   buckets: AgingBuckets;
   totalOwed: number;
   invoicesCount: number;
@@ -33,7 +34,11 @@ export type AgingRow = {
 
 export type AgingReportResponse = {
   filters: ReportsFilter;
-  totals: AgingBuckets & { totalOwed: number; subscribers: number };
+  totals: AgingBuckets & {
+    totalOwed: number;
+    subscribers: number;
+    totalPreviousBalance?: number;
+  };
   rows: AgingRow[];
 };
 

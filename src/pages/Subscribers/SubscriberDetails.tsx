@@ -102,6 +102,10 @@ export default function SubscriberDetails() {
   const meters =
     subscriber?.meters ??
     (subscriber?.meter ? [subscriber.meter] : undefined);
+  const latestInvoice = useMemo(
+    () => meters?.[0]?.invoices?.[0],
+    [meters]
+  );
   const [reassignMeterId, setReassignMeterId] = useState<number | null>(null);
 const payments = usePayments(subscriberId);
 const invoices = useUnpaidInvoices(subscriberId);
@@ -161,6 +165,12 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
                 <Typography variant="body2">
                   Phone: {subscriber?.phone}
                 </Typography>
+                {latestInvoice?.previousBalance != null && (
+                  <Typography variant="body2">
+                    Prev Balance (latest invoice):{" "}
+                    {latestInvoice.previousBalance}
+                  </Typography>
+                )}
                 {subscriber?.address && (
                   <Typography variant="body2">
                     Address: {subscriber.address}

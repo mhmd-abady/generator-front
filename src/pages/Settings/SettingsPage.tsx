@@ -1,4 +1,4 @@
-import { Paper, Typography, Stack } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 import DashboardLayout from "../Dashboard/DashboardLayout";
 import ExchangeRatePage from "./ExchangeRatePage";
 

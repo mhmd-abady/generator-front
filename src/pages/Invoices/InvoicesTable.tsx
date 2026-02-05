@@ -54,6 +54,7 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
             <TableCell>Month</TableCell>
             <TableCell>Year</TableCell>
             <TableCell>Status</TableCell>
+            <TableCell>Prev Balance</TableCell>
             <TableCell>Total</TableCell>
             <TableCell>Paid</TableCell>
             <TableCell>Remaining</TableCell>
@@ -74,6 +75,7 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
                 <TableCell>{i.month}</TableCell>
                 <TableCell>{i.year}</TableCell>
                 <TableCell>{i.status}</TableCell>
+                <TableCell>{i.previousBalance ?? "�"}</TableCell>
                 <TableCell>{i.totalDue}</TableCell>
                 <TableCell>{i.amountPaid}</TableCell>
                 <TableCell>{i.remainingBalance}</TableCell>
@@ -192,6 +194,16 @@ function InvoiceViewDialog({
 }) {
   const { data, isLoading } = query;
 
+  const calcConsumption = () => {
+    if (data?.currentReading != null && data?.previousReading != null) {
+      return Math.max(0, data.currentReading - data.previousReading);
+    }
+    if (data?.consumptionKwh != null) return data.consumptionKwh;
+    return null;
+  };
+
+  const consumption = calcConsumption();
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Invoice #{invoiceId}</DialogTitle>
@@ -201,26 +213,56 @@ function InvoiceViewDialog({
             <CircularProgress size={24} />
           </Stack>
         ) : (
-          <Stack spacing={1.5}>
-            <Typography variant="subtitle2">Subscriber</Typography>
-            <Typography>
-              {data.meter.subscriber.fullName} ({data.meter.number})
+          <Stack spacing={2}>
+            <Typography variant="subtitle2" fontWeight={600}>
+              Electric Generator Subscription Invoice
             </Typography>
+
+            <Stack spacing={0.5}>
+              <Typography>Subscriber Name: {data.meter.subscriber.fullName}</Typography>
+              <Typography>Phone Number: {data.meter.subscriber.phone}</Typography>
+              <Typography>
+                Neighborhood: {data.meter.box?.neighborhood?.name ?? "—"} | Region:{" "}
+                {data.meter.box?.region?.name ?? "—"}
+              </Typography>
+              <Typography>Meter Number: {data.meter.number}</Typography>
+              <Typography>
+                Issue Date:{" "}
+                {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : "—"}
+              </Typography>
+              <Typography>
+                Billing Month: {data.month}/{data.year}
+              </Typography>
+            </Stack>
 
             <Divider />
 
-            <Stack direction="row" spacing={2}>
-              <Typography>Period: {data.month}/{data.year}</Typography>
-              <Typography>Status: {data.status}</Typography>
+            <Stack spacing={0.5}>
+              <Typography>
+                Now Reading: {data.currentReading ?? "—"}
+              </Typography>
+              <Typography>
+                Previous Reading: {data.previousReading ?? "—"}
+              </Typography>
+              <Typography>
+                Energy Consumption: {consumption ?? "—"} kWh
+              </Typography>
             </Stack>
-            <Typography>Total Due: {data.totalDue}</Typography>
-            <Typography>Paid: {data.amountPaid}</Typography>
-            <Typography>Remaining: {data.remainingBalance}</Typography>
-            <Typography>Exchange Rate: {data.exchangeRate}</Typography>
-            <Typography>Fixes Amount: {data.fixesAmount ?? "—"}</Typography>
-            {data.fixesNote && (
-              <Typography>Fixes Note: {data.fixesNote}</Typography>
-            )}
+
+            <Divider />
+
+            <Stack spacing={0.5}>
+              <Typography>
+                Previous Balance: {data.previousBalance ?? "�"}
+              </Typography>
+              <Typography>Total Due: {data.totalDue}</Typography>
+              <Typography>Amount Paid: {data.amountPaid}</Typography>
+              <Typography>Remaining Balance: {data.remainingBalance}</Typography>
+              <Typography>Status: {data.status}</Typography>
+              <Typography>Exchange Rate: {data.exchangeRate}</Typography>
+              <Typography>Fixes Amount: {data.fixesAmount ?? "—"}</Typography>
+              {data.fixesNote && <Typography>Fixes Note: {data.fixesNote}</Typography>}
+            </Stack>
 
             {data.payments?.length > 0 && (
               <>
@@ -253,3 +295,5 @@ function InvoiceViewDialog({
     </Dialog>
   );
 }
+
+

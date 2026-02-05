@@ -33,6 +33,9 @@ export default function BulkMeterReadingsTable({
         meterId: r.meterId,
         currentReading: values[r.meterId],
       }));
+
+    if (payload.length === 0) return;
+    onSubmit(payload);
   };
 
   return (

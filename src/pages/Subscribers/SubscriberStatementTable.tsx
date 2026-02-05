@@ -31,6 +31,7 @@ export default function SubscriberStatementTable({
           <TableRow>
             <TableCell>Date</TableCell>
             <TableCell>Reference</TableCell>
+            <TableCell align="right">Prev Balance</TableCell>
             <TableCell align="right">Debit USD</TableCell>
             <TableCell align="right">Credit USD</TableCell>
             <TableCell align="right">Balance USD</TableCell>
@@ -46,10 +47,15 @@ export default function SubscriberStatementTable({
               </TableCell>
               <TableCell>{r.reference}</TableCell>
               <TableCell align="right">
-                {r.debitUsd || "—"}
+                {r.type === "INVOICE" && r.previousBalance != null
+                  ? r.previousBalance
+                  : "—"}
               </TableCell>
               <TableCell align="right">
-                {r.creditUsd || "—"}
+                {r.debitUsd || "â€”"}
+              </TableCell>
+              <TableCell align="right">
+                {r.creditUsd || "â€”"}
               </TableCell>
               <TableCell align="right">
                 {r.balanceUsd.toLocaleString()}

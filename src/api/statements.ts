@@ -12,6 +12,9 @@ export type StatementRow = {
 
   balanceUsd: number;
   balanceLbp: number;
+
+  // Present for invoice rows when provided by backend
+  previousBalance?: number;
 };
 
 export type SubscriberStatementResponse = {

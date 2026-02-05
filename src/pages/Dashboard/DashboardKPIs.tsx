@@ -7,6 +7,7 @@ import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import PersonIcon from "@mui/icons-material/Person";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import GridOnIcon from "@mui/icons-material/GridOn";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 interface KPIProps {
   label: string;
@@ -70,7 +71,8 @@ export default function DashboardKPIs({
 }) {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      {/* Financial metrics - Top row */}
+      <Grid item xs={12} sm={6} md={6} lg={3}>
         <KPIBox
           label="Total Invoiced"
           value={overview?.totalInvoiced}
@@ -78,7 +80,7 @@ export default function DashboardKPIs({
           icon={ReceiptIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={6} md={6} lg={3}>
         <KPIBox
           label="Total Collected"
           value={overview?.totalCollected}
@@ -86,7 +88,7 @@ export default function DashboardKPIs({
           icon={MonetizationOnIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={6} md={6} lg={3}>
         <KPIBox
           label="Outstanding"
           value={overview?.totalOutstanding}
@@ -94,7 +96,17 @@ export default function DashboardKPIs({
           icon={PendingActionsIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={6} md={6} lg={3}>
+        <KPIBox
+          label="Carried Forward"
+          value={overview?.totalCarriedForward}
+          loading={loading}
+          icon={AccountBalanceWalletIcon}
+        />
+      </Grid>
+
+      {/* Operational metrics - Bottom row */}
+      <Grid item xs={12} sm={4} md={4} lg={4}>
         <KPIBox
           label="Subscribers"
           value={overview?.subscribersCount}
@@ -102,7 +114,7 @@ export default function DashboardKPIs({
           icon={PersonIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={4} md={4} lg={4}>
         <KPIBox
           label="Meters"
           value={overview?.metersCount}
@@ -110,7 +122,7 @@ export default function DashboardKPIs({
           icon={EnergySavingsLeafIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={2}>
+      <Grid item xs={12} sm={4} md={4} lg={4}>
         <KPIBox
           label="Boxes"
           value={overview?.boxesCount}

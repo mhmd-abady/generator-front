@@ -40,6 +40,7 @@ export default function SubscriberInvoicesTable({
             <TableRow>
               <TableCell>Period</TableCell>
               <TableCell>Total</TableCell>
+              <TableCell>Prev Balance</TableCell>
               <TableCell>Paid</TableCell>
               <TableCell>Remaining</TableCell>
               <TableCell>Status</TableCell>
@@ -54,6 +55,7 @@ export default function SubscriberInvoicesTable({
                   {i.month}/{i.year}
                 </TableCell>
                 <TableCell>{i.totalDue}</TableCell>
+                <TableCell>{i.previousBalance ?? "—"}</TableCell>
                 <TableCell>{i.amountPaid}</TableCell>
                 <TableCell>{i.remainingBalance}</TableCell>
                 <TableCell>

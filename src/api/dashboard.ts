@@ -7,6 +7,7 @@ export type DashboardOverview = {
   totalInvoiced: number;
   totalCollected: number;
   totalOutstanding: number;
+  totalCarriedForward: number;
 };
 
 export type MonthlyTrendRow = {

@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import type { Invoice } from "../../api/invoices";
 
 const KPIBox = ({
@@ -73,10 +74,14 @@ export default function InvoiceKPIs({
     (sum, i) => sum + i.remainingBalance,
     0
   );
+  const totalPrevBalance = invoices.reduce(
+    (sum, i) => sum + (i.previousBalance ?? 0),
+    0
+  );
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid item xs={12} sm={6} md={3}>
         <KPIBox
           label="Total Invoiced"
           value={totalInvoiced}
@@ -84,7 +89,7 @@ export default function InvoiceKPIs({
           icon={ReceiptIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid item xs={12} sm={6} md={3}>
         <KPIBox
           label="Total Paid"
           value={totalPaid}
@@ -92,12 +97,20 @@ export default function InvoiceKPIs({
           icon={CheckCircleIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid item xs={12} sm={6} md={3}>
         <KPIBox
           label="Total Outstanding"
           value={totalOutstanding}
           loading={loading}
           icon={PendingActionsIcon}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={3}>
+        <KPIBox
+          label="Prev Balance"
+          value={totalPrevBalance}
+          loading={loading}
+          icon={AccountBalanceWalletIcon}
         />
       </Grid>
     </Grid>

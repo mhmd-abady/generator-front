@@ -4,7 +4,6 @@ import {
   Stack,
   TextField,
   MenuItem,
-  Button,
   Skeleton,
 } from "@mui/material";
 import { useState, useMemo } from "react";
@@ -14,6 +13,7 @@ import { fetchRegions, fetchNeighborhoodsByRegion } from "../../api/locations";
 import { useMeterReadings } from "../../hooks/useMeterReadings";
 import BulkMeterReadingsTable from "./BulkMeterReadingsTable";
 import { fetchPeriodStatus } from "../../api/dashboard";
+import type { MeterReading } from "../../api/meter-readings";
 
 export default function BulkMeterReadingsPage() {
   const now = new Date();
@@ -45,13 +45,44 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
     neighborhoodId,
   });
 
+  const meters = readings.meters ?? [];
+
   // Only meters WITHOUT invoice (editable)
   const editableRows = useMemo(
     () =>
-      (readings.readings ?? []).filter(
-        (r) => !r.invoice
-      ),
-    [readings.readings]
+      meters
+        .map((meter): MeterReading => {
+          const reading = meter.readings?.[0];
+          const previous =
+            reading?.currentReading ?? reading?.previousReading ?? 0;
+
+          return {
+            id: reading?.id ?? meter.id,
+            meterId: meter.id,
+            month,
+            year,
+            previousReading: previous,
+            currentReading: reading?.currentReading ?? previous,
+            consumptionKwh: reading
+              ? Math.max(0, reading.currentReading - previous)
+              : 0,
+            createdAt: new Date().toISOString(),
+            meter: {
+              id: meter.id,
+              number: meter.number,
+              subscriber: meter.subscriber
+                ? {
+                    id: meter.subscriber.id,
+                    fullName: meter.subscriber.fullName,
+                    phone: meter.subscriber.phone,
+                  }
+                : undefined,
+            },
+            invoice: reading?.invoice,
+          };
+        })
+        .filter((row) => !row.invoice),
+    [meters, month, year]
   );
 
   return (
