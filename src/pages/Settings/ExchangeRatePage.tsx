@@ -14,22 +14,78 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  IconButton,
 } from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
 import { useState } from "react";
 import {
+  useDeleteExchangeRate,
   useActiveExchangeRate,
   useExchangeRateHistory,
   useSetExchangeRate,
+  useUpdateExchangeRate,
 } from "../../hooks/useExchangeRate";
 
 export default function ExchangeRatePage() {
   const { data: active } = useActiveExchangeRate();
   const { data: history } = useExchangeRateHistory();
   const setRate = useSetExchangeRate();
+  const updateRate = useUpdateExchangeRate();
+  const deleteRate = useDeleteExchangeRate();
 
   const [open, setOpen] = useState(false);
   const [rate, setRateValue] = useState<number>(0);
   const [note, setNote] = useState("");
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editRateValue, setEditRateValue] = useState<number>(0);
+  const [editNote, setEditNote] = useState("");
+
+  const submitNewRate = () => {
+    setRate.mutate(
+      { usdToLbp: rate, note: note || undefined },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          setRateValue(0);
+          setNote("");
+        },
+      }
+    );
+  };
+
+  const openEditDialog = (id: number, usdToLbp: number, existingNote?: string) => {
+    setEditingId(id);
+    setEditRateValue(usdToLbp);
+    setEditNote(existingNote ?? "");
+    setEditOpen(true);
+  };
+
+  const submitEditRate = () => {
+    if (!editingId) return;
+
+    updateRate.mutate(
+      {
+        id: editingId,
+        payload: { usdToLbp: editRateValue, note: editNote || undefined },
+      },
+      {
+        onSuccess: () => {
+          setEditOpen(false);
+          setEditingId(null);
+          setEditRateValue(0);
+          setEditNote("");
+        },
+      }
+    );
+  };
+
+  const handleDeleteRate = (id: number) => {
+    const confirmed = window.confirm("Delete this exchange rate?");
+    if (!confirmed) return;
+    deleteRate.mutate(id);
+  };
 
   return (
     <Paper sx={{ p: 3 }}>
@@ -54,6 +110,7 @@ export default function ExchangeRatePage() {
               <TableCell>Note</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Date</TableCell>
+              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
 
@@ -71,6 +128,22 @@ export default function ExchangeRatePage() {
                 </TableCell>
                 <TableCell>
                   {new Date(r.createdAt).toLocaleString()}
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    size="small"
+                    onClick={() => openEditDialog(r.id, r.usdToLbp, r.note)}
+                  >
+                    <Edit fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    disabled={r.isActive}
+                    onClick={() => handleDeleteRate(r.id)}
+                  >
+                    <Delete fontSize="small" />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -102,9 +175,40 @@ export default function ExchangeRatePage() {
           <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button
             variant="contained"
-            onClick={() =>
-              setRate.mutate({ usdToLbp: rate, note: note || undefined })
-            }
+            onClick={submitNewRate}
+            disabled={setRate.isPending || rate <= 0}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
+        <DialogTitle>Edit Exchange Rate</DialogTitle>
+
+        <DialogContent>
+          <Stack spacing={2} mt={1}>
+            <TextField
+              label="USD to LBP"
+              type="number"
+              value={editRateValue}
+              onChange={(e) => setEditRateValue(Number(e.target.value))}
+            />
+
+            <TextField
+              label="Note"
+              value={editNote}
+              onChange={(e) => setEditNote(e.target.value)}
+            />
+          </Stack>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setEditOpen(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={submitEditRate}
+            disabled={updateRate.isPending || editRateValue <= 0 || !editingId}
           >
             Save
           </Button>

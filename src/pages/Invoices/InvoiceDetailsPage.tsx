@@ -67,7 +67,7 @@ const [fixesOpen, setFixesOpen] = useState(false);
               Remaining: {data!.remainingBalance}
             </Typography>
             <Typography>
-              Previous Balance: {data!.previousBalance ?? "—"}
+              Previous Balance: {data!.previousBalance ?? "ï¿½"}
             </Typography>
             <Typography>
               Fixes Amount: {data!.fixesAmount ?? "â€”"}
