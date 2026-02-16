@@ -10,11 +10,14 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
   Tooltip,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Grid from "@material-ui/core/Grid";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -132,6 +135,7 @@ export default function CollectorTasksPage() {
               startIcon={<RefreshIcon />}
               onClick={() => tasksQuery.refetch()}
               disabled={tasksQuery.isLoading}
+              sx={{ width: { xs: "100%", md: "auto" } }}
             >
               Reload
             </Button>
@@ -141,7 +145,7 @@ export default function CollectorTasksPage() {
             direction={{ xs: "column", md: "row" }}
             spacing={2}
             flexWrap="wrap"
-            alignItems="center"
+            alignItems={{ xs: "stretch", md: "center" }}
           >
             <TextField
               select
@@ -149,7 +153,7 @@ export default function CollectorTasksPage() {
               label="Month"
               value={month}
               onChange={(e) => setMonth(Number(e.target.value))}
-              sx={{ minWidth: 140 }}
+              sx={{ minWidth: { xs: "100%", md: 140 } }}
             >
               {Array.from({ length: 12 }).map((_, i) => (
                 <MenuItem key={i + 1} value={i + 1}>
@@ -163,7 +167,7 @@ export default function CollectorTasksPage() {
               label="Year"
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
-              sx={{ minWidth: 120 }}
+              sx={{ minWidth: { xs: "100%", md: 120 } }}
               type="number"
             />
 
@@ -177,7 +181,7 @@ export default function CollectorTasksPage() {
                 setRegionId(v === "all" ? undefined : Number(v));
                 setNeighborhoodId(undefined);
               }}
-              sx={{ minWidth: 180 }}
+              sx={{ minWidth: { xs: "100%", md: 180 } }}
             >
               <MenuItem value="all">All Regions</MenuItem>
               {regionsQuery.data?.map((r) => (
@@ -197,7 +201,7 @@ export default function CollectorTasksPage() {
                 const v = e.target.value;
                 setNeighborhoodId(v === "all" ? undefined : Number(v));
               }}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: { xs: "100%", md: 200 } }}
             >
               <MenuItem value="all">All Neighborhoods</MenuItem>
               {neighborhoodsQuery.data?.map((n) => (
@@ -222,7 +226,7 @@ export default function CollectorTasksPage() {
                   ? "Locked to your account"
                   : "Optional filter"
               }
-              sx={{ minWidth: 160 }}
+              sx={{ minWidth: { xs: "100%", md: 160 } }}
             />
           </Stack>
         </Stack>
@@ -384,6 +388,8 @@ function NeighborhoodCard({
   neighborhood: CollectorNeighborhoodTask;
   onPay: (subscriber: CollectorTaskSubscriber) => void;
 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { neighborhoodName, subscribers, totalToCollect, totalPreviousBalance } =
     neighborhood;
 
@@ -421,26 +427,40 @@ function NeighborhoodCard({
         </Stack>
       </Stack>
 
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Subscriber</TableCell>
-            <TableCell>Contact</TableCell>
-            <TableCell>Address</TableCell>
-            <TableCell>Amount Due</TableCell>
-            <TableCell>Prev Balance</TableCell>
-            <TableCell>Invoice</TableCell>
-            <TableCell>Meter</TableCell>
-            <TableCell>Consumption</TableCell>
-            <TableCell align="right">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+      {isMobile ? (
+        <Stack spacing={1.5}>
           {subscribers.map((s) => (
-            <SubscriberRow key={s.subscriberId} row={s} onPay={onPay} />
+            <SubscriberMobileCard
+              key={s.subscriberId}
+              row={s}
+              onPay={onPay}
+            />
           ))}
-        </TableBody>
-      </Table>
+        </Stack>
+      ) : (
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Subscriber</TableCell>
+                <TableCell>Contact</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Amount Due</TableCell>
+                <TableCell>Prev Balance</TableCell>
+                <TableCell>Invoice</TableCell>
+                <TableCell>Meter</TableCell>
+                <TableCell>Consumption</TableCell>
+                <TableCell align="right">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {subscribers.map((s) => (
+                <SubscriberRow key={s.subscriberId} row={s} onPay={onPay} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Paper>
   );
 }
@@ -520,5 +540,72 @@ function SubscriberRow({
         </Tooltip>
       </TableCell>
     </TableRow>
+  );
+}
+
+function SubscriberMobileCard({
+  row,
+  onPay,
+}: {
+  row: CollectorTaskSubscriber;
+  onPay: (subscriber: CollectorTaskSubscriber) => void;
+}) {
+  const invoice = row.invoice;
+  const consumption =
+    invoice.consumptionKwh ??
+    (invoice.currentReading != null &&
+    invoice.previousReading != null
+      ? Math.max(0, invoice.currentReading - invoice.previousReading)
+      : null);
+
+  return (
+    <Paper variant="outlined" sx={{ p: 1.5 }}>
+      <Stack spacing={1}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={1}
+        >
+          <Box>
+            <Typography fontWeight={700}>{row.name}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              ID: {row.subscriberId}
+            </Typography>
+          </Box>
+          <Button
+            size="small"
+            variant="contained"
+            startIcon={<PaymentIcon />}
+            onClick={() => onPay(row)}
+            disabled={row.amountDue <= 0}
+          >
+            Collect
+          </Button>
+        </Stack>
+
+        <Typography variant="body2">Phone: {row.phone || "-"}</Typography>
+        <Typography variant="body2">Address: {row.address || "-"}</Typography>
+        <Typography variant="body2">
+          Amount Due: {row.amountDue.toLocaleString()}
+        </Typography>
+        <Typography variant="body2">
+          Prev Balance:{" "}
+          {row.previousBalance != null ? row.previousBalance.toLocaleString() : "-"}
+        </Typography>
+        <Typography variant="body2">
+          Invoice: #{invoice.id} ({invoice.month}/{invoice.year} - {invoice.status})
+        </Typography>
+        <Typography variant="body2">
+          Meter: {invoice.meterNumber} | Box {invoice.boxCode ?? "-"}
+        </Typography>
+        <Typography variant="body2">
+          Region: {invoice.regionName} / {invoice.neighborhoodName}
+        </Typography>
+        <Typography variant="body2">
+          Consumption: {consumption != null ? `${consumption} kWh` : "-"}
+        </Typography>
+      </Stack>
+    </Paper>
   );
 }

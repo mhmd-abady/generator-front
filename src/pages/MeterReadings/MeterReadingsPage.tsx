@@ -17,6 +17,7 @@ import MeterReadingsTable from "./MeterReadingsTable";
 import { fetchPeriodStatus } from "../../api/dashboard";
 import OwnerPasswordDialog from "../../components/OwnerPasswordDialog";
 import { api } from "../../api/axios";
+import { useBoxes } from "../../hooks/useBoxes";
 
 export default function MeterReadingsPage() {
   const now = new Date();
@@ -25,6 +26,8 @@ export default function MeterReadingsPage() {
   const [year, setYear] = useState(now.getFullYear());
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
+  const [boxId, setBoxId] = useState<number | undefined>();
+  const [search, setSearch] = useState("");
 
   const [unlocked, setUnlocked] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
@@ -40,14 +43,36 @@ export default function MeterReadingsPage() {
     enabled: !!regionId,
   });
 
+  const { boxes, isLoading: boxesLoading } = useBoxes(neighborhoodId, regionId);
+
   const readings = useMeterReadings({
     month,
     year,
     neighborhoodId,
     regionId,
+    boxId,
   });
 
   const meters = readings.meters ?? [];
+  const filteredMeters = meters.filter((m) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+
+    const meterNumber = m.number?.toLowerCase() ?? "";
+    const subscriber = m.subscriber?.fullName?.toLowerCase() ?? "";
+    const box = m.box?.code?.toLowerCase() ?? "";
+    const region =
+      m.box?.region?.name?.toLowerCase() ??
+      m.box?.neighborhood?.region?.name?.toLowerCase() ??
+      "";
+
+    return (
+      meterNumber.includes(q) ||
+      subscriber.includes(q) ||
+      box.includes(q) ||
+      region.includes(q)
+    );
+  });
 
   const periodStatusQuery = useQuery({
     queryKey: ["period-status", month, year],
@@ -99,6 +124,7 @@ export default function MeterReadingsPage() {
                 const v = e.target.value;
                 setRegionId(v === "all" ? undefined : Number(v));
                 setNeighborhoodId(undefined);
+                setBoxId(undefined);
               }}
               sx={{ minWidth: 180 }}
             >
@@ -119,6 +145,7 @@ export default function MeterReadingsPage() {
               onChange={(e) => {
                 const v = e.target.value;
                 setNeighborhoodId(v === "all" ? undefined : Number(v));
+                setBoxId(undefined);
               }}
               sx={{ minWidth: 200 }}
             >
@@ -129,6 +156,35 @@ export default function MeterReadingsPage() {
                 </MenuItem>
               ))}
             </TextField>
+
+            <TextField
+              select
+              size="small"
+              label="Box"
+              disabled={boxesLoading || (!regionId && !neighborhoodId)}
+              value={boxId ?? "all"}
+              onChange={(e) => {
+                const v = e.target.value;
+                setBoxId(v === "all" ? undefined : Number(v));
+              }}
+              sx={{ minWidth: 160 }}
+            >
+              <MenuItem value="all">All Boxes</MenuItem>
+              {boxes.map((b) => (
+                <MenuItem key={b.id} value={b.id}>
+                  {b.code}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              size="small"
+              label="Search"
+              placeholder="Meter, subscriber, box, region"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              sx={{ minWidth: 260 }}
+            />
 
             {isPeriodClosed && (
               <Chip label="Period Closed" color="error" size="small" />
@@ -152,7 +208,9 @@ export default function MeterReadingsPage() {
         <Skeleton height={300} />
       ) : (
         <MeterReadingsTable
-          meters={meters}
+          meters={filteredMeters}
+          month={month}
+          year={year}
           isPeriodClosed={isPeriodClosed}
           unlocked={unlocked}
           onCreate={async (meterId, currentReading) => {

@@ -36,7 +36,12 @@ export type Subscriber = {
       code: string;
       neighborhoodId?: number;
       regionId?: number;
-      neighborhood?: { id: number; name: string };
+      neighborhood?: {
+        id: number;
+        name: string;
+        regionId?: number;
+        region?: { id: number; name: string };
+      };
       region?: { id: number; name: string };
     };
     invoices?: InvoiceSummary[];
@@ -50,7 +55,12 @@ export type Subscriber = {
       id: number;
       code: string;
       neighborhoodId: number;
-      neighborhood?: { id: number; name: string };
+      neighborhood?: {
+        id: number;
+        name: string;
+        regionId?: number;
+        region?: { id: number; name: string };
+      };
       regionId?: number;
       region?: { id: number; name: string };
     };

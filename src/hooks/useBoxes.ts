@@ -26,19 +26,19 @@ export function useBoxes(neighborhoodId?: number, regionId?: number) {
     createBox: useMutation({
       mutationFn: createBox,
       onSuccess: () =>
-        qc.invalidateQueries({ queryKey: ["boxes", neighborhoodId, regionId] }),
+        qc.invalidateQueries({ queryKey: ["boxes"], exact: false }),
     }),
 
     updateBox: useMutation({
       mutationFn: ({ id, dto }: any) => updateBox(id, dto),
       onSuccess: () =>
-        qc.invalidateQueries({ queryKey: ["boxes", neighborhoodId, regionId] }),
+        qc.invalidateQueries({ queryKey: ["boxes"], exact: false }),
     }),
 
     deleteBox: useMutation({
       mutationFn: deleteBox,
       onSuccess: () =>
-        qc.invalidateQueries({ queryKey: ["boxes", neighborhoodId, regionId] }),
+        qc.invalidateQueries({ queryKey: ["boxes"], exact: false }),
     }),
   };
 }

@@ -19,9 +19,11 @@ import {
   DialogActions,
   TextField,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
 import DashboardLayout from "../Dashboard/DashboardLayout";
 import { useRegions } from "../../hooks/useRegions";
 import { useNeighborhoods } from "../../hooks/useNeighborhoods";
@@ -29,6 +31,7 @@ import type { Region, Neighborhood } from "../../api/locations";
 import { useBoxes } from "../../hooks/useBoxes";
 import type { Box } from "../../api/boxes";
 import { useMeters } from "../../hooks/useMeters";
+import type { Meter } from "../../api/meters";
 import MetersTable from "../Meters/MetersTable";
 import { useBoxMeters } from "../../hooks/useBoxMeters";
 import MeterFormDialog from "../Meters/MeterFormDialog";
@@ -56,6 +59,7 @@ export default function LocationsPage() {
   const [boxCode, setBoxCode] = useState("");
   const [selectedBox, setSelectedBox] = useState<Box | null>(null);
   const [meterDialogOpen, setMeterDialogOpen] = useState(false);
+  const [meterSearch, setMeterSearch] = useState("");
 
   const { boxes, isLoading: boxesLoading, createBox, updateBox, deleteBox } =
     useBoxes(selectedNeighborhood?.id, selectedRegion?.id);
@@ -65,10 +69,31 @@ export default function LocationsPage() {
   });
   const boxMetersQuery = useBoxMeters(selectedBox?.id);
 
-  const meters = selectedBox ? boxMetersQuery.data : metersQuery.meters;
+  const meters: Meter[] = (selectedBox
+    ? boxMetersQuery.data
+    : metersQuery.meters) ?? [];
   const metersLoading = selectedBox
     ? boxMetersQuery.isLoading
     : metersQuery.isLoading;
+  const filteredMeters = meters.filter((m) => {
+    const q = meterSearch.trim().toLowerCase();
+    if (!q) return true;
+
+    const box = m.box?.code?.toLowerCase() ?? "";
+    const meterNumber = m.number?.toLowerCase() ?? "";
+    const subscriber = m.subscriber?.fullName?.toLowerCase() ?? "";
+    const phone = m.subscriber?.phone?.toLowerCase() ?? "";
+    const ampere =
+      m.ampere !== undefined && m.ampere !== null ? String(m.ampere) : "";
+
+    return (
+      box.includes(q) ||
+      meterNumber.includes(q) ||
+      subscriber.includes(q) ||
+      phone.includes(q) ||
+      ampere.includes(q)
+    );
+  });
 
   const resetBoxDialog = () => {
     setEditingBox(null);
@@ -363,8 +388,25 @@ export default function LocationsPage() {
               : selectedRegion
               ? ` - Region ${selectedRegion.name}`
               : ""}
-              <Button
-              sx={{ml:13}}
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="start">
+            {metersLoading && <CircularProgress size={20} />}
+            <TextField
+              size="small"
+              label="Search"
+              placeholder="Box, meter, subscriber, phone, ampere"
+              value={meterSearch}
+              onChange={(e) => setMeterSearch(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ minWidth: 280 }}
+            />
+            <Button
               variant="contained"
               size="small"
               startIcon={<Add />}
@@ -372,13 +414,9 @@ export default function LocationsPage() {
             >
               Add Meter
             </Button>
-          </Typography>
-          <Stack direction="row" spacing={1} alignItems="center">
-            {metersLoading && <CircularProgress size={20} />}
-            
           </Stack>
         </Stack>
-        <MetersTable rows={meters ?? []} disablePaper />
+        <MetersTable rows={filteredMeters} disablePaper />
       </Paper>
 
       {/* ================= DIALOGS ================= */}

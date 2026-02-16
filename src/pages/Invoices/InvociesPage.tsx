@@ -25,6 +25,7 @@ export default function InvoicesPage() {
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
   const [subscriberId, setSubscriberId] = useState<number | undefined>();
+  const [search, setSearch] = useState("");
 
   const regionsQuery = useQuery({
     queryKey: ["regions"],
@@ -52,6 +53,16 @@ export default function InvoicesPage() {
     subscriberId,
     regionId,
     neighborhoodId,
+  });
+
+  const filteredInvoices = (data ?? []).filter((invoice) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+
+    const subscriberName = invoice.meter?.subscriber?.fullName?.toLowerCase() ?? "";
+    const invoiceId = String(invoice.id);
+
+    return subscriberName.includes(q) || invoiceId.includes(q);
   });
 
   return (
@@ -190,7 +201,19 @@ export default function InvoicesPage() {
       {isLoading ? (
         <Skeleton height={300} />
       ) : (
-        <InvoicesTable rows={data ?? []} />
+        <>
+          <Stack direction="row" sx={{ mt: 1, mb: 1 }}>
+            <TextField
+              size="small"
+              label="Search"
+              placeholder="Subscriber name or invoice ID"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              sx={{ minWidth: 280 }}
+            />
+          </Stack>
+          <InvoicesTable rows={filteredInvoices} />
+        </>
       )}
     </DashboardLayout>
   );

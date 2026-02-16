@@ -19,12 +19,16 @@ export type MeterWithReadings = Meter & {
     id: number;
     previousReading: number;
     currentReading: number;
+    month: number;
+    year: number;
     invoice?: { id: number };
   }[];
 };
 
 type Props = {
   meters: MeterWithReadings[];
+  month: number;
+  year: number;
   isPeriodClosed?: boolean;
   unlocked: boolean;
   onCreate: (meterId: number, currentReading: number) => void;
@@ -33,6 +37,8 @@ type Props = {
 
 export default function MeterReadingsTable({
   meters,
+  month,
+  year,
   isPeriodClosed,
   unlocked,
   onCreate,
@@ -45,6 +51,8 @@ export default function MeterReadingsTable({
           <TableRow>
             <TableCell>Meter</TableCell>
             <TableCell>Subscriber</TableCell>
+            <TableCell>Region</TableCell>
+            <TableCell>Box</TableCell>
             <TableCell align="right">Previous</TableCell>
             <TableCell align="right">Current</TableCell>
             <TableCell align="right">Consumption</TableCell>
@@ -56,8 +64,10 @@ export default function MeterReadingsTable({
         <TableBody>
           {meters.map((meter) => (
             <MeterRow
-              key={meter.id}
+              key={`${meter.id}-${month}-${year}`}
               meter={meter}
+              month={month}
+              year={year}
               isPeriodClosed={isPeriodClosed}
               unlocked={unlocked}
               onCreate={onCreate}
@@ -72,18 +82,26 @@ export default function MeterReadingsTable({
 
 function MeterRow({
   meter,
+  month,
+  year,
   isPeriodClosed,
   unlocked,
   onCreate,
   onUpdate,
 }: {
   meter: MeterWithReadings;
+  month: number;
+  year: number;
   isPeriodClosed?: boolean;
   unlocked: boolean;
   onCreate: (meterId: number, currentReading: number) => void;
   onUpdate: (readingId: number, currentReading: number) => void;
 }) {
-  const reading = meter.readings[0] ?? null;
+  const latestReading = meter.readings[0] ?? null;
+  const reading =
+    latestReading?.month === month && latestReading?.year === year
+      ? latestReading
+      : null;
 
 const [rowLocked, setRowLocked] = useState<boolean>(false);
 const locked = Boolean(
@@ -93,7 +111,9 @@ const locked = Boolean(
   rowLocked
 );
 
-  const previous = reading?.previousReading ?? 0;
+  const previous = reading
+    ? reading.previousReading
+    : latestReading?.currentReading ?? 0;
   const [value, setValue] = useState<number>(
     reading?.currentReading ?? previous
   );
@@ -101,11 +121,18 @@ const locked = Boolean(
   const changed =
     (reading && value !== reading.currentReading) ||
     (!reading && value !== previous);
+  const regionName =
+    meter.box?.region?.name ??
+    meter.box?.neighborhood?.region?.name ??
+    "-";
+  const boxCode = meter.box?.code ?? "-";
 
   return (
     <TableRow sx={locked ? { opacity: 0.6 } : undefined}>
       <TableCell>{meter.number}</TableCell>
       <TableCell>{meter.subscriber?.fullName ?? "-"}</TableCell>
+      <TableCell>{regionName}</TableCell>
+      <TableCell>{boxCode}</TableCell>
 
       <TableCell align="right">{previous}</TableCell>
 

@@ -16,6 +16,20 @@ export type Meter = {
     id: number;
     code: string;
     neighborhoodId: number;
+    regionId?: number;
+    neighborhood?: {
+      id: number;
+      name: string;
+      regionId?: number;
+      region?: {
+        id: number;
+        name: string;
+      };
+    };
+    region?: {
+      id: number;
+      name: string;
+    };
   };
 };
 

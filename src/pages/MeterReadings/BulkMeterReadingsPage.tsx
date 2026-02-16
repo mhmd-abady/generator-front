@@ -52,9 +52,14 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
     () =>
       meters
         .map((meter): MeterReading => {
-          const reading = meter.readings?.[0];
-          const previous =
-            reading?.currentReading ?? reading?.previousReading ?? 0;
+          const latestReading = meter.readings?.[0];
+          const reading =
+            latestReading?.month === month && latestReading?.year === year
+              ? latestReading
+              : undefined;
+          const previous = reading
+            ? reading.previousReading
+            : latestReading?.currentReading ?? 0;
 
           return {
             id: reading?.id ?? meter.id,

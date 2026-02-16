@@ -36,7 +36,8 @@ export default function Sidebar() {
     { label: "Payments", icon: <Payments />, path: "/payments" },
     { label: "Collector Tasks", icon: <AssignmentTurnedIn />, path: "/collector-tasks" },
     { label: "Reports", icon: <BarChart />, path: "/reports" },
-    { label: "Exchange Rate", icon: <Settings />, path: "/settings" }
+    { label: "Exchange Rate", icon: <Settings />, path: "/settings" },
+    { label: "Ampere Pricing", icon: <Settings />, path: "/settings/ampere-pricing" }
   ];
 
   return (

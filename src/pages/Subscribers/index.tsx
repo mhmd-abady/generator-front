@@ -41,8 +41,17 @@ export default function SubscribersPage() {
       if (!search.trim()) return true;
 
       const q = search.toLowerCase();
+      const meterInfo = s.meter || (s.meters && s.meters[0]);
+      const region =
+        meterInfo?.box?.region?.name?.toLowerCase() ??
+        meterInfo?.box?.neighborhood?.region?.name?.toLowerCase() ??
+        "";
 
-      return s.fullName.toLowerCase().includes(q) || s.phone.includes(q);
+      return (
+        s.fullName.toLowerCase().includes(q) ||
+        s.phone.includes(q) ||
+        region.includes(q)
+      );
     }) ?? [];
   return (
     <DashboardLayout>
@@ -111,8 +120,8 @@ export default function SubscribersPage() {
           </TextField>
           <TextField
             size="small"
-            label="Search (Name or Phone)"
-            placeholder="Type name or phone…"
+            label="Search (Name, Phone, Region)"
+            placeholder="Type name, phone, or region..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             sx={{ minWidth: 260 }}
@@ -155,3 +164,4 @@ export default function SubscribersPage() {
     </DashboardLayout>
   );
 }
+

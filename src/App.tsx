@@ -17,6 +17,7 @@ import SettingsPage from "./pages/Settings/SettingsPage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
 import ReportsPage from "./pages/Reports/ReportsPage";
 import CollectorTasksPage from "./pages/Collectors/CollectorTasksPage";
+import AmperePricingPage from "./pages/AmperePricing/AmperePricingPage";
 // check invoices pages
 //check meter readings pages
 
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/payments" element={<PaymentsPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/settings/exchange-rate" element={<ExchangeRatePage />} />
+        <Route path="/settings/ampere-pricing" element={<AmperePricingPage />} />
         <Route path="/collector-tasks" element={<CollectorTasksPage />} />
       </Route>
     </Routes>
