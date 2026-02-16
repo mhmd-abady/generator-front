@@ -20,7 +20,6 @@ export default function TariffsTable({
             <TableCell>Period</TableCell>
             <TableCell>Scope</TableCell>
             <TableCell>kWh</TableCell>
-            <TableCell>Ampere</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>
@@ -37,7 +36,6 @@ export default function TariffsTable({
                   : "Global"}
               </TableCell>
               <TableCell>{t.kwhRate}</TableCell>
-              <TableCell>{t.ampereRate}</TableCell>
 
               <TableCell align="right">
                 <IconButton

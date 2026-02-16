@@ -5,7 +5,6 @@ export type Tariff = {
   month: number;
   year: number;
   kwhRate: number;
-  ampereRate: number;
 
   region?: { id: number; name: string } | null;
   neighborhood?: { id: number; name: string } | null;
@@ -20,7 +19,6 @@ export const createTariff = async (payload: {
   month: number;
   year: number;
   kwhRate: number;
-  ampereRate: number;
   regionId?: number;
   neighborhoodId?: number;
 }) => {
@@ -34,7 +32,6 @@ export const updateTariff = async (
     month: number;
     year: number;
     kwhRate: number;
-    ampereRate: number;
     regionId?: number;
     neighborhoodId?: number;
   }>

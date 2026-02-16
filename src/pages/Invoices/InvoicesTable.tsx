@@ -75,7 +75,7 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
                 <TableCell>{i.month}</TableCell>
                 <TableCell>{i.year}</TableCell>
                 <TableCell>{i.status}</TableCell>
-                <TableCell>{i.previousBalance ?? "—"}</TableCell>
+                <TableCell>{i.previousBalance ?? "ï¿½"}</TableCell>
                 <TableCell>{i.totalDue}</TableCell>
                 <TableCell>{i.amountPaid}</TableCell>
                 <TableCell>{i.remainingBalance}</TableCell>
@@ -253,7 +253,7 @@ function InvoiceViewDialog({
 
             <Stack spacing={0.5}>
               <Typography>
-                Previous Balance: {data.previousBalance ?? "—"}
+                Previous Balance: {data.previousBalance ?? "ï¿½"}
               </Typography>
               <Typography>Total Due: {data.totalDue}</Typography>
               <Typography>Amount Paid: {data.amountPaid}</Typography>

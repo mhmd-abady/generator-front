@@ -21,7 +21,6 @@ export default function TariffFormDialog({
   const [regionId, setRegionId] = useState<number>();
   const [neighborhoodId, setNeighborhoodId] = useState<number>();
   const [kwhRate, setKwhRate] = useState(0);
-  const [ampereRate, setAmpereRate] = useState(0);
 
   const regionsQuery = useQuery({ queryKey: ["regions"], queryFn: fetchRegions });
   const neighborhoodsQuery = useQuery({
@@ -35,7 +34,6 @@ export default function TariffFormDialog({
       month,
       year,
       kwhRate,
-      ampereRate,
       regionId: scope === "REGION" ? regionId : undefined,
       neighborhoodId: scope === "NEIGHBORHOOD" ? neighborhoodId : undefined,
     });
@@ -79,7 +77,6 @@ export default function TariffFormDialog({
           )}
 
           <TextField label="kWh Rate" type="number" value={kwhRate} onChange={(e) => setKwhRate(+e.target.value)} />
-          <TextField label="Ampere Rate" type="number" value={ampereRate} onChange={(e) => setAmpereRate(+e.target.value)} />
         </Stack>
       </DialogContent>
 
