@@ -125,6 +125,8 @@ export default function InvoicesPage() {
             <MenuItem value="PARTIALLY_PAID">PARTIALLY_PAID</MenuItem>
             <MenuItem value="PAID">PAID</MenuItem>
             <MenuItem value="CANCELLED">CANCELLED</MenuItem>
+            <MenuItem value="REVERSED_PARTIAL">REVERSED_PARTIAL</MenuItem>
+            <MenuItem value="REVERSED_FULL">REVERSED_FULL</MenuItem>
           </TextField>
 
           <TextField

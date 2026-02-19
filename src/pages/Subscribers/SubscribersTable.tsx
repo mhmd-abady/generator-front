@@ -43,8 +43,11 @@ export default function SubscribersTable({
 
         <TableBody>
           {rows.map((s) => {
-            // Get meter and box info from either single meter or first meter in array
-            const meterInfo = s.meter || (s.meters && s.meters[0]);
+            // Prefer ACTIVE meter, else fall back to first available (for legacy payloads).
+            const activeFromArray = s.meters?.find(
+              (m: any) => m?.status === "ACTIVE"
+            );
+            const meterInfo = activeFromArray || s.meter || (s.meters && s.meters[0]);
             const meterNumber = meterInfo?.number || "-";
             const boxCode = meterInfo?.box?.code || "-";
             const neighborhood =

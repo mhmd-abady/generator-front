@@ -473,6 +473,9 @@ function SubscriberRow({
   onPay: (subscriber: CollectorTaskSubscriber) => void;
 }) {
   const invoice = row.invoice;
+  const meterNumber =
+    invoice.meterNumber ?? invoice.meter?.number ?? "—";
+  const meterStatus = invoice.meter?.status;
   const consumption =
     invoice.consumptionKwh ??
     (invoice.currentReading != null &&
@@ -494,7 +497,10 @@ function SubscriberRow({
         <Stack spacing={0.3}>
           <Typography variant="body2">{row.phone || "—"}</Typography>
           <Typography variant="caption" color="text.secondary">
-            Meter: {invoice.meterNumber}
+            Meter: {meterNumber}
+            {meterStatus && meterStatus !== "ACTIVE"
+              ? ` • ${meterStatus}`
+              : ""}
           </Typography>
         </Stack>
       </TableCell>
@@ -551,6 +557,9 @@ function SubscriberMobileCard({
   onPay: (subscriber: CollectorTaskSubscriber) => void;
 }) {
   const invoice = row.invoice;
+  const meterNumber =
+    invoice.meterNumber ?? invoice.meter?.number ?? "-";
+  const meterStatus = invoice.meter?.status;
   const consumption =
     invoice.consumptionKwh ??
     (invoice.currentReading != null &&
@@ -597,7 +606,11 @@ function SubscriberMobileCard({
           Invoice: #{invoice.id} ({invoice.month}/{invoice.year} - {invoice.status})
         </Typography>
         <Typography variant="body2">
-          Meter: {invoice.meterNumber} | Box {invoice.boxCode ?? "-"}
+          Meter: {meterNumber}
+          {meterStatus && meterStatus !== "ACTIVE"
+            ? ` (${meterStatus})`
+            : ""}{" "}
+          | Box {invoice.boxCode ?? "-"}
         </Typography>
         <Typography variant="body2">
           Region: {invoice.regionName} / {invoice.neighborhoodName}

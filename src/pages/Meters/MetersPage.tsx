@@ -17,7 +17,9 @@ import { useRegions } from "../../hooks/useRegions";
 import { useNeighborhoods } from "../../hooks/useNeighborhoods";
 import { useBoxes } from "../../hooks/useBoxes";
 import SearchIcon from "@mui/icons-material/Search";
-import type { Meter } from "../../api/meters";
+import type { Meter, MeterStatus } from "../../api/meters";
+import { updateMeter } from "../../api/meters";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function MetersPage() {
   const [regionId, setRegionId] = useState<number | undefined>();
@@ -25,6 +27,7 @@ export default function MetersPage() {
   const [boxId, setBoxId] = useState<number | undefined>();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const qc = useQueryClient();
 
   const { regions } = useRegions();
   const { neighborhoods, isLoading: hoodsLoading } = useNeighborhoods(regionId);
@@ -155,7 +158,14 @@ export default function MetersPage() {
       {isLoading ? (
         <Skeleton height={300} />
       ) : (
-        <MetersTable rows={filtered} />
+        <MetersTable
+          rows={filtered}
+          onUpdateStatus={async (meterId: number, status: MeterStatus) => {
+            await updateMeter(meterId, { status });
+            qc.invalidateQueries({ queryKey: ["meters"] });
+            qc.invalidateQueries({ queryKey: ["subscribers"] });
+          }}
+        />
       )}
 
       <MeterFormDialog open={open} onClose={() => setOpen(false)} />

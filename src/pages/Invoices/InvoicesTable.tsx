@@ -194,11 +194,26 @@ function InvoiceViewDialog({
 }) {
   const { data, isLoading } = query;
 
+  const currentReading =
+    data?.reading?.currentReading ?? data?.currentReading ?? null;
+  const previousReading =
+    data?.reading?.previousReading ?? data?.previousReading ?? null;
+  const consumptionKwh =
+    data?.reading?.consumptionKwh ?? data?.consumptionKwh ?? null;
+  const kwhRate = data?.tariffDetails?.kwhRate ?? data?.kwhRate ?? null;
+  const ampereFee = data?.ampereFee ?? null;
+  const meterAmpere = data?.meter?.ampere ?? null;
+  const tariffScope = data?.tariffDetails?.scope ?? null;
+  const tariffMonth =
+    data?.tariffDetails?.month != null && data?.tariffDetails?.year != null
+      ? `${data.tariffDetails.month}/${data.tariffDetails.year}`
+      : null;
+
   const calcConsumption = () => {
-    if (data?.currentReading != null && data?.previousReading != null) {
-      return Math.max(0, data.currentReading - data.previousReading);
+    if (currentReading != null && previousReading != null) {
+      return Math.max(0, currentReading - previousReading);
     }
-    if (data?.consumptionKwh != null) return data.consumptionKwh;
+    if (consumptionKwh != null) return consumptionKwh;
     return null;
   };
 
@@ -223,7 +238,7 @@ function InvoiceViewDialog({
               <Typography>Phone Number: {data.meter.subscriber.phone}</Typography>
               <Typography>
                 Neighborhood: {data.meter.box?.neighborhood?.name ?? "—"} | Region:{" "}
-                {data.meter.box?.region?.name ?? "—"}
+                {data.meter.box?.neighborhood?.region?.name ?? data.meter.box?.region?.name ?? "—"}
               </Typography>
               <Typography>Meter Number: {data.meter.number}</Typography>
               <Typography>
@@ -239,14 +254,27 @@ function InvoiceViewDialog({
 
             <Stack spacing={0.5}>
               <Typography>
-                Now Reading: {data.currentReading ?? "—"}
+                Now Reading: {currentReading ?? "—"}
               </Typography>
               <Typography>
-                Previous Reading: {data.previousReading ?? "—"}
+                Previous Reading: {previousReading ?? "—"}
               </Typography>
               <Typography>
                 Energy Consumption: {consumption ?? "—"} kWh
               </Typography>
+            </Stack>
+
+            <Divider />
+
+            <Stack spacing={0.5}>
+              <Typography variant="subtitle2" fontWeight={600}>
+                Tariff & Meter
+              </Typography>
+              <Typography>Meter Ampere: {meterAmpere ?? "—"}</Typography>
+              <Typography>kWh Rate: {kwhRate ?? "—"}</Typography>
+              <Typography>Ampere Fee: {ampereFee ?? "—"}</Typography>
+              <Typography>Tariff Scope: {tariffScope ?? "—"}</Typography>
+              <Typography>Tariff Month: {tariffMonth ?? "—"}</Typography>
             </Stack>
 
             <Divider />
@@ -295,5 +323,6 @@ function InvoiceViewDialog({
     </Dialog>
   );
 }
+
 
 

@@ -43,6 +43,11 @@ export type CreatePaymentDto = {
   receiverId: number;
 };
 
+export type PaymentsQueryParams = {
+  from?: string;
+  to?: string;
+};
+
 /*
  * POST /payments
  */
@@ -55,10 +60,12 @@ export const createPayment = async (dto: CreatePaymentDto) => {
  * GET /payments/by-subscriber/:subscriberId
  */
 export const fetchPaymentsBySubscriber = async (
-  subscriberId: number
+  subscriberId: number,
+  params?: PaymentsQueryParams
 ): Promise<Payment[]> => {
   const res = await api.get(
-    `/payments/by-subscriber/${subscriberId}`
+    `/payments/by-subscriber/${subscriberId}`,
+    { params }
   );
   return res.data;
 };
@@ -77,7 +84,9 @@ export const reversePayment = async (
   return res.data;
 };
 
-export const fetchAllPayments = async (): Promise<Payment[]> => {
-  const res = await api.get("/payments");
+export const fetchAllPayments = async (
+  params?: PaymentsQueryParams
+): Promise<Payment[]> => {
+  const res = await api.get("/payments", { params });
   return res.data;
 };

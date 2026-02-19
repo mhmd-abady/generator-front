@@ -7,6 +7,7 @@ import {
   Skeleton,
   Chip,
   Button,
+  Alert,
 } from "@mui/material";
 import { useState } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -31,6 +32,7 @@ export default function MeterReadingsPage() {
 
   const [unlocked, setUnlocked] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const regionsQuery = useQuery({
     queryKey: ["regions"],
@@ -207,30 +209,50 @@ export default function MeterReadingsPage() {
       {readings.isLoading ? (
         <Skeleton height={300} />
       ) : (
-        <MeterReadingsTable
-          meters={filteredMeters}
-          month={month}
-          year={year}
-          isPeriodClosed={isPeriodClosed}
-          unlocked={unlocked}
-          onCreate={async (meterId, currentReading) => {
-            const res = await readings.createReading.mutateAsync({
-              meterId,
-              month,
-              year,
-              currentReading,
-            });
+        <>
+          {error && (
+            <Paper sx={{ p: 2, mb: 2 }}>
+              <Alert severity="error">{error}</Alert>
+            </Paper>
+          )}
+          <MeterReadingsTable
+            meters={filteredMeters}
+            month={month}
+            year={year}
+            isPeriodClosed={isPeriodClosed}
+            unlocked={unlocked}
+            onCreate={async (meterId, currentReading) => {
+              setError(null);
+              try {
+                const res = await readings.createReading.mutateAsync({
+                  meterId,
+                  month,
+                  year,
+                  currentReading,
+                });
 
-            await autoCreateInvoice(res.id);
-          }}
-          onUpdate={async (readingId, currentReading) => {
-            await readings.updateReading.mutateAsync({
-              id: readingId,
-              currentReading,
-            });
-
-          }}
-        />
+                await autoCreateInvoice(res.id);
+              } catch (err: any) {
+                setError(
+                  err?.response?.data?.message || "Failed to save reading"
+                );
+              }
+            }}
+            onUpdate={async (readingId, currentReading) => {
+              setError(null);
+              try {
+                await readings.updateReading.mutateAsync({
+                  id: readingId,
+                  currentReading,
+                });
+              } catch (err: any) {
+                setError(
+                  err?.response?.data?.message || "Failed to update reading"
+                );
+              }
+            }}
+          />
+        </>
       )}
 
       <OwnerPasswordDialog

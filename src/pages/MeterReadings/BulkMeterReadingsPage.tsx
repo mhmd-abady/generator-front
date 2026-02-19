@@ -5,6 +5,7 @@ import {
   TextField,
   MenuItem,
   Skeleton,
+  Alert,
 } from "@mui/material";
 import { useState, useMemo } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -22,6 +23,7 @@ export default function BulkMeterReadingsPage() {
   const [year, setYear] = useState(now.getFullYear());
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
+  const [error, setError] = useState<string | null>(null);
 
   const regionsQuery = useQuery({
     queryKey: ["regions"],
@@ -47,8 +49,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
 
   const meters = readings.meters ?? [];
 
-  // Only meters WITHOUT invoice (editable)
-  const editableRows = useMemo(
+  const rows = useMemo(
     () =>
       meters
         .map((meter): MeterReading => {
@@ -75,6 +76,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
             meter: {
               id: meter.id,
               number: meter.number,
+              status: meter.status,
               subscriber: meter.subscriber
                 ? {
                     id: meter.subscriber.id,
@@ -85,9 +87,13 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
             },
             invoice: reading?.invoice,
           };
-        })
-        .filter((row) => !row.invoice),
+        }),
     [meters, month, year]
+  );
+
+  const visibleRows = useMemo(
+    () => rows.filter((row) => !row.invoice),
+    [rows]
   );
 
   return (
@@ -182,17 +188,31 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
 ) : readings.isLoading ? (
   <Skeleton height={300} />
 ) : (
-  <BulkMeterReadingsTable
-    rows={editableRows}
-    onSubmit={(rows) =>
-      readings.bulkCreateReadings.mutate({
-        month,
-        year,
-        rows,
-      })
-    }
-    submitting={readings.bulkCreateReadings.isPending}
-  />
+  <>
+    {error && (
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Alert severity="error">{error}</Alert>
+      </Paper>
+    )}
+    <BulkMeterReadingsTable
+      rows={visibleRows}
+      onSubmit={async (rows) => {
+        setError(null);
+        try {
+          await readings.bulkCreateReadings.mutateAsync({
+            month,
+            year,
+            rows,
+          });
+        } catch (err: any) {
+          setError(
+            err?.response?.data?.message || "Failed to save bulk readings"
+          );
+        }
+      }}
+      submitting={readings.bulkCreateReadings.isPending}
+    />
+  </>
 )}
 
     </DashboardLayout>

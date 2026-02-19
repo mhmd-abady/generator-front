@@ -3,6 +3,7 @@ import {
   fetchMeters,
   fetchMetersByFilters,
   fetchMetersByBox,
+  fetchMetersBySubscriber,
   createMeter,
   type CreateMeterDto,
 } from "../api/meters";
@@ -42,5 +43,20 @@ export function useMeters(filters?: {
     meters: metersQuery.data,
     isLoading: metersQuery.isLoading,
     createMeter: createMutation,
+  };
+}
+
+export function useMetersBySubscriber(subscriberId: number) {
+  const metersQuery = useQuery({
+    queryKey: ["meters", "by-subscriber", subscriberId],
+    queryFn: () => fetchMetersBySubscriber(subscriberId),
+    enabled: !!subscriberId,
+  });
+
+  return {
+    meters: metersQuery.data,
+    isLoading: metersQuery.isLoading,
+    isError: metersQuery.isError,
+    refetch: metersQuery.refetch,
   };
 }

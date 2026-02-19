@@ -1,4 +1,4 @@
-// src/pages/Subscribers/SubscriberInvoicesTable.tsx
+ï»¿// src/pages/Subscribers/SubscriberInvoicesTable.tsx
 import {
   Paper,
   Table,
@@ -55,7 +55,7 @@ export default function SubscriberInvoicesTable({
                   {i.month}/{i.year}
                 </TableCell>
                 <TableCell>{i.totalDue}</TableCell>
-                <TableCell>{i.previousBalance ?? "—"}</TableCell>
+                <TableCell>{i.previousBalance ?? "ï¿½"}</TableCell>
                 <TableCell>{i.amountPaid}</TableCell>
                 <TableCell>{i.remainingBalance}</TableCell>
                 <TableCell>
@@ -87,3 +87,4 @@ export default function SubscriberInvoicesTable({
     </Paper>
   );
 }
+

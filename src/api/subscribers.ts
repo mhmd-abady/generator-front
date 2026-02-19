@@ -1,4 +1,5 @@
 import { api } from "./axios";
+import type { MeterStatus } from "./meters";
 
 export type InvoiceSummary = {
   id: number;
@@ -29,6 +30,7 @@ export type Subscriber = {
     id: number;
     number: string;
     ampere?: number;
+    status?: MeterStatus;
     boxId: number;
     subscriberId: number;
     box?: {
@@ -50,6 +52,8 @@ export type Subscriber = {
   meters?: {
     id: number;
     number: string;
+    ampere?: number;
+    status?: MeterStatus;
     boxId: number;
     box?: {
       id: number;

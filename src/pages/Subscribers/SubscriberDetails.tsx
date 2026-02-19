@@ -8,6 +8,7 @@ import {
   Tabs,
   Tab,
   TextField,
+  MenuItem,
   Box,
   Table,
   TableHead,
@@ -21,7 +22,7 @@ import { useSubscriberDetails } from "../../hooks/useSubscriberDetails";
 import SubscriberMeters from "./SubscriberMeters";
 import { useMemo, useState, type ReactNode } from "react";
 import SubscriberReassignMeterDialog from "./SubscriberReassignMeterDialog";
-import { updateMeter } from "../../api/meters";
+import { updateMeter, type MeterStatus } from "../../api/meters";
 import SubscriberPaymentsTable from "./SubscriberPaymentsTable";
 import { usePayments } from "../../hooks/usePayments";
 import { useInvoices, useUnpaidInvoices } from "../../hooks/useInvoices";
@@ -29,6 +30,7 @@ import AddPaymentDialog from "./AddPaymentDialog";
 import { useAuth } from "../../context/AuthContext";
 import ReversePaymentDialog from "./ReversePaymentDialog";
 import SubscriberInvoicesTable from "./SubscriberInvoicesTable";
+import { useMetersBySubscriber } from "../../hooks/useMeters";
 import {
   RequestQuote,
   Paid,
@@ -38,6 +40,7 @@ import {
 import SubscriberStatementTable from "./SubscriberStatementTable";
 import { useSubscriberStatement } from "../../hooks/useSubscriberStatement";
 import { getSubscriberStatementPdfUrl } from "../../api/statements";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface StatCardProps {
   label: string;
@@ -98,28 +101,79 @@ export default function SubscriberDetails() {
   const { id } = useParams();
   const subscriberId = Number(id);
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const { subscriber, isLoading } = useSubscriberDetails(subscriberId);
+  const metersQuery = useMetersBySubscriber(subscriberId);
   const meters =
+    metersQuery.meters ??
     subscriber?.meters ??
     (subscriber?.meter ? [subscriber.meter] : undefined);
-  const latestInvoice = useMemo(
-    () => meters?.[0]?.invoices?.[0],
-    [meters]
-  );
+  const metersLoading = isLoading || metersQuery.isLoading;
+  const activeMeter = useMemo(() => {
+    if (!meters?.length) return undefined;
+    const fromArray = meters.find((m: any) => m?.status === "ACTIVE");
+    return fromArray ?? meters[0];
+  }, [meters]);
+  const latestInvoice = useMemo(() => activeMeter?.invoices?.[0], [activeMeter]);
   const [reassignMeterId, setReassignMeterId] = useState<number | null>(null);
-const payments = usePayments(subscriberId);
-const invoices = useUnpaidInvoices(subscriberId);
-const allInvoices = useInvoices(subscriberId);
-const { user } = useAuth();
+  const [paymentFrom, setPaymentFrom] = useState<string>("");
+  const [paymentTo, setPaymentTo] = useState<string>("");
+  const payments = usePayments(subscriberId, {
+    from: paymentFrom || undefined,
+    to: paymentTo || undefined,
+  });
+  const invoices = useUnpaidInvoices(subscriberId);
+  const allInvoices = useInvoices(subscriberId);
+  const { user } = useAuth();
 
-const [openPayment, setOpenPayment] = useState(false);
-const [reversePaymentId, setReversePaymentId] = useState<number | null>(null);
-const statsLoading = allInvoices.isLoading || payments.isLoading;
-const [tab, setTab] = useState(0);
-const [from, setFrom] = useState<string>();
-const [to, setTo] = useState<string>();
+  const [openPayment, setOpenPayment] = useState(false);
+  const [reversePaymentId, setReversePaymentId] = useState<number | null>(null);
+  const statsLoading = allInvoices.isLoading || payments.isLoading;
+  const [tab, setTab] = useState(0);
+  const [from, setFrom] = useState<string>();
+  const [to, setTo] = useState<string>();
+  const [invoiceStatus, setInvoiceStatus] = useState<string>("");
+  const [invoiceFrom, setInvoiceFrom] = useState<string>("");
+  const [invoiceTo, setInvoiceTo] = useState<string>("");
 
 const statement = useSubscriberStatement(subscriberId, { from, to });
+
+  const filteredSubscriberInvoices = useMemo(() => {
+    const status = invoiceStatus || undefined;
+    const fromDate = invoiceFrom ? new Date(invoiceFrom) : undefined;
+    const toDate = invoiceTo ? new Date(invoiceTo) : undefined;
+
+    return allInvoices.invoices.filter((inv) => {
+      if (status && inv.status !== status) return false;
+
+      if (fromDate || toDate) {
+        if (!inv.createdAt) return false;
+        const created = new Date(inv.createdAt);
+        if (fromDate && created < fromDate) return false;
+        if (toDate) {
+          const end = new Date(toDate);
+          end.setHours(23, 59, 59, 999);
+          if (created > end) return false;
+        }
+      }
+
+      return true;
+    });
+  }, [allInvoices.invoices, invoiceStatus, invoiceFrom, invoiceTo]);
+
+  const filteredSubscriberPayments = useMemo(
+    () => payments.payments ?? [],
+    [payments.payments]
+  );
+
+  const updateMeterStatus = async (
+    meterId: number,
+    status: MeterStatus
+  ) => {
+    await updateMeter(meterId, { status });
+    qc.invalidateQueries({ queryKey: ["meters", "by-subscriber", subscriberId] });
+    qc.invalidateQueries({ queryKey: ["subscriber", subscriberId] });
+  };
 
   const stats = useMemo(() => {
     const totalDue = allInvoices.invoices.reduce(
@@ -165,6 +219,11 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
                 <Typography variant="body2">
                   Phone: {subscriber?.phone}
                 </Typography>
+                {activeMeter && (
+                  <Typography variant="body2">
+                    Current Meter: {activeMeter.number} ({activeMeter.status})
+                  </Typography>
+                )}
                 {latestInvoice?.previousBalance != null && (
                   <Typography variant="body2">
                     Prev Balance (latest invoice):{" "}
@@ -294,25 +353,86 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
         <SubscriberMeters
           onReassign={(meterId) => setReassignMeterId(meterId)}
           meters={meters}
-          loading={isLoading}
+          loading={metersLoading}
+          onUpdateStatus={updateMeterStatus}
         />
       )}
 
       {tab === 2 && (
-        <SubscriberPaymentsTable
-          payments={payments.payments}
-          loading={payments.isLoading}
-          onReverse={(id) => setReversePaymentId(id)}
-          onAddPayment={() => setOpenPayment(true)}
-        />
+        <Stack spacing={2}>
+          <Paper sx={{ p: 2 }}>
+            <Stack direction="row" spacing={2} flexWrap="wrap">
+              <TextField
+                type="date"
+                size="small"
+                label="From"
+                InputLabelProps={{ shrink: true }}
+                value={paymentFrom}
+                onChange={(e) => setPaymentFrom(e.target.value)}
+              />
+              <TextField
+                type="date"
+                size="small"
+                label="To"
+                InputLabelProps={{ shrink: true }}
+                value={paymentTo}
+                onChange={(e) => setPaymentTo(e.target.value)}
+              />
+            </Stack>
+          </Paper>
+          <SubscriberPaymentsTable
+            payments={filteredSubscriberPayments}
+            loading={payments.isLoading}
+            onReverse={(id) => setReversePaymentId(id)}
+            onAddPayment={() => setOpenPayment(true)}
+          />
+        </Stack>
       )}
 
       {tab === 3 && (
-        <SubscriberInvoicesTable
-          invoices={invoices.invoices}
-          loading={invoices.isLoading}
-          onView={(invoiceId) => navigate(`/invoices/${invoiceId}`)}
-        />
+        <Stack spacing={2}>
+          <Paper sx={{ p: 2 }}>
+            <Stack direction="row" spacing={2} flexWrap="wrap">
+              <TextField
+                select
+                size="small"
+                label="Status"
+                value={invoiceStatus}
+                onChange={(e) => setInvoiceStatus(e.target.value)}
+                sx={{ minWidth: 200 }}
+              >
+                <MenuItem value="">All Status</MenuItem>
+                <MenuItem value="ISSUED">ISSUED</MenuItem>
+                <MenuItem value="PARTIALLY_PAID">PARTIALLY_PAID</MenuItem>
+                <MenuItem value="PAID">PAID</MenuItem>
+                <MenuItem value="CANCELLED">CANCELLED</MenuItem>
+                <MenuItem value="REVERSED_PARTIAL">REVERSED_PARTIAL</MenuItem>
+                <MenuItem value="REVERSED_FULL">REVERSED_FULL</MenuItem>
+              </TextField>
+              <TextField
+                type="date"
+                size="small"
+                label="From"
+                InputLabelProps={{ shrink: true }}
+                value={invoiceFrom}
+                onChange={(e) => setInvoiceFrom(e.target.value)}
+              />
+              <TextField
+                type="date"
+                size="small"
+                label="To"
+                InputLabelProps={{ shrink: true }}
+                value={invoiceTo}
+                onChange={(e) => setInvoiceTo(e.target.value)}
+              />
+            </Stack>
+          </Paper>
+          <SubscriberInvoicesTable
+            invoices={filteredSubscriberInvoices}
+            loading={allInvoices.isLoading}
+            onView={(invoiceId) => navigate(`/invoices/${invoiceId}`)}
+          />
+        </Stack>
       )}
 
       {tab === 4 && (
@@ -344,10 +464,12 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
         meterId={reassignMeterId!}
         currentSubscriberId={subscriberId}
         onClose={() => setReassignMeterId(null)}
-        onConfirm={(newSubscriberId) => {
-          updateMeter(reassignMeterId!, {
+        onConfirm={async (newSubscriberId) => {
+          await updateMeter(reassignMeterId!, {
             subscriberId: newSubscriberId,
           });
+          qc.invalidateQueries({ queryKey: ["meters", "by-subscriber", subscriberId] });
+          qc.invalidateQueries({ queryKey: ["subscriber", subscriberId] });
           setReassignMeterId(null);
         }}
       />

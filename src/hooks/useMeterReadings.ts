@@ -26,6 +26,7 @@ async function fetchMetersWithReadings(params: {
   year: number;
   neighborhoodId?: number;
   boxId?: number;
+  regionId?: number;
 }) {
   const res = await api.get<MeterWithReadings[]>(
     "/readings/by-period",

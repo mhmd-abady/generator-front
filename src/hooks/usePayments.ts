@@ -7,15 +7,19 @@ import {
   type CreatePaymentDto,
   type Payment,
   fetchAllPayments,
+  type PaymentsQueryParams,
 } from "../api/payments";
 
-export function usePayments(subscriberId: number) {
+export function usePayments(
+  subscriberId: number,
+  params?: PaymentsQueryParams
+) {
   const queryClient = useQueryClient();
 
   // LIST PAYMENTS
   const listQuery = useQuery<Payment[]>({
-    queryKey: ["payments", subscriberId],
-    queryFn: () => fetchPaymentsBySubscriber(subscriberId),
+    queryKey: ["payments", subscriberId, params],
+    queryFn: () => fetchPaymentsBySubscriber(subscriberId, params),
     enabled: !!subscriberId,
   });
 
@@ -55,9 +59,9 @@ export function usePayments(subscriberId: number) {
   };
 }
 
-export function useAllPayments() {
+export function useAllPayments(params?: PaymentsQueryParams) {
   return useQuery<Payment[]>({
-    queryKey: ["payments", "all"],
-    queryFn: fetchAllPayments,
+    queryKey: ["payments", "all", params],
+    queryFn: () => fetchAllPayments(params),
   });
 }

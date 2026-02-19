@@ -16,7 +16,12 @@ import PaymentKPIs from "./PaymentKPIs";
 import SearchIcon from "@mui/icons-material/Search";
 
 export default function PaymentsPage() {
-  const { data, isLoading } = useAllPayments();
+  const [from, setFrom] = useState<string>("");
+  const [to, setTo] = useState<string>("");
+  const { data, isLoading } = useAllPayments({
+    from: from || undefined,
+    to: to || undefined,
+  });
 
   const { reversePayment } = usePayments(0); // we only use reverse mutation
   const [reverseId, setReverseId] = useState<number | null>(null);
@@ -66,6 +71,25 @@ export default function PaymentsPage() {
             }}
             sx={{ minWidth: 280 }}
           />
+
+          <Stack direction="row" spacing={2} flexWrap="wrap">
+            <TextField
+              type="date"
+              size="small"
+              label="From"
+              InputLabelProps={{ shrink: true }}
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+            />
+            <TextField
+              type="date"
+              size="small"
+              label="To"
+              InputLabelProps={{ shrink: true }}
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+            />
+          </Stack>
         </Stack>
       </Paper>
 

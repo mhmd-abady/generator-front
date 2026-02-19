@@ -1,9 +1,18 @@
 import { api } from "./axios";
+import type { InvoiceSummary } from "./subscribers";
+
+export type MeterStatus =
+  | "ACTIVE"
+  | "INACTIVE"
+  | "BROKEN"
+  | "REPLACED"
+  | "DISCONNECTED";
 
 export type Meter = {
   id: number;
   number: string;
   ampere?: number;
+  status: MeterStatus;
 
   subscriberId: number;
   subscriber?: {
@@ -31,6 +40,8 @@ export type Meter = {
       name: string;
     };
   };
+
+  invoices?: InvoiceSummary[];
 };
 
 export type CreateMeterDto = {
@@ -38,6 +49,10 @@ export type CreateMeterDto = {
   boxId: number;
   subscriberId: number;
   ampere?: number;
+};
+
+export type UpdateMeterDto = Partial<CreateMeterDto> & {
+  status?: MeterStatus;
 };
 
 /*
@@ -60,7 +75,7 @@ export const createMeter = async (
 
 export const updateMeter = async (
   meterId: number,
-  dto: { subscriberId: number }
+  dto: UpdateMeterDto
 ) => {
   const res = await api.patch(`/meters/${meterId}`, dto);
   return res.data;
@@ -68,6 +83,18 @@ export const updateMeter = async (
 
 export const fetchMetersByBox = async (boxId: number) => {
   const res = await api.get(`/meters/by-box/${boxId}`);
+  return res.data;
+};
+
+/*
+ * GET /meters/by-subscriber/:subscriberId
+ */
+export const fetchMetersBySubscriber = async (
+  subscriberId: number
+): Promise<Meter[]> => {
+  const res = await api.get<Meter[]>(
+    `/meters/by-subscriber/${subscriberId}`
+  );
   return res.data;
 };
 

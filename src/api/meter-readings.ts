@@ -1,5 +1,6 @@
 // src/api/meter-readings.ts
 import { api } from "./axios";
+import type { MeterStatus } from "./meters";
 
 /* =======================
    Types
@@ -21,6 +22,7 @@ export type MeterReading = {
   meter?: {
     id: number;
     number: string;
+    status?: MeterStatus;
     subscriber?: {
       id: number;
       fullName: string;

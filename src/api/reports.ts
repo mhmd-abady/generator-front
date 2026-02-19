@@ -5,7 +5,13 @@ import { api } from "./axios";
    TYPES
 ========================= */
 
-export type InvoiceStatus = "ISSUED" | "PARTIALLY_PAID" | "PAID" | "CANCELLED";
+export type InvoiceStatus =
+  | "ISSUED"
+  | "PARTIALLY_PAID"
+  | "PAID"
+  | "CANCELLED"
+  | "REVERSED_PARTIAL"
+  | "REVERSED_FULL";
 
 export type ReportsFilter = {
   month?: number;

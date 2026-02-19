@@ -9,6 +9,8 @@ import {
   Paper,
   Chip,
   Button,
+  Typography,
+  Stack,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { useState } from "react";
@@ -98,18 +100,22 @@ function MeterRow({
   onUpdate: (readingId: number, currentReading: number) => void;
 }) {
   const latestReading = meter.readings[0] ?? null;
-  const reading =
-    latestReading?.month === month && latestReading?.year === year
-      ? latestReading
-      : null;
+  const hasRealReading =
+    latestReading &&
+    latestReading.month === month &&
+    latestReading.year === year &&
+    latestReading.id !== 0;
+  const reading = hasRealReading ? latestReading : null;
 
-const [rowLocked, setRowLocked] = useState<boolean>(false);
-const locked = Boolean(
-  isPeriodClosed || 
-  reading?.invoice || 
-  !unlocked || 
-  rowLocked
-);
+  const [rowLocked, setRowLocked] = useState<boolean>(false);
+  const meterInactive = meter.status !== "ACTIVE";
+  const locked = Boolean(
+    isPeriodClosed ||
+      reading?.invoice ||
+      meterInactive ||
+      !unlocked ||
+      rowLocked
+  );
 
   const previous = reading
     ? reading.previousReading
@@ -153,7 +159,18 @@ const locked = Boolean(
       </TableCell>
 
       <TableCell>
-        {locked ? (
+        {meterInactive ? (
+          <Stack spacing={0.5}>
+            <Chip
+              size="small"
+              label={meter.status ?? "INACTIVE"}
+              color={meter.status === "INACTIVE" ? "warning" : "error"}
+            />
+            <Typography variant="caption" color="text.secondary">
+              Meter inactive
+            </Typography>
+          </Stack>
+        ) : locked ? (
           <Chip size="small" label="LOCKED" color="error" />
         ) : (
           <Chip size="small" label="Editable" color="success" />

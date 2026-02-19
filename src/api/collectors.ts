@@ -1,5 +1,6 @@
 // src/api/collectors.ts
 import { api } from "./axios";
+import type { MeterStatus } from "./meters";
 
 export type CollectorTaskInvoice = {
   id: number;
@@ -17,8 +18,15 @@ export type CollectorTaskInvoice = {
   consumptionKwh?: number | null;
   previousReading?: number | null;
   currentReading?: number | null;
-  meterNumber: string;
+  // Backward compatible: some payloads may flatten meter fields, others include meter object.
+  meterNumber?: string;
   meterAmpere?: number | null;
+  meter?: {
+    id: number;
+    number: string;
+    ampere?: number | null;
+    status?: MeterStatus;
+  };
   boxCode?: string | null;
   neighborhoodId: number;
   neighborhoodName: string;

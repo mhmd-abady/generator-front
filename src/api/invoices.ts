@@ -9,7 +9,13 @@ export type Invoice = {
   amountPaid: number;
   remainingBalance: number;
   previousBalance?: number;
-  status: "ISSUED" | "PARTIALLY_PAID" | "PAID" | "CANCELLED";
+  status:
+    | "ISSUED"
+    | "PARTIALLY_PAID"
+    | "PAID"
+    | "CANCELLED"
+    | "REVERSED_PARTIAL"
+    | "REVERSED_FULL";
   createdAt?: string;
   previousReading?: number;
   currentReading?: number;
@@ -53,16 +59,26 @@ export type InvoiceDetails = {
   remainingBalance: number;
   previousBalance?: number;
   status: string;
+  kwhRate?: number;
+  ampereFee?: number;
   exchangeRate: number;
   createdAt?: string;
-  previousReading?: number;
-  currentReading?: number;
-  consumptionKwh?: number;
   fixesAmount?: number;
   fixesNote?: string;
+  reading?: {
+    id: number;
+    meterId: number;
+    month: number;
+    year: number;
+    previousReading: number;
+    currentReading: number;
+    consumptionKwh: number;
+    createdAt: string;
+  };
 
   meter: {
     number: string;
+    ampere?: number;
     subscriber: {
       id: number;
       fullName: string;
@@ -70,7 +86,11 @@ export type InvoiceDetails = {
     };
     box?: {
       code?: string;
-      neighborhood?: { id: number; name: string };
+      neighborhood?: {
+        id: number;
+        name: string;
+        region?: { id: number; name: string };
+      };
       region?: { id: number; name: string };
     };
   };
@@ -81,6 +101,14 @@ export type InvoiceDetails = {
     paidAt: string;
     receiver?: { username: string };
   }[];
+
+  tariffDetails?: {
+    id: number;
+    scope: string;
+    month: number;
+    year: number;
+    kwhRate: number;
+  };
 };
 
 export const fetchInvoiceById = async (

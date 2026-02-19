@@ -1,4 +1,4 @@
-import {
+﻿import {
   Paper,
   Table,
   TableHead,
@@ -7,6 +7,9 @@ import {
   TableBody,
   TextField,
   Button,
+  Chip,
+  Stack,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import type { MeterReading } from "../../api/meter-readings";
@@ -26,6 +29,7 @@ export default function BulkMeterReadingsTable({
     const payload = rows
       .filter(
         (r) =>
+          (!r.meter?.status || r.meter.status === "ACTIVE") &&
           values[r.meterId] !== undefined &&
           values[r.meterId] >= r.previousReading
       )
@@ -48,6 +52,7 @@ export default function BulkMeterReadingsTable({
             <TableCell align="right">Previous</TableCell>
             <TableCell align="right">Current</TableCell>
             <TableCell align="right">Consumption</TableCell>
+            <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
 
@@ -56,9 +61,14 @@ export default function BulkMeterReadingsTable({
             const current = values[r.meterId];
             const consumption =
               current !== undefined ? current - r.previousReading : undefined;
+            const meterInactive =
+              r.meter?.status && r.meter.status !== "ACTIVE";
 
             return (
-              <TableRow key={r.id}>
+              <TableRow
+                key={r.id}
+                sx={meterInactive ? { opacity: 0.6 } : undefined}
+              >
                 <TableCell>{r.meter?.number}</TableCell>
                 <TableCell>{r.meter?.subscriber?.fullName}</TableCell>
 
@@ -70,6 +80,7 @@ export default function BulkMeterReadingsTable({
                     type="number"
                     value={current ?? ""}
                     inputProps={{ min: r.previousReading }}
+                    disabled={meterInactive}
                     onChange={(e) =>
                       setValues((prev) => ({
                         ...prev,
@@ -81,7 +92,26 @@ export default function BulkMeterReadingsTable({
                 </TableCell>
 
                 <TableCell align="right">
-                  {consumption !== undefined ? consumption.toFixed(2) : "—"}
+                  {consumption !== undefined ? consumption.toFixed(2) : "-"}
+                </TableCell>
+
+                <TableCell>
+                  {meterInactive ? (
+                    <Stack spacing={0.5}>
+                      <Chip
+                        size="small"
+                        label={r.meter?.status ?? "INACTIVE"}
+                        color={
+                          r.meter?.status === "INACTIVE" ? "warning" : "error"
+                        }
+                      />
+                      <Typography variant="caption" color="text.secondary">
+                        Meter inactive
+                      </Typography>
+                    </Stack>
+                  ) : (
+                    <Chip size="small" label="ACTIVE" color="success" />
+                  )}
                 </TableCell>
               </TableRow>
             );

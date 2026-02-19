@@ -41,7 +41,8 @@ export default function SubscribersPage() {
       if (!search.trim()) return true;
 
       const q = search.toLowerCase();
-      const meterInfo = s.meter || (s.meters && s.meters[0]);
+      const activeFromArray = s.meters?.find((m: any) => m?.status === "ACTIVE");
+      const meterInfo = activeFromArray || s.meter || (s.meters && s.meters[0]);
       const region =
         meterInfo?.box?.region?.name?.toLowerCase() ??
         meterInfo?.box?.neighborhood?.region?.name?.toLowerCase() ??
