@@ -63,6 +63,9 @@ export type InvoiceDetails = {
   ampereFee?: number;
   exchangeRate: number;
   createdAt?: string;
+  previousReading?: number;
+  currentReading?: number;
+  consumptionKwh?: number;
   fixesAmount?: number;
   fixesNote?: string;
   reading?: {

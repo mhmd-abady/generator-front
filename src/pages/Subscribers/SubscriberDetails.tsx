@@ -477,11 +477,12 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
         open={openPayment}
         onClose={() => setOpenPayment(false)}
         invoices={invoices.invoices}
-        onSubmit={({ amount, invoiceId }) => {
+        onSubmit={({ amount, invoiceId, isPrepayment }) => {
           payments.createPayment.mutate({
             amount,
             subscriberId,
             invoiceId,
+            isPrepayment,
             receiverId: user!.id,
             receiverType:
               user!.role === "ADMIN"

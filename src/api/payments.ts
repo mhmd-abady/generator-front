@@ -8,6 +8,7 @@ export type Payment = {
 
   isReversed: boolean;
   reversedAt?: string;
+  isPrepayment?: boolean;
 
   subscriberId: number;
   invoiceId?: number;
@@ -39,6 +40,7 @@ export type CreatePaymentDto = {
   amount: number;
   subscriberId: number;
   invoiceId?: number;
+  isPrepayment?: boolean;
   receiverType: "COLLECTOR" | "EMPLOYEE" | "OWNER";
   receiverId: number;
 };

@@ -18,6 +18,7 @@ import PaymentsPage from "./pages/Payments/PaymentsPage";
 import ReportsPage from "./pages/Reports/ReportsPage";
 import CollectorTasksPage from "./pages/Collectors/CollectorTasksPage";
 import AmperePricingPage from "./pages/AmperePricing/AmperePricingPage";
+import StaffPage from "./pages/Staff";
 // check invoices pages
 //check meter readings pages
 
@@ -46,6 +47,7 @@ export default function App() {
         <Route path="/tariffs" element={<TariffsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/staff" element={<StaffPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/settings/exchange-rate" element={<ExchangeRatePage />} />
         <Route path="/settings/ampere-pricing" element={<AmperePricingPage />} />

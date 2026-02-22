@@ -5,6 +5,9 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Box,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import {
   Dashboard,
@@ -16,12 +19,20 @@ import {
   BarChart,
   Settings,
   AssignmentTurnedIn,
+  ManageAccounts,
+  Close,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
-export default function Sidebar() {
+export default function Sidebar({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -34,6 +45,7 @@ export default function Sidebar() {
     { label: "Invoices", icon: <Receipt />, path: "/invoices" },
     { label: "Tariffs", icon: <Receipt />, path: "/tariffs" },
     { label: "Payments", icon: <Payments />, path: "/payments" },
+    { label: "Staff", icon: <ManageAccounts />, path: "/staff" },
     { label: "Collector Tasks", icon: <AssignmentTurnedIn />, path: "/collector-tasks" },
     { label: "Reports", icon: <BarChart />, path: "/reports" },
     { label: "Exchange Rate", icon: <Settings />, path: "/settings" },
@@ -42,9 +54,9 @@ export default function Sidebar() {
 
   return (
     <Drawer
-      variant="permanent"
+      variant="persistent"
+      open={open}
       sx={{
-        
         width: drawerWidth,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
@@ -53,7 +65,15 @@ export default function Sidebar() {
         },
       }}
     >
-      <List sx={{mt:4}}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+        <Tooltip title="Close sidebar">
+          <IconButton size="small" onClick={onClose} aria-label="Close sidebar">
+            <Close fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+
+      <List sx={{ mt: 1 }}>
         {items.map((item) => (
           <ListItemButton
             key={item.path}

@@ -7,6 +7,7 @@ import {
   Stack,
   TextField,
   Alert,
+  Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -99,6 +100,9 @@ export default function PayInvoiceDialog({
             onChange={(e) => setAmount(Number(e.target.value))}
             inputProps={{ min: 0, max: remainingBalance }}
           />
+          <Typography variant="caption" color="text.secondary">
+            Payments are applied FIFO to oldest unpaid invoices.
+          </Typography>
         </Stack>
       </DialogContent>
 
