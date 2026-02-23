@@ -40,6 +40,8 @@ export type PeriodStatus = {
 export const fetchDashboardOverview = async (params?: {
   month?: number;
   year?: number;
+  from?: string;
+  to?: string;
   regionId?: number;
   neighborhoodId?: number;
 }): Promise<DashboardOverview> => {
@@ -54,7 +56,9 @@ export const fetchDashboardOverview = async (params?: {
  * GET /dashboard/trends/monthly
  */
 export const fetchMonthlyTrend = async (params: {
-  year: number;
+  year?: number;
+  from?: string;
+  to?: string;
   regionId?: number;
   neighborhoodId?: number;
 }): Promise<MonthlyTrendRow[]> => {
@@ -71,6 +75,8 @@ export const fetchMonthlyTrend = async (params: {
 export const fetchRegionsBreakdown = async (params?: {
   month?: number;
   year?: number;
+  from?: string;
+  to?: string;
 }): Promise<RegionBreakdownRow[]> => {
   const res = await api.get<RegionBreakdownRow[]>(
     "/dashboard/breakdown/regions",

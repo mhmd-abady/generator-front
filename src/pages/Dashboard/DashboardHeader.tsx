@@ -4,30 +4,45 @@ import {
   Typography,
   TextField,
   MenuItem,
-  Chip,
+  Button,
 } from "@mui/material";
 import type { DashboardContext } from "./Index";
-import type { PeriodStatus } from "../../api/dashboard";
 import {
   fetchRegions,
   fetchNeighborhoodsByRegion,
 } from "../../api/locations";
 import type {Region, Neighborhood} from '../../api/locations';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from "react";
 
 type Props = {
   context: DashboardContext;
   onChange: (ctx: DashboardContext) => void;
-  periodStatus?: PeriodStatus;
   loading: boolean;
 };
 
 export default function DashboardHeader({
   context,
   onChange,
-  periodStatus,
   loading,
 }: Props) {
+  const formatDate = (date: Date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const today = new Date();
+  const startOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+
+  const [useRange, setUseRange] = useState(false);
+  const defaultFrom = formatDate(startOfMonth);
+  const defaultTo = formatDate(today);
+
   const months = [
     "January","February","March","April","May","June",
     "July","August","September","October","November","December",
@@ -57,34 +72,66 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
         </Typography>
 
         <Stack direction="row" spacing={2} alignItems="center">
-          <TextField
-            select
-            size="small"
-            label="Month"
-            value={context.month}
-            onChange={(e) =>
-              onChange({ ...context, month: Number(e.target.value) })
-            }
-            disabled={loading}
-          >
-            {months.map((m, i) => (
-              <MenuItem key={i + 1} value={i + 1}>
-                {m}
-              </MenuItem>
-            ))}
-          </TextField>
+          {useRange ? (
+            <>
+              <TextField
+                size="small"
+                label="From"
+                type="date"
+                value={context.from ?? defaultFrom}
+                onChange={(e) =>
+                  onChange({ ...context, from: e.target.value })
+                }
+                InputLabelProps={{ shrink: true }}
+                disabled={loading}
+                sx={{ width: 150 }}
+              />
 
-          <TextField
-            size="small"
-            label="Year"
-            type="number"
-            value={context.year}
-            onChange={(e) =>
-              onChange({ ...context, year: Number(e.target.value) })
-            }
-            sx={{ width: 100 }}
-            disabled={loading}
-          />
+              <TextField
+                size="small"
+                label="To"
+                type="date"
+                value={context.to ?? defaultTo}
+                onChange={(e) =>
+                  onChange({ ...context, to: e.target.value })
+                }
+                InputLabelProps={{ shrink: true }}
+                disabled={loading}
+                sx={{ width: 150 }}
+              />
+            </>
+          ) : (
+            <>
+              <TextField
+                select
+                size="small"
+                label="Month"
+                value={context.month}
+                onChange={(e) =>
+                  onChange({ ...context, month: Number(e.target.value) })
+                }
+                disabled={loading}
+              >
+                {months.map((m, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {m}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                size="small"
+                label="Year"
+                type="number"
+                value={context.year}
+                onChange={(e) =>
+                  onChange({ ...context, year: Number(e.target.value) })
+                }
+                sx={{ width: 100 }}
+                disabled={loading}
+              />
+            </>
+          )}
 
           <TextField
   size="small"
@@ -140,19 +187,40 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
 </TextField>
 
 
-          <Chip
-            label={
-              periodStatus
-                ? periodStatus.isClosed
-                  ? "CLOSED"
-                  : "OPEN"
-                : "—"
-            }
-            color={periodStatus?.isClosed ? "default" : "success"}
+          <Button
+            variant="outlined"
             size="small"
-          />
+            onClick={() => {
+              setUseRange((v) => {
+                const next = !v;
+                if (next) {
+                  onChange({
+                    ...context,
+                    from: context.from ?? defaultFrom,
+                    to: context.to ?? defaultTo,
+                    month: undefined,
+                    year: undefined,
+                  });
+                } else {
+                  onChange({
+                    ...context,
+                    from: undefined,
+                    to: undefined,
+                    month: today.getMonth() + 1,
+                    year: today.getFullYear(),
+                  });
+                }
+                return next;
+              });
+            }}
+            disabled={loading}
+          >
+            {useRange ? "Specific" : "From / To"}
+          </Button>
         </Stack>
       </Stack>
     </Paper>
   );
 }
+
+

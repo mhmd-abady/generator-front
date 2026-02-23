@@ -13,7 +13,7 @@ export function generateDashboardInsights(params: {
   overview?: DashboardOverview;
   trend?: MonthlyTrendRow[];
   regions?: RegionBreakdownRow[];
-  month: number;
+  month?: number;
 }): DashboardInsight[] {
   const insights: DashboardInsight[] = [];
 
@@ -48,7 +48,7 @@ export function generateDashboardInsights(params: {
   }
 
   // Insight C — Month-over-month drop
-  if (trend && trend.length >= 2) {
+  if (trend && trend.length >= 2 && month != null) {
     const current = trend.find((t) => t.month === month);
     const prev = trend.find((t) => t.month === month - 1);
 

@@ -9,8 +9,10 @@ import { useDashboard } from "../../hooks/useDashboard";
 import { generateDashboardInsights } from "../../utils/dashboardInsights";
 
 export type DashboardContext = {
-  month: number;
-  year: number;
+  month?: number;
+  year?: number;
+  from?: string;
+  to?: string;
   regionId?: number;
   neighborhoodId?: number;
 };
@@ -26,18 +28,17 @@ export default function Dashboard() {
   const dashboard = useDashboard(context);
   
   const insights = generateDashboardInsights({
-  overview: dashboard.overview,
-  trend: dashboard.trend,
-  regions: dashboard.regions,
-  month: context.month,
-});
+    overview: dashboard.overview,
+    trend: dashboard.trend,
+    regions: dashboard.regions,
+    month: context.month,
+  });
 
   return (
     <DashboardLayout>
       <DashboardHeader
         context={context}
         onChange={setContext}
-        periodStatus={dashboard.periodStatus}
         loading={dashboard.isLoading}
       />
       <DashboardKPIs
