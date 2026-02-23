@@ -19,25 +19,36 @@ const KPIBox = ({
 }) => (
   <Paper
     sx={{
-      p: 2.5,
+      p: 2,
       background: "linear-gradient(135deg, #fefefe 0%, #ffffff 100%)",
-      border: "1px solid #f0f0f0",
+      border: "1px solid #e5e7eb",
       borderRadius: 2,
+      width: "100%",
+      height: "100%",
     }}
   >
-    <Stack spacing={1.5}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Stack
+      spacing={1.2}
+      sx={{ height: "100%", justifyContent: "space-between" }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
         <Box
           sx={{
             p: 1,
             borderRadius: 1.5,
-            background: "#f5f5f5",
-            display: "flex",
+            background: "#f3f4f6",
+            display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Icon sx={{ color: "#333333", fontSize: 24 }} />
+          <Icon sx={{ color: "#333333", fontSize: 22 }} />
         </Box>
         <Typography variant="body2" color="text.secondary" fontWeight={500}>
           {label}
@@ -51,7 +62,7 @@ const KPIBox = ({
           fontWeight={700}
           sx={{
             color: "#333333",
-            fontSize: "1.75rem",
+            fontSize: "1.5rem",
           }}
         >
           {value?.toLocaleString() ?? "—"}
@@ -96,6 +107,7 @@ export default function PaymentKPIs({
           xs: "1fr",
           sm: "repeat(2, 1fr)",
           md: "repeat(3, 1fr)",
+          lg: "repeat(5, 1fr)",
         },
       }}
     >

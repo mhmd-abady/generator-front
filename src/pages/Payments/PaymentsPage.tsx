@@ -83,80 +83,6 @@ export default function PaymentsPage() {
           <Typography variant="h6" fontWeight={600}>
             Payments
           </Typography>
-
-          <TextField
-            size="small"
-            placeholder="Search subscriber, invoice #, date, amount"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ minWidth: 280 }}
-          />
-
-          <Stack direction="row" spacing={2} flexWrap="wrap">
-            <TextField
-              select
-              size="small"
-              label="Region"
-              sx={{ minWidth: 160 }}
-              value={regionId ?? "all"}
-              onChange={(e) => {
-                const v = e.target.value;
-                setRegionId(v === "all" ? undefined : Number(v));
-                setNeighborhoodId(undefined);
-              }}
-            >
-              <MenuItem value="all">All Regions</MenuItem>
-              {regions.map((r) => (
-                <MenuItem key={r.id} value={r.id}>
-                  {r.name}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <Autocomplete
-              size="small"
-              options={neighborhoods}
-              value={
-                neighborhoods.find((n) => n.id === neighborhoodId) ??
-                null
-              }
-              onChange={(_, value) =>
-                setNeighborhoodId(value ? value.id : undefined)
-              }
-              getOptionLabel={(option) => option.name}
-              isOptionEqualToValue={(option, value) =>
-                option.id === value.id
-              }
-              renderInput={(params) => (
-                <TextField {...params} label="Neighborhood" />
-              )}
-              disabled={!regionId || hoodsLoading}
-              sx={{ minWidth: 200 }}
-            />
-            <TextField
-              type="date"
-              size="small"
-              label="From"
-              InputLabelProps={{ shrink: true }}
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
-            <TextField
-              type="date"
-              size="small"
-              label="To"
-              InputLabelProps={{ shrink: true }}
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
-          </Stack>
         </Stack>
       </Paper>
 
@@ -165,6 +91,85 @@ export default function PaymentsPage() {
       ) : (
         <PaymentKPIs payments={data ?? []} loading={isLoading} />
       )}
+
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        alignItems={{ xs: "stretch", sm: "center" }}
+        flexWrap="wrap"
+        sx={{ mt: 2 }}
+      >
+        <TextField
+          size="small"
+          placeholder="Search subscriber, invoice #, date, amount"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ minWidth: 280 }}
+        />
+        <TextField
+          select
+          size="small"
+          label="Region"
+          sx={{ minWidth: 160 }}
+          value={regionId ?? "all"}
+          onChange={(e) => {
+            const v = e.target.value;
+            setRegionId(v === "all" ? undefined : Number(v));
+            setNeighborhoodId(undefined);
+          }}
+        >
+          <MenuItem value="all">All Regions</MenuItem>
+          {regions.map((r) => (
+            <MenuItem key={r.id} value={r.id}>
+              {r.name}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <Autocomplete
+          size="small"
+          options={neighborhoods}
+          value={
+            neighborhoods.find((n) => n.id === neighborhoodId) ??
+            null
+          }
+          onChange={(_, value) =>
+            setNeighborhoodId(value ? value.id : undefined)
+          }
+          getOptionLabel={(option) => option.name}
+          isOptionEqualToValue={(option, value) =>
+            option.id === value.id
+          }
+          renderInput={(params) => (
+            <TextField {...params} label="Neighborhood" />
+          )}
+          disabled={!regionId || hoodsLoading}
+          sx={{ minWidth: 200 }}
+        />
+        <TextField
+          type="date"
+          size="small"
+          label="From"
+          InputLabelProps={{ shrink: true }}
+          value={from}
+          onChange={(e) => setFrom(e.target.value)}
+        />
+        <TextField
+          type="date"
+          size="small"
+          label="To"
+          InputLabelProps={{ shrink: true }}
+          value={to}
+          onChange={(e) => setTo(e.target.value)}
+        />
+      </Stack>
 
       {isLoading ? (
         <Skeleton height={300} />
