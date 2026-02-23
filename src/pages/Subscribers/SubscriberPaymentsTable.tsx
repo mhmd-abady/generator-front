@@ -24,12 +24,14 @@ export default function SubscriberPaymentsTable({
   onReverse,
   onAddPayment,
   showSubscriberColumn = false,
+  showLocationColumns = false,
 }: {
   payments?: Payment[];
   loading: boolean;
   onReverse: (paymentId: number) => void;
   onAddPayment?: () => void;
   showSubscriberColumn?: boolean;
+  showLocationColumns?: boolean;
 }) {
   const { user } = useAuth();
   const isAdmin = user?.role === "ADMIN";
@@ -74,6 +76,8 @@ export default function SubscriberPaymentsTable({
               <TableCell>Amount</TableCell>
               <TableCell>Invoice</TableCell>
               {showSubscriberColumn && <TableCell>Subscriber</TableCell>}
+              {showLocationColumns && <TableCell>Region</TableCell>}
+              {showLocationColumns && <TableCell>Neighborhood</TableCell>}
               <TableCell align="center">Receiver</TableCell>
               <TableCell align="center">Status</TableCell>
               <TableCell align="right">Actions</TableCell>
@@ -101,6 +105,18 @@ export default function SubscriberPaymentsTable({
 
                 {showSubscriberColumn && (
                   <TableCell>{p.subscriber?.fullName ?? "—"}</TableCell>
+                )}
+                {showLocationColumns && (
+                  <TableCell>
+                    {p.invoice?.meter?.box?.neighborhood?.region?.name ??
+                      p.invoice?.meter?.box?.region?.name ??
+                      "—"}
+                  </TableCell>
+                )}
+                {showLocationColumns && (
+                  <TableCell>
+                    {p.invoice?.meter?.box?.neighborhood?.name ?? "—"}
+                  </TableCell>
                 )}
 
                 <TableCell align="center">

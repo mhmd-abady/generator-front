@@ -5,6 +5,8 @@ import {
   Stack,
   TextField,
   InputAdornment,
+  Autocomplete,
+  MenuItem,
 } from "@mui/material";
 import { useState } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -15,6 +17,8 @@ import { usePayments } from "../../hooks/usePayments";
 import PaymentKPIs from "./PaymentKPIs";
 import SearchIcon from "@mui/icons-material/Search";
 import { formatDisplayDate } from "../../utils/date";
+import { useRegions } from "../../hooks/useRegions";
+import { useNeighborhoods } from "../../hooks/useNeighborhoods";
 
 export default function PaymentsPage() {
   const formatDate = (date: Date) => {
@@ -34,9 +38,16 @@ export default function PaymentsPage() {
 
   const [from, setFrom] = useState<string>(defaultFrom);
   const [to, setTo] = useState<string>(defaultTo);
+  const [regionId, setRegionId] = useState<number | undefined>();
+  const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
+  const { regions } = useRegions();
+  const { neighborhoods, isLoading: hoodsLoading } =
+    useNeighborhoods(regionId);
   const { data, isLoading } = useAllPayments({
     from: from || undefined,
     to: to || undefined,
+    regionId,
+    neighborhoodId,
   });
 
   const { reversePayment } = usePayments(0); // we only use reverse mutation
@@ -90,6 +101,46 @@ export default function PaymentsPage() {
 
           <Stack direction="row" spacing={2} flexWrap="wrap">
             <TextField
+              select
+              size="small"
+              label="Region"
+              sx={{ minWidth: 160 }}
+              value={regionId ?? "all"}
+              onChange={(e) => {
+                const v = e.target.value;
+                setRegionId(v === "all" ? undefined : Number(v));
+                setNeighborhoodId(undefined);
+              }}
+            >
+              <MenuItem value="all">All Regions</MenuItem>
+              {regions.map((r) => (
+                <MenuItem key={r.id} value={r.id}>
+                  {r.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <Autocomplete
+              size="small"
+              options={neighborhoods}
+              value={
+                neighborhoods.find((n) => n.id === neighborhoodId) ??
+                null
+              }
+              onChange={(_, value) =>
+                setNeighborhoodId(value ? value.id : undefined)
+              }
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) =>
+                option.id === value.id
+              }
+              renderInput={(params) => (
+                <TextField {...params} label="Neighborhood" />
+              )}
+              disabled={!regionId || hoodsLoading}
+              sx={{ minWidth: 200 }}
+            />
+            <TextField
               type="date"
               size="small"
               label="From"
@@ -122,6 +173,7 @@ export default function PaymentsPage() {
           payments={filtered}
           loading={false}
           showSubscriberColumn
+          showLocationColumns
           onReverse={(id) => setReverseId(id)}
         />
       )}

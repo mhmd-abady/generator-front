@@ -33,6 +33,15 @@ export type Payment = {
     totalDue: number;
     remainingBalance: number;
     status: string;
+    meter?: {
+      box?: {
+        neighborhood?: {
+          name: string;
+          region?: { name: string };
+        };
+        region?: { name: string };
+      };
+    };
   };
 };
 
@@ -48,6 +57,8 @@ export type CreatePaymentDto = {
 export type PaymentsQueryParams = {
   from?: string;
   to?: string;
+  regionId?: number;
+  neighborhoodId?: number;
 };
 
 /*

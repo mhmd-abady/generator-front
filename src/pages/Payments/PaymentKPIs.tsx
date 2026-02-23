@@ -1,9 +1,9 @@
 import { Paper, Typography, Stack, Skeleton, Box } from "@mui/material";
-import Grid from "@material-ui/core/Grid";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import BlockIcon from "@mui/icons-material/Block";
 import NumbersIcon from "@mui/icons-material/Numbers";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import type { Payment } from "../../api/payments";
 
 const KPIBox = ({
@@ -76,41 +76,59 @@ export default function PaymentKPIs({
     .filter((p) => !p.isReversed)
     .reduce((sum, p) => sum + p.amount, 0);
   const paymentsCount = payments.length;
+  const toCollect = Array.from(
+    new Map(
+      payments
+        .filter((p) => p.invoice?.id != null)
+        .map((p) => [
+          p.invoice!.id,
+          p.invoice!.remainingBalance ?? 0,
+        ])
+    ).values()
+  ).reduce((sum, v) => sum + v, 0);
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} sm={6} md={3}>
-        <KPIBox
-          label="Total Payments"
-          value={totalPayments}
-          loading={loading}
-          icon={PaymentsIcon}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <KPIBox
-          label="Active Payments"
-          value={activePayments}
-          loading={loading}
-          icon={CheckCircleIcon}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <KPIBox
-          label="Reversed Payments"
-          value={reversedPayments}
-          loading={loading}
-          icon={BlockIcon}
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <KPIBox
-          label="Payment Count"
-          value={paymentsCount}
-          loading={loading}
-          icon={NumbersIcon}
-        />
-      </Grid>
-    </Grid>
+    <Box
+      sx={{
+        display: "grid",
+        gap: 2,
+        gridTemplateColumns: {
+          xs: "1fr",
+          sm: "repeat(2, 1fr)",
+          md: "repeat(3, 1fr)",
+        },
+      }}
+    >
+      <KPIBox
+        label="Total Payments"
+        value={totalPayments}
+        loading={loading}
+        icon={PaymentsIcon}
+      />
+      <KPIBox
+        label="Active Payments"
+        value={activePayments}
+        loading={loading}
+        icon={CheckCircleIcon}
+      />
+      <KPIBox
+        label="Reversed Payments"
+        value={reversedPayments}
+        loading={loading}
+        icon={BlockIcon}
+      />
+      <KPIBox
+        label="Payment Count"
+        value={paymentsCount}
+        loading={loading}
+        icon={NumbersIcon}
+      />
+      <KPIBox
+        label="To Collect"
+        value={toCollect}
+        loading={loading}
+        icon={AttachMoneyIcon}
+      />
+    </Box>
   );
 }
