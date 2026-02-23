@@ -3,7 +3,7 @@ import type { ChipProps } from "@mui/material";
 export type ReceiverRole = "ADMIN" | "EMPLOYEE" | "COLLECTOR" | string;
 
 export const receiverRoleColor = (role?: ReceiverRole): ChipProps["color"] => {
-  if (!role) return "default";
+  if (!role) return "info";
   switch (role) {
     case "ADMIN":
       return "info";

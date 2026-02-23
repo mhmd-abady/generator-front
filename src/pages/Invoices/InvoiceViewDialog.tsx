@@ -10,6 +10,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useInvoice } from "../../hooks/useInvoices";
+import { formatDisplayDate } from "../../utils/date";
 
 export default function InvoiceViewDialog({
   open,
@@ -73,7 +74,7 @@ export default function InvoiceViewDialog({
               <Typography>Meter Number: {data.meter.number}</Typography>
               <Typography>
                 Issue Date:{" "}
-                {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : "—"}
+                {data.createdAt ? formatDisplayDate(data.createdAt) : "—"}
               </Typography>
               <Typography>
                 Billing Month: {data.month}/{data.year}
@@ -137,7 +138,7 @@ export default function InvoiceViewDialog({
                       <Typography variant="body2">#{p.id}</Typography>
                       <Typography variant="body2">{p.amount}</Typography>
                       <Typography variant="body2">
-                        {new Date(p.paidAt).toLocaleString()}
+                        {formatDisplayDate(p.paidAt)}
                       </Typography>
                     </Stack>
                   ))}

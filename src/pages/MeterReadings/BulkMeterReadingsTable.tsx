@@ -8,8 +8,6 @@
   TextField,
   Button,
   Chip,
-  Stack,
-  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import type { MeterReading } from "../../api/meter-readings";
@@ -98,20 +96,15 @@ export default function BulkMeterReadingsTable({
 
                 <TableCell align="center">
                   {meterInactive ? (
-                    <Stack spacing={0.5}>
-                      <Chip
-                        size="medium"
-                        label={r.meter?.status ?? "INACTIVE"}
-                        color={meterStatusColor(r.meter?.status)}
-                        sx={meterStatusChipSx}
-                      />
-                      <Typography variant="caption" color="text.secondary">
-                        Meter inactive
-                      </Typography>
-                    </Stack>
+                    <Chip
+                      size="small"
+                      label={r.meter?.status ?? "INACTIVE"}
+                      color={meterStatusColor(r.meter?.status)}
+                      sx={meterStatusChipSx}
+                    />
                   ) : (
                     <Chip
-                      size="medium"
+                      size="small"
                       label="ACTIVE"
                       color="success"
                       sx={meterStatusChipSx}

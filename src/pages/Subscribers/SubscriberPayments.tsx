@@ -8,6 +8,7 @@ import {
   TableBody,
   Skeleton,
 } from "@mui/material";
+import { formatDisplayDate } from "../../utils/date";
 
 export default function SubscriberPayments({
   payments,
@@ -41,7 +42,7 @@ export default function SubscriberPayments({
             {payments.map((p) => (
               <TableRow key={p.id}>
                 <TableCell>
-                  {new Date(p.paidAt).toLocaleDateString()}
+                  {formatDisplayDate(p.paidAt)}
                 </TableCell>
                 <TableCell align="right">
                   {p.amount.toLocaleString()}

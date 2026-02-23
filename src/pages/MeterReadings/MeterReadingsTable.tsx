@@ -9,7 +9,6 @@ import {
   Paper,
   Chip,
   Button,
-  Typography,
   Stack,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
@@ -161,27 +160,22 @@ function MeterRow({
 
       <TableCell align="center">
         {meterInactive ? (
-          <Stack spacing={0.5}>
-            <Chip
-              size="medium"
-              label={meter.status ?? "INACTIVE"}
-              color={meterStatusColor(meter.status)}
-              sx={meterStatusChipSx}
-            />
-            <Typography variant="caption" color="text.secondary">
-              Meter inactive
-            </Typography>
-          </Stack>
+          <Chip
+            size="small"
+            label={meter.status ?? "INACTIVE"}
+            color={meterStatusColor(meter.status)}
+            sx={meterStatusChipSx}
+          />
         ) : locked ? (
           <Chip
-            size="medium"
+            size="small"
             label="LOCKED"
             color="error"
             sx={meterStatusChipSx}
           />
         ) : (
           <Chip
-            size="medium"
+            size="small"
             label="Editable"
             color="success"
             sx={meterStatusChipSx}

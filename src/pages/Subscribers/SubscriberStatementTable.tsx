@@ -8,6 +8,7 @@ import {
   TableBody,
 } from "@mui/material";
 import type { StatementRow } from "../../api/statements";
+import { formatDisplayDate } from "../../utils/date";
 
 export default function SubscriberStatementTable({
   openingBalanceUsd,
@@ -43,7 +44,7 @@ export default function SubscriberStatementTable({
           {rows.map((r, i) => (
             <TableRow key={i}>
               <TableCell>
-                {new Date(r.date).toLocaleDateString()}
+                {formatDisplayDate(r.date)}
               </TableCell>
               <TableCell>{r.reference}</TableCell>
               <TableCell align="right">

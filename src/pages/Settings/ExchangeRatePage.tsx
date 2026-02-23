@@ -25,6 +25,7 @@ import {
   useSetExchangeRate,
   useUpdateExchangeRate,
 } from "../../hooks/useExchangeRate";
+import { formatDisplayDate } from "../../utils/date";
 
 export default function ExchangeRatePage() {
   const { data: active } = useActiveExchangeRate();
@@ -127,7 +128,7 @@ export default function ExchangeRatePage() {
                   )}
                 </TableCell>
                 <TableCell>
-                  {new Date(r.createdAt).toLocaleString()}
+                  {formatDisplayDate(r.createdAt)}
                 </TableCell>
                 <TableCell align="right">
                   <IconButton

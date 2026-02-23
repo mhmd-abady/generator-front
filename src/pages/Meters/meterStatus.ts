@@ -21,4 +21,7 @@ export const meterStatusColor = (
 export const meterStatusChipSx = {
   borderRadius: "6px",
   justifyContent: "center",
+  px: 1.5,
+  height: 26,
+  width: "fit-content",
 } as const;

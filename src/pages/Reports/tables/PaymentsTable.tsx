@@ -10,7 +10,8 @@ import {
   Chip,
 } from "@mui/material";
 import type { PaymentsReportResponse } from "../../../api/reports";
-import { receiverChipSx } from "../../Payments/receiverChips";
+import { receiverChipSx, receiverRoleColor } from "../../Payments/receiverChips";
+import { formatDisplayDate } from "../../../utils/date";
 
 export default function PaymentsTable({
   data,
@@ -54,12 +55,13 @@ export default function PaymentsTable({
                 <Chip
                   size="small"
                   label={p.receiver?.username ?? "-"}
+                  color={receiverRoleColor(undefined)}
                   sx={receiverChipSx}
                 />
               </TableCell>
               <TableCell align="right">{p.amount}</TableCell>
               <TableCell>
-                {new Date(p.paidAt).toISOString().split("T")[0]}
+                {formatDisplayDate(p.paidAt)}
               </TableCell>
               <TableCell>
                 {p.invoice?.meter.box.neighborhood.region.name ?? "-"}

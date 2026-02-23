@@ -14,6 +14,7 @@ import ReversePaymentDialog from "../Subscribers/ReversePaymentDialog";
 import { usePayments } from "../../hooks/usePayments";
 import PaymentKPIs from "./PaymentKPIs";
 import SearchIcon from "@mui/icons-material/Search";
+import { formatDisplayDate } from "../../utils/date";
 
 export default function PaymentsPage() {
   const formatDate = (date: Date) => {
@@ -49,7 +50,7 @@ export default function PaymentsPage() {
     const subscriberName = p.subscriber?.fullName?.toLowerCase() ?? "";
     const invoice = p.invoiceId ? String(p.invoiceId) : "";
     const amount = String(p.amount);
-    const date = new Date(p.paidAt).toLocaleDateString().toLowerCase();
+    const date = formatDisplayDate(p.paidAt).toLowerCase();
 
     return (
       subscriberName.includes(q) ||

@@ -16,6 +16,7 @@ import UndoIcon from "@mui/icons-material/Undo";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../../context/AuthContext";
 import { receiverChipSx, receiverRoleColor } from "../Payments/receiverChips";
+import { formatDisplayDate } from "../../utils/date";
 
 export default function SubscriberPaymentsTable({
   payments,
@@ -83,7 +84,7 @@ export default function SubscriberPaymentsTable({
             {payments.map((p) => (
               <TableRow key={p.id}>
                 <TableCell>
-                  {new Date(p.paidAt).toLocaleDateString()}
+                  {formatDisplayDate(p.paidAt)}
                 </TableCell>
 
                 <TableCell

@@ -11,6 +11,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { AmperePricing } from "../../api/ampere-pricing";
+import { formatDisplayDate } from "../../utils/date";
 
 export default function AmperePricingTable({
   rows,
@@ -48,7 +49,7 @@ export default function AmperePricingTable({
                   <Chip size="small" label="INACTIVE" />
                 )}
               </TableCell>
-              <TableCell>{new Date(row.createdAt).toLocaleDateString()}</TableCell>
+              <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
               <TableCell align="right">
                 <IconButton size="small" onClick={() => onEdit(row)}>
                   <EditIcon fontSize="small" />
@@ -68,4 +69,3 @@ export default function AmperePricingTable({
     </Paper>
   );
 }
-

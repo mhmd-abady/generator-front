@@ -1,4 +1,4 @@
-import {
+ï»¿import {
   Button,
   Chip,
   Paper,
@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import type { User, UserRole } from "../../api/staff";
+import { formatDisplayDate } from "../../utils/date";
 
 const roleColor = (role: UserRole) => {
   switch (role) {
@@ -24,12 +25,8 @@ const roleColor = (role: UserRole) => {
   }
 };
 
-const formatDate = (value?: string | null) => {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleString();
-};
+const formatDate = (value?: string | null) =>
+  formatDisplayDate(value ?? undefined);
 
 export default function StaffTable({
   rows,
@@ -58,13 +55,13 @@ export default function StaffTable({
             <TableRow key={u.id} hover>
               <TableCell>{u.id}</TableCell>
               <TableCell>{u.username}</TableCell>
-              <TableCell>{u.email ?? "—"}</TableCell>
+              <TableCell>{u.email ?? "â€”"}</TableCell>
               <TableCell>
                 <Chip size="small" label={u.role} color={roleColor(u.role)} />
               </TableCell>
               <TableCell>{formatDate(u.createdAt)}</TableCell>
               <TableCell>{formatDate(u.lockedUntil)}</TableCell>
-              <TableCell>{u.failedLoginAttempts ?? "—"}</TableCell>
+              <TableCell>{u.failedLoginAttempts ?? "â€”"}</TableCell>
               <TableCell align="right">
                 {onEdit ? (
                   <Tooltip
@@ -94,3 +91,4 @@ export default function StaffTable({
     </Paper>
   );
 }
+
