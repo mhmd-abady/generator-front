@@ -15,6 +15,7 @@ import type { Payment } from "../../api/payments";
 import UndoIcon from "@mui/icons-material/Undo";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../../context/AuthContext";
+import { receiverChipSx, receiverRoleColor } from "../Payments/receiverChips";
 
 export default function SubscriberPaymentsTable({
   payments,
@@ -72,8 +73,8 @@ export default function SubscriberPaymentsTable({
               <TableCell>Amount</TableCell>
               <TableCell>Invoice</TableCell>
               {showSubscriberColumn && <TableCell>Subscriber</TableCell>}
-              <TableCell>Receiver</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell align="center">Receiver</TableCell>
+              <TableCell align="center">Status</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -101,13 +102,30 @@ export default function SubscriberPaymentsTable({
                   <TableCell>{p.subscriber?.fullName ?? "—"}</TableCell>
                 )}
 
-                <TableCell>{p.receiver?.username ?? "—"}</TableCell>
+                <TableCell align="center">
+                  <Chip
+                    size="small"
+                    label={p.receiver?.username ?? "—"}
+                    color={receiverRoleColor(p.receiver?.role)}
+                    sx={receiverChipSx}
+                  />
+                </TableCell>
 
-                <TableCell>
+                <TableCell align="center">
                   {p.isReversed ? (
-                    <Chip size="small" label="REVERSED" color="error" />
+                    <Chip
+                      size="small"
+                      label="REVERSED"
+                      color="error"
+                      sx={{ borderRadius: "6px" }}
+                    />
                   ) : (
-                    <Chip size="small" label="OK" color="success" />
+                    <Chip
+                      size="small"
+                      label="OK"
+                      color="success"
+                      sx={{ borderRadius: "6px" }}
+                    />
                   )}
                 </TableCell>
 

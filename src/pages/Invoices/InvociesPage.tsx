@@ -19,6 +19,7 @@ import {
   fetchSubscribers,
   fetchSubscribersByNeighborhood,
 } from "../../api/subscribers";
+import { formatInvoiceStatus } from "./invoiceStatus";
 
 export default function InvoicesPage() {
   const [year, setYear] = useState<number | undefined>();
@@ -29,6 +30,14 @@ export default function InvoicesPage() {
   const [boxId, setBoxId] = useState<number | undefined>();
   const [subscriberId, setSubscriberId] = useState<number | undefined>();
   const [search, setSearch] = useState("");
+  const statusOptions = [
+    "ISSUED",
+    "PARTIALLY_PAID",
+    "PAID",
+    "CANCELLED",
+    "REVERSED_PARTIAL",
+    "REVERSED_FULL",
+  ] as const;
 
   const regionsQuery = useQuery({
     queryKey: ["regions"],
@@ -135,12 +144,11 @@ export default function InvoicesPage() {
             sx={{ minWidth: 180 }}
           >
             <MenuItem value="">All Status</MenuItem>
-            <MenuItem value="ISSUED">ISSUED</MenuItem>
-            <MenuItem value="PARTIALLY_PAID">PARTIALLY_PAID</MenuItem>
-            <MenuItem value="PAID">PAID</MenuItem>
-            <MenuItem value="CANCELLED">CANCELLED</MenuItem>
-            <MenuItem value="REVERSED_PARTIAL">REVERSED_PARTIAL</MenuItem>
-            <MenuItem value="REVERSED_FULL">REVERSED_FULL</MenuItem>
+            {statusOptions.map((s) => (
+              <MenuItem key={s} value={s}>
+                {formatInvoiceStatus(s)}
+              </MenuItem>
+            ))}
           </TextField>
 
           <TextField

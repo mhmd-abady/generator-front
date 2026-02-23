@@ -5,6 +5,7 @@ import {
   Divider,
   Skeleton,
   Button,
+  Chip,
 } from "@mui/material";
 import { useParams, Link } from "react-router-dom";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -15,6 +16,11 @@ import PayInvoiceDialog from "./PayInvoiceDialog";
 import { useState } from "react";
 
 import InvoiceFixesDialog from "./InvoiceFixesDialog";
+import {
+  formatInvoiceStatus,
+  invoiceStatusColor,
+  invoiceStatusChipSx,
+} from "./invoiceStatus";
 
 export default function InvoiceDetailsPage() {
   const { id } = useParams();
@@ -75,7 +81,15 @@ const [fixesOpen, setFixesOpen] = useState(false);
             {data!.fixesNote && (
               <Typography>Fixes Note: {data!.fixesNote}</Typography>
             )}
-            <Typography>Status: {data!.status}</Typography>
+            <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+              <Typography>Status:</Typography>
+              <Chip
+                size="medium"
+                label={formatInvoiceStatus(data!.status)}
+                color={invoiceStatusColor(data!.status)}
+                sx={invoiceStatusChipSx}
+              />
+            </Stack>
 
             <Divider />
 

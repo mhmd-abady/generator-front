@@ -41,6 +41,7 @@ import type {
 } from "../../api/collectors";
 import PayInvoiceDialog from "../Invoices/PayInvoiceDialog";
 import { useAuth } from "../../context/AuthContext";
+import { formatInvoiceStatus } from "../Invoices/invoiceStatus";
 
 type PayContext = {
   invoiceId: number;
@@ -518,7 +519,7 @@ function SubscriberRow({
         <Stack spacing={0.3}>
           <Typography variant="body2">#{invoice.id}</Typography>
           <Typography variant="caption" color="text.secondary">
-            {invoice.month}/{invoice.year} • {invoice.status}
+            {invoice.month}/{invoice.year} • {formatInvoiceStatus(invoice.status)}
           </Typography>
         </Stack>
       </TableCell>
@@ -606,7 +607,7 @@ function SubscriberMobileCard({
           {row.previousBalance != null ? row.previousBalance.toLocaleString() : "-"}
         </Typography>
         <Typography variant="body2">
-          Invoice: #{invoice.id} ({invoice.month}/{invoice.year} - {invoice.status})
+          Invoice: #{invoice.id} ({invoice.month}/{invoice.year} - {formatInvoiceStatus(invoice.status)})
         </Typography>
         <Typography variant="body2">
           Meter: {meterNumber}

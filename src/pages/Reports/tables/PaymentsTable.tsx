@@ -7,8 +7,10 @@ import {
   TableBody,
   Typography,
   Stack,
+  Chip,
 } from "@mui/material";
 import type { PaymentsReportResponse } from "../../../api/reports";
+import { receiverChipSx } from "../../Payments/receiverChips";
 
 export default function PaymentsTable({
   data,
@@ -34,7 +36,7 @@ export default function PaymentsTable({
             <TableCell>ID</TableCell>
             <TableCell>Subscriber</TableCell>
             <TableCell>Phone</TableCell>
-            <TableCell>Receiver</TableCell>
+            <TableCell align="center">Receiver</TableCell>
             <TableCell align="right">Amount</TableCell>
             <TableCell>Paid At</TableCell>
             <TableCell>Region</TableCell>
@@ -48,7 +50,13 @@ export default function PaymentsTable({
               <TableCell>{p.id}</TableCell>
               <TableCell>{p.subscriber.fullName}</TableCell>
               <TableCell>{p.subscriber.phone}</TableCell>
-              <TableCell>{p.receiver?.username ?? "-"}</TableCell>
+              <TableCell align="center">
+                <Chip
+                  size="small"
+                  label={p.receiver?.username ?? "-"}
+                  sx={receiverChipSx}
+                />
+              </TableCell>
               <TableCell align="right">{p.amount}</TableCell>
               <TableCell>
                 {new Date(p.paidAt).toISOString().split("T")[0]}

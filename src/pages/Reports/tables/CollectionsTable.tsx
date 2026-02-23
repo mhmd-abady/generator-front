@@ -10,6 +10,7 @@ import {
   Chip,
 } from "@mui/material";
 import type { CollectionsSummaryResponse } from "../../../api/reports";
+import { receiverChipSx, receiverRoleColor } from "../../Payments/receiverChips";
 
 export default function CollectionsTable({
   data,
@@ -37,9 +38,9 @@ export default function CollectionsTable({
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Receiver</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Type</TableCell>
+            <TableCell align="center">Receiver</TableCell>
+            <TableCell align="center">Role</TableCell>
+            <TableCell align="center">Type</TableCell>
             <TableCell align="right">Payments</TableCell>
             <TableCell align="right">Total Collected</TableCell>
           </TableRow>
@@ -48,27 +49,29 @@ export default function CollectionsTable({
         <TableBody>
           {data.rows.map((r) => (
             <TableRow key={`${r.receiverType}-${r.receiverId}`} hover>
-              <TableCell>{r.receiverName}</TableCell>
-
-              <TableCell>
+              <TableCell align="center">
                 <Chip
                   size="small"
-                  label={r.role}
-                  color={
-                    r.role === "ADMIN"
-                      ? "primary"
-                      : r.role === "COLLECTOR"
-                      ? "success"
-                      : "default"
-                  }
+                  label={r.receiverName}
+                  sx={receiverChipSx}
                 />
               </TableCell>
 
-              <TableCell>
+              <TableCell align="center">
+                <Chip
+                  size="small"
+                  label={r.role}
+                  color={receiverRoleColor(r.role)}
+                  sx={receiverChipSx}
+                />
+              </TableCell>
+
+              <TableCell align="center">
                 <Chip
                   size="small"
                   label={r.receiverType}
                   variant="outlined"
+                  sx={receiverChipSx}
                 />
               </TableCell>
 

@@ -16,6 +16,7 @@ import {
   Typography,
   Divider,
   CircularProgress,
+  Chip,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -26,6 +27,11 @@ import type { Invoice } from "../../api/invoices";
 import { useInvoice } from "../../hooks/useInvoices";
 import PayInvoiceDialog from "./PayInvoiceDialog";
 import InvoiceFixesDialog from "./InvoiceFixesDialog";
+import {
+  formatInvoiceStatus,
+  invoiceStatusColor,
+  invoiceStatusChipSx,
+} from "./invoiceStatus";
 
 export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
   const [viewId, setViewId] = useState<number | null>(null);
@@ -53,7 +59,7 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
             <TableCell>Subscriber</TableCell>
             <TableCell>Month</TableCell>
             <TableCell>Year</TableCell>
-            <TableCell>Status</TableCell>
+            <TableCell align="center">Status</TableCell>
             <TableCell>Prev Balance</TableCell>
             <TableCell>Total</TableCell>
             <TableCell>Paid</TableCell>
@@ -74,7 +80,14 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
                 <TableCell>{i.meter?.subscriber?.fullName ?? "-"}</TableCell>
                 <TableCell>{i.month}</TableCell>
                 <TableCell>{i.year}</TableCell>
-                <TableCell>{i.status}</TableCell>
+                <TableCell align="center">
+                  <Chip
+                    size="medium"
+                    label={formatInvoiceStatus(i.status)}
+                    color={invoiceStatusColor(i.status)}
+                    sx={invoiceStatusChipSx}
+                  />
+                </TableCell>
                 <TableCell>{i.previousBalance ?? "�"}</TableCell>
                 <TableCell>{i.totalDue}</TableCell>
                 <TableCell>{i.amountPaid}</TableCell>
@@ -286,7 +299,15 @@ function InvoiceViewDialog({
               <Typography>Total Due: {data.totalDue}</Typography>
               <Typography>Amount Paid: {data.amountPaid}</Typography>
               <Typography>Remaining Balance: {data.remainingBalance}</Typography>
-              <Typography>Status: {data.status}</Typography>
+              <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+                <Typography>Status:</Typography>
+                <Chip
+                  size="medium"
+                  label={formatInvoiceStatus(data.status)}
+                  color={invoiceStatusColor(data.status)}
+                  sx={invoiceStatusChipSx}
+                />
+              </Stack>
               <Typography>Exchange Rate: {data.exchangeRate}</Typography>
               <Typography>Fixes Amount: {data.fixesAmount ?? "—"}</Typography>
               {data.fixesNote && <Typography>Fixes Note: {data.fixesNote}</Typography>}

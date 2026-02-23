@@ -13,6 +13,7 @@
 } from "@mui/material";
 import { useState } from "react";
 import type { MeterReading } from "../../api/meter-readings";
+import { meterStatusChipSx, meterStatusColor } from "../Meters/meterStatus";
 
 export default function BulkMeterReadingsTable({
   rows,
@@ -52,7 +53,7 @@ export default function BulkMeterReadingsTable({
             <TableCell align="right">Previous</TableCell>
             <TableCell align="right">Current</TableCell>
             <TableCell align="right">Consumption</TableCell>
-            <TableCell>Status</TableCell>
+            <TableCell align="center">Status</TableCell>
           </TableRow>
         </TableHead>
 
@@ -95,22 +96,26 @@ export default function BulkMeterReadingsTable({
                   {consumption !== undefined ? consumption.toFixed(2) : "-"}
                 </TableCell>
 
-                <TableCell>
+                <TableCell align="center">
                   {meterInactive ? (
                     <Stack spacing={0.5}>
                       <Chip
-                        size="small"
+                        size="medium"
                         label={r.meter?.status ?? "INACTIVE"}
-                        color={
-                          r.meter?.status === "INACTIVE" ? "warning" : "error"
-                        }
+                        color={meterStatusColor(r.meter?.status)}
+                        sx={meterStatusChipSx}
                       />
                       <Typography variant="caption" color="text.secondary">
                         Meter inactive
                       </Typography>
                     </Stack>
                   ) : (
-                    <Chip size="small" label="ACTIVE" color="success" />
+                    <Chip
+                      size="medium"
+                      label="ACTIVE"
+                      color="success"
+                      sx={meterStatusChipSx}
+                    />
                   )}
                 </TableCell>
               </TableRow>

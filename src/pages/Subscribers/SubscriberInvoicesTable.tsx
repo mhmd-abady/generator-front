@@ -12,6 +12,11 @@ import {
   Button,
 } from "@mui/material";
 import type { Invoice } from "../../api/invoices";
+import {
+  formatInvoiceStatus,
+  invoiceStatusColor,
+  invoiceStatusChipSx,
+} from "../Invoices/invoiceStatus";
 
 export default function SubscriberInvoicesTable({
   invoices,
@@ -43,7 +48,7 @@ export default function SubscriberInvoicesTable({
               <TableCell>Prev Balance</TableCell>
               <TableCell>Paid</TableCell>
               <TableCell>Remaining</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell align="center">Status</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -58,17 +63,12 @@ export default function SubscriberInvoicesTable({
                 <TableCell>{i.previousBalance ?? "�"}</TableCell>
                 <TableCell>{i.amountPaid}</TableCell>
                 <TableCell>{i.remainingBalance}</TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Chip
-                    size="small"
-                    label={i.status}
-                    color={
-                      i.status === "PAID"
-                        ? "success"
-                        : i.status === "PARTIALLY_PAID"
-                        ? "warning"
-                        : "default"
-                    }
+                    size="medium"
+                    label={formatInvoiceStatus(i.status)}
+                    color={invoiceStatusColor(i.status)}
+                    sx={invoiceStatusChipSx}
                   />
                 </TableCell>
                 <TableCell align="right">

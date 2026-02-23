@@ -15,6 +15,7 @@ import {
 import SaveIcon from "@mui/icons-material/Save";
 import { useState } from "react";
 import type { Meter } from "../../api/meters";
+import { meterStatusChipSx, meterStatusColor } from "../Meters/meterStatus";
 
 export type MeterWithReadings = Meter & {
   readings: {
@@ -58,7 +59,7 @@ export default function MeterReadingsTable({
             <TableCell align="right">Previous</TableCell>
             <TableCell align="right">Current</TableCell>
             <TableCell align="right">Consumption</TableCell>
-            <TableCell>Status</TableCell>
+            <TableCell align="center">Status</TableCell>
             <TableCell />
           </TableRow>
         </TableHead>
@@ -158,22 +159,33 @@ function MeterRow({
         {Math.max(0, value - previous)}
       </TableCell>
 
-      <TableCell>
+      <TableCell align="center">
         {meterInactive ? (
           <Stack spacing={0.5}>
             <Chip
-              size="small"
+              size="medium"
               label={meter.status ?? "INACTIVE"}
-              color={meter.status === "INACTIVE" ? "warning" : "error"}
+              color={meterStatusColor(meter.status)}
+              sx={meterStatusChipSx}
             />
             <Typography variant="caption" color="text.secondary">
               Meter inactive
             </Typography>
           </Stack>
         ) : locked ? (
-          <Chip size="small" label="LOCKED" color="error" />
+          <Chip
+            size="medium"
+            label="LOCKED"
+            color="error"
+            sx={meterStatusChipSx}
+          />
         ) : (
-          <Chip size="small" label="Editable" color="success" />
+          <Chip
+            size="medium"
+            label="Editable"
+            color="success"
+            sx={meterStatusChipSx}
+          />
         )}
       </TableCell>
 
