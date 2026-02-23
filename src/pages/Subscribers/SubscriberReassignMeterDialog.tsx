@@ -5,7 +5,7 @@ import {
   DialogActions,
   Button,
   TextField,
-  MenuItem,
+  Autocomplete,
   Stack,
   Typography,
 } from "@mui/material";
@@ -44,21 +44,27 @@ export default function SubscriberReassignMeterDialog({
           <Typography variant="body2" color="text.secondary">
             Meter ID: {meterId}
           </Typography>
-          <TextField
-            select
-            label="New Subscriber"
-            value={targetId ?? ""}
-            onChange={(e) => setTargetId(Number(e.target.value))}
+          <Autocomplete
+            options={
+              subsQuery.data?.filter((s) => s.id !== currentSubscriberId) ??
+              []
+            }
+            value={
+              subsQuery.data?.find((s) => s.id === targetId) ??
+              null
+            }
+            onChange={(_, value) => setTargetId(value?.id)}
+            getOptionLabel={(option) =>
+              `${option.fullName} - ${option.phone}`
+            }
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="New Subscriber" />
+            )}
             fullWidth
-          >
-            {subsQuery.data
-              ?.filter((s) => s.id !== currentSubscriberId)
-              .map((s) => (
-                <MenuItem key={s.id} value={s.id}>
-                  {s.fullName} — {s.phone}
-                </MenuItem>
-              ))}
-          </TextField>
+          />
         </Stack>
       </DialogContent>
 
@@ -75,3 +81,9 @@ export default function SubscriberReassignMeterDialog({
     </Dialog>
   );
 }
+
+
+
+
+
+

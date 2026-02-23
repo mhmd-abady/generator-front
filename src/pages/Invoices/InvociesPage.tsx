@@ -4,6 +4,7 @@ import {
   Typography,
   TextField,
   MenuItem,
+  Autocomplete,
   Skeleton,
 } from "@mui/material";
 import { useState } from "react";
@@ -13,6 +14,7 @@ import InvoiceKPIs from "./InvoiceKPIs";
 import { useAllInvoices } from "../../hooks/useInvoices";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRegions, fetchNeighborhoodsByRegion } from "../../api/locations";
+import { useBoxes } from "../../hooks/useBoxes";
 import {
   fetchSubscribers,
   fetchSubscribersByNeighborhood,
@@ -24,6 +26,7 @@ export default function InvoicesPage() {
   const [status, setStatus] = useState<string | undefined>();
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
+  const [boxId, setBoxId] = useState<number | undefined>();
   const [subscriberId, setSubscriberId] = useState<number | undefined>();
   const [search, setSearch] = useState("");
 
@@ -37,6 +40,11 @@ export default function InvoicesPage() {
     queryFn: () => fetchNeighborhoodsByRegion(regionId!),
     enabled: !!regionId,
   });
+
+  const { boxes, isLoading: boxesLoading } = useBoxes(
+    neighborhoodId,
+    regionId
+  );
 
   const subscribersQuery = useQuery({
     queryKey: ["subscribers", neighborhoodId],
@@ -56,13 +64,19 @@ export default function InvoicesPage() {
   });
 
   const filteredInvoices = (data ?? []).filter((invoice) => {
+    if (boxId) {
+      const invoiceBoxId = invoice.meter?.box?.id;
+      if (invoiceBoxId !== boxId) return false;
+    }
+
     const q = search.trim().toLowerCase();
     if (!q) return true;
 
     const subscriberName = invoice.meter?.subscriber?.fullName?.toLowerCase() ?? "";
     const invoiceId = String(invoice.id);
+    const boxCode = invoice.meter?.box?.code?.toLowerCase() ?? "";
 
-    return subscriberName.includes(q) || invoiceId.includes(q);
+    return subscriberName.includes(q) || invoiceId.includes(q) || boxCode.includes(q);
   });
 
   return (
@@ -138,6 +152,7 @@ export default function InvoicesPage() {
               const v = e.target.value;
               setRegionId(v ? Number(v) : undefined);
               setNeighborhoodId(undefined);
+              setBoxId(undefined);
               setSubscriberId(undefined);
             }}
             sx={{ minWidth: 180 }}
@@ -159,6 +174,7 @@ export default function InvoicesPage() {
             onChange={(e) => {
               const v = e.target.value;
               setNeighborhoodId(v ? Number(v) : undefined);
+              setBoxId(undefined);
               setSubscriberId(undefined);
             }}
             sx={{ minWidth: 200 }}
@@ -171,25 +187,46 @@ export default function InvoicesPage() {
             ))}
           </TextField>
 
-          <TextField
-            select
+          <Autocomplete
             size="small"
-            label="Subscriber"
-            value={subscriberId ?? ""}
-            onChange={(e) =>
-              setSubscriberId(
-                e.target.value ? Number(e.target.value) : undefined
-              )
+            options={boxes}
+            value={boxes.find((b) => b.id === boxId) ?? null}
+            onChange={(_, value) =>
+              setBoxId(value ? value.id : undefined)
             }
-            sx={{ minWidth: 220 }}
-          >
-            <MenuItem value="">All Subscribers</MenuItem>
-            {subscribersQuery.data?.map((s) => (
-              <MenuItem key={s.id} value={s.id}>
-                {s.fullName} — {s.phone}
-              </MenuItem>
-            ))}
-          </TextField>
+            getOptionLabel={(option) => option.code}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Box" />
+            )}
+            disabled={boxesLoading || (!regionId && !neighborhoodId)}
+            sx={{ minWidth: 180 }}
+          />
+
+          <Autocomplete
+            size="small"
+            options={subscribersQuery.data ?? []}
+            value={
+              subscribersQuery.data?.find((s) => s.id === subscriberId) ??
+              null
+            }
+            onChange={(_, value) =>
+              setSubscriberId(value ? value.id : undefined)
+            }
+            getOptionLabel={(option) =>
+              `${option.fullName} | ${option.phone}`
+            }
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Subscriber" />
+            )}
+            clearOnEscape
+            sx={{ minWidth: 260 }}
+          />
           </Stack>
         </Stack>
       </Paper>

@@ -7,12 +7,14 @@ import {
   Skeleton,
   TextField,
   MenuItem,
+  Autocomplete,
 } from "@mui/material";
 import { fetchRegions, fetchNeighborhoodsByRegion } from "../../api/locations";
 import { useQuery } from "@tanstack/react-query";
 import type { Region, Neighborhood } from "../../api/locations";
 import DashboardLayout from "../Dashboard/DashboardLayout";
 import { useSubscribers } from "../../hooks/useSubscribers";
+import { useBoxes } from "../../hooks/useBoxes";
 import SubscribersTable from "./SubscribersTable";
 import SubscriberFormDialog from "./SubscriberFormDialog";
 import type { Subscriber } from "../../api/subscribers";
@@ -23,6 +25,7 @@ export default function SubscribersPage() {
   const [editing, setEditing] = useState<Subscriber | null>(null);
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
+  const [boxId, setBoxId] = useState<number | undefined>();
 
   const regionsQuery = useQuery<Region[]>({
     queryKey: ["regions"],
@@ -34,24 +37,36 @@ export default function SubscribersPage() {
     queryFn: () => fetchNeighborhoodsByRegion(regionId!),
     enabled: !!regionId,
   });
+  const { boxes, isLoading: boxesLoading } = useBoxes(
+    neighborhoodId,
+    regionId
+  );
   const subscribers = useSubscribers(neighborhoodId);
   const [search, setSearch] = useState("");
   const filteredSubscribers =
     subscribers.subscribers?.filter((s) => {
+      const activeFromArray = s.meters?.find((m: any) => m?.status === "ACTIVE");
+      const meterInfo = activeFromArray || s.meter || (s.meters && s.meters[0]);
+
+      if (boxId) {
+        const meterBoxId = meterInfo?.box?.id;
+        if (meterBoxId !== boxId) return false;
+      }
+
       if (!search.trim()) return true;
 
       const q = search.toLowerCase();
-      const activeFromArray = s.meters?.find((m: any) => m?.status === "ACTIVE");
-      const meterInfo = activeFromArray || s.meter || (s.meters && s.meters[0]);
       const region =
         meterInfo?.box?.region?.name?.toLowerCase() ??
         meterInfo?.box?.neighborhood?.region?.name?.toLowerCase() ??
         "";
+      const box = meterInfo?.box?.code?.toLowerCase() ?? "";
 
       return (
         s.fullName.toLowerCase().includes(q) ||
         s.phone.includes(q) ||
-        region.includes(q)
+        region.includes(q) ||
+        box.includes(q)
       );
     }) ?? [];
   return (
@@ -89,6 +104,7 @@ export default function SubscribersPage() {
               const value = e.target.value;
               setRegionId(value === "all" ? undefined : Number(value));
               setNeighborhoodId(undefined);
+              setBoxId(undefined);
             }}
             sx={{ minWidth: 180 }}
           >
@@ -109,6 +125,7 @@ export default function SubscribersPage() {
             onChange={(e) => {
               const value = e.target.value;
               setNeighborhoodId(value === "all" ? undefined : Number(value));
+              setBoxId(undefined);
             }}
             sx={{ minWidth: 200 }}
           >
@@ -119,10 +136,25 @@ export default function SubscribersPage() {
               </MenuItem>
             ))}
           </TextField>
+          <Autocomplete
+            size="small"
+            options={boxes}
+            value={boxes.find((b) => b.id === boxId) ?? null}
+            onChange={(_, value) =>
+              setBoxId(value ? value.id : undefined)
+            }
+            getOptionLabel={(option) => option.code}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField {...params} label="Box" />
+            )}
+            disabled={boxesLoading || (!regionId && !neighborhoodId)}
+            sx={{ minWidth: 180 }}
+          />
           <TextField
             size="small"
-            label="Search (Name, Phone, Region)"
-            placeholder="Type name, phone, or region..."
+            label="Search (Name, Phone, Region, Box)"
+            placeholder="Type name, phone, region, or box..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             sx={{ minWidth: 260 }}

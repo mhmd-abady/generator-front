@@ -4,6 +4,7 @@ import {
   Typography,
   TextField,
   MenuItem,
+  Autocomplete,
   Skeleton,
   Chip,
   Button,
@@ -159,25 +160,21 @@ export default function MeterReadingsPage() {
               ))}
             </TextField>
 
-            <TextField
-              select
+            <Autocomplete
               size="small"
-              label="Box"
+              options={boxes}
+              value={boxes.find((b) => b.id === boxId) ?? null}
+              onChange={(_, value) =>
+                setBoxId(value ? value.id : undefined)
+              }
+              getOptionLabel={(option) => option.code}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              renderInput={(params) => (
+                <TextField {...params} label="Box" />
+              )}
               disabled={boxesLoading || (!regionId && !neighborhoodId)}
-              value={boxId ?? "all"}
-              onChange={(e) => {
-                const v = e.target.value;
-                setBoxId(v === "all" ? undefined : Number(v));
-              }}
-              sx={{ minWidth: 160 }}
-            >
-              <MenuItem value="all">All Boxes</MenuItem>
-              {boxes.map((b) => (
-                <MenuItem key={b.id} value={b.id}>
-                  {b.code}
-                </MenuItem>
-              ))}
-            </TextField>
+              sx={{ minWidth: 180 }}
+            />
 
             <TextField
               size="small"
@@ -263,3 +260,7 @@ export default function MeterReadingsPage() {
     </DashboardLayout>
   );
 }
+
+
+
+

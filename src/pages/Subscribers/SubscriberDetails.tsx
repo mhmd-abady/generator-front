@@ -100,6 +100,20 @@ function StatCard({ label, value, icon, loading }: StatCardProps) {
 export default function SubscriberDetails() {
   const { id } = useParams();
   const subscriberId = Number(id);
+  const formatDate = (date: Date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const today = new Date();
+  const startOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+  const defaultFrom = formatDate(startOfMonth);
+  const defaultTo = formatDate(today);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { subscriber, isLoading } = useSubscriberDetails(subscriberId);
@@ -116,8 +130,8 @@ export default function SubscriberDetails() {
   }, [meters]);
   const latestInvoice = useMemo(() => activeMeter?.invoices?.[0], [activeMeter]);
   const [reassignMeterId, setReassignMeterId] = useState<number | null>(null);
-  const [paymentFrom, setPaymentFrom] = useState<string>("");
-  const [paymentTo, setPaymentTo] = useState<string>("");
+  const [paymentFrom, setPaymentFrom] = useState<string>(defaultFrom);
+  const [paymentTo, setPaymentTo] = useState<string>(defaultTo);
   const payments = usePayments(subscriberId, {
     from: paymentFrom || undefined,
     to: paymentTo || undefined,
@@ -130,13 +144,16 @@ export default function SubscriberDetails() {
   const [reversePaymentId, setReversePaymentId] = useState<number | null>(null);
   const statsLoading = allInvoices.isLoading || payments.isLoading;
   const [tab, setTab] = useState(0);
-  const [from, setFrom] = useState<string>();
-  const [to, setTo] = useState<string>();
+  const [from, setFrom] = useState<string>(defaultFrom);
+  const [to, setTo] = useState<string>(defaultTo);
   const [invoiceStatus, setInvoiceStatus] = useState<string>("");
-  const [invoiceFrom, setInvoiceFrom] = useState<string>("");
-  const [invoiceTo, setInvoiceTo] = useState<string>("");
+  const [invoiceFrom, setInvoiceFrom] = useState<string>(defaultFrom);
+  const [invoiceTo, setInvoiceTo] = useState<string>(defaultTo);
 
-const statement = useSubscriberStatement(subscriberId, { from, to });
+const statement = useSubscriberStatement(subscriberId, {
+  from: from || undefined,
+  to: to || undefined,
+});
 
   const filteredSubscriberInvoices = useMemo(() => {
     const status = invoiceStatus || undefined;
@@ -309,16 +326,16 @@ const statement = useSubscriberStatement(subscriberId, { from, to });
                 size="small"
                 label="From"
                 InputLabelProps={{ shrink: true }}
-                value={from ?? ""}
-                onChange={(e) => setFrom(e.target.value || undefined)}
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
               />
               <TextField
                 type="date"
                 size="small"
                 label="To"
                 InputLabelProps={{ shrink: true }}
-                value={to ?? ""}
-                onChange={(e) => setTo(e.target.value || undefined)}
+                value={to}
+                onChange={(e) => setTo(e.target.value)}
               />
               <Button
                 variant="outlined"

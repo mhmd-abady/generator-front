@@ -6,6 +6,7 @@ import {
   Skeleton,
   TextField,
   MenuItem,
+  Autocomplete,
   InputAdornment,
 } from "@mui/material";
 import { useState } from "react";
@@ -117,25 +118,21 @@ export default function MetersPage() {
             ))}
           </TextField>
 
-          <TextField
-            select
+          <Autocomplete
             size="small"
-            label="Box"
-            sx={{ minWidth: 160 }}
+            options={boxes}
+            value={boxes.find((b) => b.id === boxId) ?? null}
+            onChange={(_, value) =>
+              setBoxId(value ? value.id : undefined)
+            }
+            getOptionLabel={(option) => option.code}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField {...params} label="Box" />
+            )}
             disabled={boxesLoading || (!regionId && !neighborhoodId)}
-            value={boxId ?? "all"}
-            onChange={(e) => {
-              const v = e.target.value;
-              setBoxId(v === "all" ? undefined : Number(v));
-            }}
-          >
-            <MenuItem value="all">All Boxes</MenuItem>
-            {boxes.map((b) => (
-              <MenuItem key={b.id} value={b.id}>
-                {b.code}
-              </MenuItem>
-            ))}
-          </TextField>
+            sx={{ minWidth: 180 }}
+          />
 
           <TextField
             size="small"
@@ -172,3 +169,8 @@ export default function MetersPage() {
     </DashboardLayout>
   );
 }
+
+
+
+
+

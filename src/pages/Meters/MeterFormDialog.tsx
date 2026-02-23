@@ -6,6 +6,7 @@ import {
   Button,
   TextField,
   MenuItem,
+  Autocomplete,
   Stack,
 } from "@mui/material";
 import { useState } from "react";
@@ -58,35 +59,49 @@ export default function MeterFormDialog({
             onChange={(e) => setForm({ ...form, number: e.target.value })}
           />
 
-          <TextField
-            select
-            label="Subscriber"
-            value={form.subscriberId}
-            onChange={(e) =>
-              setForm({ ...form, subscriberId: Number(e.target.value) })
+          <Autocomplete
+            options={subsQuery.data ?? []}
+            value={
+              subsQuery.data?.find((s) => s.id === form.subscriberId) ??
+              null
             }
-          >
-            {subsQuery.data?.map((s) => (
-              <MenuItem key={s.id} value={s.id}>
-                {s.fullName} — {s.phone}
-              </MenuItem>
-            ))}
-          </TextField>
+            onChange={(_, value) =>
+              setForm({
+                ...form,
+                subscriberId: value ? value.id : 0,
+              })
+            }
+            getOptionLabel={(option) =>
+              `${option.fullName} - ${option.phone}`
+            }
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Subscriber" />
+            )}
+          />
 
-          <TextField
-            select
-            label="Box"
-            value={form.boxId}
-            onChange={(e) =>
-              setForm({ ...form, boxId: Number(e.target.value) })
+          <Autocomplete
+            options={boxesQuery.data ?? []}
+            value={
+              boxesQuery.data?.find((b) => b.id === form.boxId) ??
+              null
             }
-          >
-            {boxesQuery.data?.map((b) => (
-              <MenuItem key={b.id} value={b.id}>
-                {b.code}
-              </MenuItem>
-            ))}
-          </TextField>
+            onChange={(_, value) =>
+              setForm({
+                ...form,
+                boxId: value ? value.id : 0,
+              })
+            }
+            getOptionLabel={(option) => option.code}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Box" />
+            )}
+          />
 
           <TextField
             label="Ampere (optional)"
@@ -111,3 +126,5 @@ export default function MeterFormDialog({
     </Dialog>
   );
 }
+
+

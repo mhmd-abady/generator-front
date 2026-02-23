@@ -16,8 +16,23 @@ import PaymentKPIs from "./PaymentKPIs";
 import SearchIcon from "@mui/icons-material/Search";
 
 export default function PaymentsPage() {
-  const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
+  const formatDate = (date: Date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const today = new Date();
+  const startOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+  const defaultFrom = formatDate(startOfMonth);
+  const defaultTo = formatDate(today);
+
+  const [from, setFrom] = useState<string>(defaultFrom);
+  const [to, setTo] = useState<string>(defaultTo);
   const { data, isLoading } = useAllPayments({
     from: from || undefined,
     to: to || undefined,

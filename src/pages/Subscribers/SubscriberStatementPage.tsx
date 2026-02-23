@@ -17,12 +17,27 @@ export default function SubscriberStatementPage() {
   const { id } = useParams();
   const subscriberId = Number(id);
 
-  const [from, setFrom] = useState<string>();
-  const [to, setTo] = useState<string>();
+  const formatDate = (date: Date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const today = new Date();
+  const startOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1
+  );
+  const defaultFrom = formatDate(startOfMonth);
+  const defaultTo = formatDate(today);
+
+  const [from, setFrom] = useState<string>(defaultFrom);
+  const [to, setTo] = useState<string>(defaultTo);
 
   const { data, isLoading } = useSubscriberStatement(subscriberId, {
-    from,
-    to,
+    from: from || undefined,
+    to: to || undefined,
   });
 
   return (
@@ -53,16 +68,16 @@ export default function SubscriberStatementPage() {
             size="small"
             label="From"
             InputLabelProps={{ shrink: true }}
-            value={from ?? ""}
-            onChange={(e) => setFrom(e.target.value || undefined)}
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
           />
           <TextField
             type="date"
             size="small"
             label="To"
             InputLabelProps={{ shrink: true }}
-            value={to ?? ""}
-            onChange={(e) => setTo(e.target.value || undefined)}
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
           />
           <Button
             variant="outlined"

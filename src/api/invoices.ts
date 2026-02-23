@@ -27,9 +27,19 @@ export type Invoice = {
     subscriber?: {
       fullName: string;
       phone: string;
-    };};
+    };
+    box?: {
+      id: number;
+      code?: string;
+      neighborhood?: {
+        id: number;
+        name: string;
+        region?: { id: number; name: string };
+      };
+      region?: { id: number; name: string };
+    };
+  };
 };
-
 export const fetchInvoices = async (params: {
   subscriberId: number;
   status?: string;
@@ -136,3 +146,10 @@ export const addInvoiceFixes = async (
   const res = await api.post(`/invoices/${invoiceId}/fixes`, payload);
   return res.data;
 };
+
+
+
+
+
+
+
