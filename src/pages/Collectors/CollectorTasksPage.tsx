@@ -14,6 +14,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Autocomplete,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -191,25 +192,27 @@ export default function CollectorTasksPage() {
               ))}
             </TextField>
 
-            <TextField
-              select
+            <Autocomplete
               size="small"
-              label="Neighborhood"
-              disabled={!regionId}
-              value={neighborhoodId ?? "all"}
-              onChange={(e) => {
-                const v = e.target.value;
-                setNeighborhoodId(v === "all" ? undefined : Number(v));
+              options={neighborhoodsQuery.data ?? []}
+              value={
+                neighborhoodsQuery.data?.find(
+                  (n) => n.id === neighborhoodId
+                ) ?? null
+              }
+              onChange={(_, value) => {
+                setNeighborhoodId(value ? value.id : undefined);
               }}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) =>
+                option.id === value.id
+              }
+              renderInput={(params) => (
+                <TextField {...params} label="Neighborhood" />
+              )}
+              disabled={!regionId}
               sx={{ minWidth: { xs: "100%", md: 200 } }}
-            >
-              <MenuItem value="all">All Neighborhoods</MenuItem>
-              {neighborhoodsQuery.data?.map((n) => (
-                <MenuItem key={n.id} value={n.id}>
-                  {n.name}
-                </MenuItem>
-              ))}
-            </TextField>
+            />
 
             <TextField
               size="small"

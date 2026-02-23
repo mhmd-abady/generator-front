@@ -96,27 +96,24 @@ export default function MetersPage() {
             ))}
           </TextField>
 
-          <TextField
-            select
+          <Autocomplete
             size="small"
-            label="Neighborhood"
-            sx={{ minWidth: 200 }}
-            disabled={!regionId || hoodsLoading}
-            value={neighborhoodId ?? "all"}
-            onChange={(e) => {
-              const v = e.target.value;
-              const nextHood = v === "all" ? undefined : Number(v);
-              setNeighborhoodId(nextHood);
+            options={neighborhoods}
+            value={neighborhoods.find((n) => n.id === neighborhoodId) ?? null}
+            onChange={(_, value) => {
+              setNeighborhoodId(value ? value.id : undefined);
               setBoxId(undefined);
             }}
-          >
-            <MenuItem value="all">All Neighborhoods</MenuItem>
-            {neighborhoods.map((n) => (
-              <MenuItem key={n.id} value={n.id}>
-                {n.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Neighborhood" />
+            )}
+            disabled={!regionId || hoodsLoading}
+            sx={{ minWidth: 200 }}
+          />
 
           <Autocomplete
             size="small"

@@ -25,7 +25,7 @@ import SubscriberReassignMeterDialog from "./SubscriberReassignMeterDialog";
 import { updateMeter, type MeterStatus } from "../../api/meters";
 import SubscriberPaymentsTable from "./SubscriberPaymentsTable";
 import { usePayments } from "../../hooks/usePayments";
-import { useInvoices, useUnpaidInvoices } from "../../hooks/useInvoices";
+import { useInvoice, useInvoices, useUnpaidInvoices } from "../../hooks/useInvoices";
 import AddPaymentDialog from "./AddPaymentDialog";
 import { useAuth } from "../../context/AuthContext";
 import ReversePaymentDialog from "./ReversePaymentDialog";
@@ -41,6 +41,7 @@ import SubscriberStatementTable from "./SubscriberStatementTable";
 import { useSubscriberStatement } from "../../hooks/useSubscriberStatement";
 import { getSubscriberStatementPdfUrl } from "../../api/statements";
 import { useQueryClient } from "@tanstack/react-query";
+import InvoiceViewDialog from "../Invoices/InvoiceViewDialog";
 
 interface StatCardProps {
   label: string;
@@ -142,6 +143,8 @@ export default function SubscriberDetails() {
 
   const [openPayment, setOpenPayment] = useState(false);
   const [reversePaymentId, setReversePaymentId] = useState<number | null>(null);
+  const [viewInvoiceId, setViewInvoiceId] = useState<number | null>(null);
+  const viewInvoiceQuery = useInvoice(viewInvoiceId ?? 0);
   const statsLoading = allInvoices.isLoading || payments.isLoading;
   const [tab, setTab] = useState(0);
   const [from, setFrom] = useState<string>(defaultFrom);
@@ -447,7 +450,7 @@ const statement = useSubscriberStatement(subscriberId, {
           <SubscriberInvoicesTable
             invoices={filteredSubscriberInvoices}
             loading={allInvoices.isLoading}
-            onView={(invoiceId) => navigate(`/invoices/${invoiceId}`)}
+            onView={(invoiceId) => setViewInvoiceId(invoiceId)}
           />
         </Stack>
       )}
@@ -522,6 +525,15 @@ const statement = useSubscriberStatement(subscriberId, {
           setReversePaymentId(null);
         }}
       />
+
+      {viewInvoiceId !== null && (
+        <InvoiceViewDialog
+          open
+          invoiceId={viewInvoiceId}
+          onClose={() => setViewInvoiceId(null)}
+          query={viewInvoiceQuery}
+        />
+      )}
 
     </DashboardLayout>
   );

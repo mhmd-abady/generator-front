@@ -116,26 +116,28 @@ export default function SubscribersPage() {
             ))}
           </TextField>
 
-          <TextField
-            select
+          <Autocomplete
             size="small"
-            label="Neighborhood"
-            disabled={!regionId}
-            value={neighborhoodId ?? "all"}
-            onChange={(e) => {
-              const value = e.target.value;
-              setNeighborhoodId(value === "all" ? undefined : Number(value));
+            options={neighborhoodsQuery.data ?? []}
+            value={
+              neighborhoodsQuery.data?.find(
+                (n) => n.id === neighborhoodId
+              ) ?? null
+            }
+            onChange={(_, value) => {
+              setNeighborhoodId(value ? value.id : undefined);
               setBoxId(undefined);
             }}
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Neighborhood" />
+            )}
+            disabled={!regionId}
             sx={{ minWidth: 200 }}
-          >
-            <MenuItem value="all">All Neighborhoods</MenuItem>
-            {neighborhoodsQuery.data?.map((n) => (
-              <MenuItem key={n.id} value={n.id}>
-                {n.name}
-              </MenuItem>
-            ))}
-          </TextField>
+          />
           <Autocomplete
             size="small"
             options={boxes}

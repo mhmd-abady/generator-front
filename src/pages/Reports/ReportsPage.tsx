@@ -4,6 +4,7 @@ import {
   Typography,
   TextField,
   MenuItem,
+  Autocomplete,
   Tabs,
   Tab,
   Skeleton,
@@ -134,26 +135,27 @@ export default function ReportsPage() {
             ))}
           </TextField>
 
-          <TextField
-            select
+          <Autocomplete
             size="small"
-            label="Neighborhood"
-            disabled={!regionId}
-            value={neighborhoodId ?? ""}
-            onChange={(e) =>
-              setNeighborhoodId(
-                e.target.value ? Number(e.target.value) : undefined
-              )
+            options={neighborhoodsQuery.data ?? []}
+            value={
+              neighborhoodsQuery.data?.find(
+                (n) => n.id === neighborhoodId
+              ) ?? null
             }
+            onChange={(_, value) =>
+              setNeighborhoodId(value ? value.id : undefined)
+            }
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Neighborhood" />
+            )}
+            disabled={!regionId}
             sx={{ minWidth: 200 }}
-          >
-            <MenuItem value="">All Neighborhoods</MenuItem>
-            {neighborhoodsQuery.data?.map((n) => (
-              <MenuItem key={n.id} value={n.id}>
-                {n.name}
-              </MenuItem>
-            ))}
-          </TextField>
+          />
 
           <TextField
             select

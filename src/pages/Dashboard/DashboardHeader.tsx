@@ -5,6 +5,7 @@ import {
   TextField,
   MenuItem,
   Button,
+  Autocomplete,
 } from "@mui/material";
 import type { DashboardContext } from "./Index";
 import {
@@ -160,31 +161,30 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
 </TextField>
 
 
-<TextField
-  size="small"
-  label="Neighborhood"
-  select
-  disabled={!context.regionId || neighborhoodsQuery.isLoading}
-  value={context.neighborhoodId ?? "all"}
-  onChange={(e) =>
-    onChange({
-      ...context,
-      neighborhoodId:
-        e.target.value === "all"
-          ? undefined
-          : Number(e.target.value),
-    })
-  }
-  sx={{ minWidth: 180 }}
->
-  <MenuItem value="all">All Neighborhoods</MenuItem>
-
-  {neighborhoodsQuery.data?.map((n) => (
-    <MenuItem key={n.id} value={n.id}>
-      {n.name}
-    </MenuItem>
-  ))}
-</TextField>
+          <Autocomplete
+            size="small"
+            options={neighborhoodsQuery.data ?? []}
+            value={
+              neighborhoodsQuery.data?.find(
+                (n) => n.id === context.neighborhoodId
+              ) ?? null
+            }
+            onChange={(_, value) =>
+              onChange({
+                ...context,
+                neighborhoodId: value ? value.id : undefined,
+              })
+            }
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(option, value) =>
+              option.id === value.id
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Neighborhood" />
+            )}
+            disabled={!context.regionId || neighborhoodsQuery.isLoading}
+            sx={{ minWidth: 180 }}
+          />
 
 
           <Button
