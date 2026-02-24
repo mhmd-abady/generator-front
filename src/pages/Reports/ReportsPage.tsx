@@ -8,6 +8,7 @@ import {
   Tabs,
   Tab,
   Skeleton,
+  Button,
 } from "@mui/material";
 import { useState } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -30,11 +31,29 @@ import CollectionsTable from "./tables/CollectionsTable";
 export default function ReportsPage() {
   const [tab, setTab] = useState(0);
 
-  const [year, setYear] = useState<number | undefined>();
-  const [month, setMonth] = useState<number | undefined>();
+  const today = new Date();
+  const [year, setYear] = useState<number | undefined>(
+    today.getFullYear()
+  );
+  const [month, setMonth] = useState<number | undefined>(
+    today.getMonth() + 1
+  );
+  const [from, setFrom] = useState<string | undefined>();
+  const [to, setTo] = useState<string | undefined>();
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
   const [receiverId, setReceiverId] = useState<number | undefined>();
+
+  const formatDate = (date: Date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const defaultFrom = formatDate(startOfMonth);
+  const defaultTo = formatDate(today);
+  const [useRange, setUseRange] = useState(false);
 
   const regionsQuery = useQuery({
     queryKey: ["regions"],
@@ -55,6 +74,8 @@ export default function ReportsPage() {
   const filters = {
     year,
     month,
+    from,
+    to,
     regionId,
     neighborhoodId,
     receiverId,
@@ -76,44 +97,69 @@ export default function ReportsPage() {
       {/* FILTERS */}
       <Paper sx={{ p: 2 }}>
         <Stack direction="row" spacing={2} flexWrap="wrap">
-          <TextField
-            select
-            size="small"
-            label="Year"
-            value={year ?? ""}
-            onChange={(e) =>
-              setYear(e.target.value ? Number(e.target.value) : undefined)
-            }
-            sx={{ minWidth: 140 }}
-          >
-            <MenuItem value="">All Years</MenuItem>
-            {Array.from({ length: 5 }).map((_, i) => {
-              const y = new Date().getFullYear() - i;
-              return (
-                <MenuItem key={y} value={y}>
-                  {y}
-                </MenuItem>
-              );
-            })}
-          </TextField>
+          {useRange ? (
+            <>
+              <TextField
+                size="small"
+                label="From"
+                type="date"
+                value={from ?? defaultFrom}
+                onChange={(e) => setFrom(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ minWidth: 150 }}
+              />
+              <TextField
+                size="small"
+                label="To"
+                type="date"
+                value={to ?? defaultTo}
+                onChange={(e) => setTo(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ minWidth: 150 }}
+              />
+            </>
+          ) : (
+            <>
+              <TextField
+                select
+                size="small"
+                label="Year"
+                value={year ?? ""}
+                onChange={(e) =>
+                  setYear(e.target.value ? Number(e.target.value) : undefined)
+                }
+                sx={{ minWidth: 140 }}
+              >
+                <MenuItem value="">All Years</MenuItem>
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const y = new Date().getFullYear() - i;
+                  return (
+                    <MenuItem key={y} value={y}>
+                      {y}
+                    </MenuItem>
+                  );
+                })}
+              </TextField>
 
-          <TextField
-            select
-            size="small"
-            label="Month"
-            value={month ?? ""}
-            onChange={(e) =>
-              setMonth(e.target.value ? Number(e.target.value) : undefined)
-            }
-            sx={{ minWidth: 140 }}
-          >
-            <MenuItem value="">All Months</MenuItem>
-            {Array.from({ length: 12 }).map((_, i) => (
-              <MenuItem key={i + 1} value={i + 1}>
-                {i + 1}
-              </MenuItem>
-            ))}
-          </TextField>
+              <TextField
+                select
+                size="small"
+                label="Month"
+                value={month ?? ""}
+                onChange={(e) =>
+                  setMonth(e.target.value ? Number(e.target.value) : undefined)
+                }
+                sx={{ minWidth: 140 }}
+              >
+                <MenuItem value="">All Months</MenuItem>
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </>
+          )}
 
           <TextField
             select
@@ -176,6 +222,30 @@ export default function ReportsPage() {
               </MenuItem>
             ))}*/}
           </TextField>
+
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => {
+              setUseRange((v) => {
+                const next = !v;
+                if (next) {
+                  setFrom(from ?? defaultFrom);
+                  setTo(to ?? defaultTo);
+                  setMonth(undefined);
+                  setYear(undefined);
+                } else {
+                  setFrom(undefined);
+                  setTo(undefined);
+                  setMonth(today.getMonth() + 1);
+                  setYear(today.getFullYear());
+                }
+                return next;
+              });
+            }}
+          >
+            {useRange ? "Specific" : "From / To"}
+          </Button>
         </Stack>
       </Paper>
 

@@ -16,6 +16,8 @@ export type InvoiceStatus =
 export type ReportsFilter = {
   month?: number;
   year?: number;
+  from?: string;
+  to?: string;
   regionId?: number;
   neighborhoodId?: number;
   receiverId?: number;
