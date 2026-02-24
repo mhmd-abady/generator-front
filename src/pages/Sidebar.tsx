@@ -21,8 +21,11 @@ import {
   AssignmentTurnedIn,
   ManageAccounts,
   Close,
+  Login as LoginIcon,
+  Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const drawerWidth = 240;
 
@@ -35,6 +38,7 @@ export default function Sidebar({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, logout } = useAuth();
 
   const items = [
     { label: "Dashboard", icon: <Dashboard />, path: "/" },
@@ -89,11 +93,18 @@ export default function Sidebar({
       <Divider />
 
       <List>
-        <ListItemButton onClick={() => navigate("/settings")}>
+        <ListItemButton
+          onClick={() => {
+            if (isAuthenticated) {
+              logout();
+            }
+            navigate("/login");
+          }}
+        >
           <ListItemIcon>
-            <Settings />
+            {isAuthenticated ? <LogoutIcon /> : <LoginIcon />}
           </ListItemIcon>
-          <ListItemText primary="Settings" />
+          <ListItemText primary={isAuthenticated ? "Logout" : "Login"} />
         </ListItemButton>
       </List>
     </Drawer>
