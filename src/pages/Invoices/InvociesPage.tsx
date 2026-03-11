@@ -6,6 +6,8 @@ import {
   MenuItem,
   Autocomplete,
   Skeleton,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { useState } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -15,10 +17,6 @@ import { useAllInvoices } from "../../hooks/useInvoices";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRegions, fetchNeighborhoodsByRegion } from "../../api/locations";
 import { useBoxes } from "../../hooks/useBoxes";
-import {
-  fetchSubscribers,
-  fetchSubscribersByNeighborhood,
-} from "../../api/subscribers";
 import { formatInvoiceStatus } from "./invoiceStatus";
 
 export default function InvoicesPage() {
@@ -28,8 +26,8 @@ export default function InvoicesPage() {
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
   const [boxId, setBoxId] = useState<number | undefined>();
-  const [subscriberId, setSubscriberId] = useState<number | undefined>();
   const [search, setSearch] = useState("");
+  const [onlyUnpaid, setOnlyUnpaid] = useState(false);
   const statusOptions = [
     "ISSUED",
     "PARTIALLY_PAID",
@@ -55,24 +53,20 @@ export default function InvoicesPage() {
     regionId
   );
 
-  const subscribersQuery = useQuery({
-    queryKey: ["subscribers", neighborhoodId],
-    queryFn: () =>
-      neighborhoodId
-        ? fetchSubscribersByNeighborhood(neighborhoodId)
-        : fetchSubscribers(),
-  });
-
   const { data, isLoading } = useAllInvoices({
     year,
     month,
     status,
-    subscriberId,
     regionId,
     neighborhoodId,
   });
 
   const filteredInvoices = (data ?? []).filter((invoice) => {
+    if (onlyUnpaid) {
+      if (invoice.remainingBalance <= 0) return false;
+      if (invoice.status === "CANCELLED") return false;
+    }
+
     if (boxId) {
       const invoiceBoxId = invoice.meter?.box?.id;
       if (invoiceBoxId !== boxId) return false;
@@ -95,7 +89,12 @@ export default function InvoicesPage() {
           <Typography variant="h6" fontWeight={600}>
             Invoices
           </Typography>
-          <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ flex: 1 }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            flexWrap="wrap"
+            sx={{ flex: 1 }}
+          >
           <TextField
             select
             size="small"
@@ -161,7 +160,6 @@ export default function InvoicesPage() {
               setRegionId(v ? Number(v) : undefined);
               setNeighborhoodId(undefined);
               setBoxId(undefined);
-              setSubscriberId(undefined);
             }}
             sx={{ minWidth: 180 }}
           >
@@ -184,7 +182,6 @@ export default function InvoicesPage() {
             onChange={(_, value) => {
               setNeighborhoodId(value ? value.id : undefined);
               setBoxId(undefined);
-              setSubscriberId(undefined);
             }}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) =>
@@ -214,28 +211,15 @@ export default function InvoicesPage() {
             disabled={boxesLoading || (!regionId && !neighborhoodId)}
             sx={{ minWidth: 180 }}
           />
-
-          <Autocomplete
-            size="small"
-            options={subscribersQuery.data ?? []}
-            value={
-              subscribersQuery.data?.find((s) => s.id === subscriberId) ??
-              null
+          <FormControlLabel
+            control={
+              <Switch
+                checked={onlyUnpaid}
+                onChange={(e) => setOnlyUnpaid(e.target.checked)}
+              />
             }
-            onChange={(_, value) =>
-              setSubscriberId(value ? value.id : undefined)
-            }
-            getOptionLabel={(option) =>
-              `${option.fullName} | ${option.phone}`
-            }
-            isOptionEqualToValue={(option, value) =>
-              option.id === value.id
-            }
-            renderInput={(params) => (
-              <TextField {...params} label="Subscriber" />
-            )}
-            clearOnEscape
-            sx={{ minWidth: 260 }}
+            label="Only unpaid"
+            sx={{ ml: 1 }}
           />
           </Stack>
         </Stack>

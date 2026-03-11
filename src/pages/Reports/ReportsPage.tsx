@@ -125,9 +125,15 @@ export default function ReportsPage() {
                 size="small"
                 label="Year"
                 value={year ?? ""}
-                onChange={(e) =>
-                  setYear(e.target.value ? Number(e.target.value) : undefined)
-                }
+                  onChange={(e) => {
+                    const selectedYear = e.target.value ? Number(e.target.value) : undefined;
+                    setYear(selectedYear);
+                    if (selectedYear) {
+                      setMonth(today.getMonth() + 1); // Auto-select current month
+                    } else {
+                      setMonth(undefined); // Auto-select All Months
+                    }
+                  }}
                 sx={{ minWidth: 140 }}
               >
                 <MenuItem value="">All Years</MenuItem>
@@ -146,9 +152,15 @@ export default function ReportsPage() {
                 size="small"
                 label="Month"
                 value={month ?? ""}
-                onChange={(e) =>
-                  setMonth(e.target.value ? Number(e.target.value) : undefined)
-                }
+                  onChange={(e) => {
+                    const selectedMonth = e.target.value ? Number(e.target.value) : undefined;
+                    setMonth(selectedMonth);
+                    if (selectedMonth) {
+                      setYear(today.getFullYear()); // Auto-select current year
+                    } else {
+                      setYear(undefined); // Auto-select All Years
+                    }
+                  }}
                 sx={{ minWidth: 140 }}
               >
                 <MenuItem value="">All Months</MenuItem>
