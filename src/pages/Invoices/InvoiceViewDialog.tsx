@@ -34,11 +34,6 @@ export default function InvoiceViewDialog({
   const kwhRate = data?.tariffDetails?.kwhRate ?? data?.kwhRate ?? null;
   const ampereFee = data?.ampereFee ?? null;
   const meterAmpere = data?.meter?.ampere ?? null;
-  const tariffScope = data?.tariffDetails?.scope ?? null;
-  const tariffMonth =
-    data?.tariffDetails?.month != null && data?.tariffDetails?.year != null
-      ? `${data.tariffDetails.month}/${data.tariffDetails.year}`
-      : null;
 
   const calcConsumption = () => {
     if (currentReading != null && previousReading != null) {
@@ -65,13 +60,18 @@ export default function InvoiceViewDialog({
             </Typography>
 
             <Stack spacing={0.5}>
-              <Typography>Subscriber Name: {data.meter.subscriber.fullName}</Typography>
-              <Typography>Phone Number: {data.meter.subscriber.phone}</Typography>
+              <Typography>
+                Subscriber Name: {data.meter.subscriber.fullName} | Phone Number:{" "}
+                {data.meter.subscriber.phone}
+              </Typography>
               <Typography>
                 Neighborhood: {data.meter.box?.neighborhood?.name ?? "—"} | Region:{" "}
                 {data.meter.box?.neighborhood?.region?.name ?? data.meter.box?.region?.name ?? "—"}
               </Typography>
-              <Typography>Meter Number: {data.meter.number}</Typography>
+              <Typography>
+                Meter Number: {data.meter.number} | Box Number:{" "}
+                {data.meter.box?.code ?? "—"}
+              </Typography>
               <Typography>
                 Issue Date:{" "}
                 {data.createdAt ? formatDisplayDate(data.createdAt) : "—"}
@@ -85,27 +85,17 @@ export default function InvoiceViewDialog({
 
             <Stack spacing={0.5}>
               <Typography>
-                Now Reading: {currentReading ?? "—"}
+                Previous Reading: {previousReading ?? "—"} | Now Reading:{" "}
+                {currentReading ?? "—"}
               </Typography>
               <Typography>
-                Previous Reading: {previousReading ?? "—"}
+                Energy Consumption: {consumption ?? "—"} kWh * kWh Rate:{" "}
+                {kwhRate ?? "—"}
               </Typography>
               <Typography>
-                Energy Consumption: {consumption ?? "—"} kWh
+                Meter Ampere: {meterAmpere ?? "—"} | Ampere Fee: {ampereFee ?? "—"}
               </Typography>
-            </Stack>
-
-            <Divider />
-
-            <Stack spacing={0.5}>
-              <Typography variant="subtitle2" fontWeight={600}>
-                Tariff & Meter
-              </Typography>
-              <Typography>Meter Ampere: {meterAmpere ?? "—"}</Typography>
-              <Typography>kWh Rate: {kwhRate ?? "—"}</Typography>
-              <Typography>Ampere Fee: {ampereFee ?? "—"}</Typography>
-              <Typography>Tariff Scope: {tariffScope ?? "—"}</Typography>
-              <Typography>Tariff Month: {tariffMonth ?? "—"}</Typography>
+              <Typography>Exchange Rate: {data.exchangeRate}</Typography>
             </Stack>
 
             <Divider />
@@ -114,13 +104,14 @@ export default function InvoiceViewDialog({
               <Typography>
                 Previous Balance: {data.previousBalance ?? "�"}
               </Typography>
+              <Typography>This Month Due: {data.thisMonthDue ?? "—"}</Typography>
+              <Typography>Fixes Amount: {data.fixesAmount ?? "—"}</Typography>
+              <Typography>-------------------------------------------------------</Typography>
               <Typography>Total Due: {data.totalDue}</Typography>
               <Typography>Amount Paid: {data.amountPaid}</Typography>
               <Typography>Remaining Balance: {data.remainingBalance}</Typography>
-              <Typography>Status: {data.status}</Typography>
-              <Typography>Exchange Rate: {data.exchangeRate}</Typography>
-              <Typography>Fixes Amount: {data.fixesAmount ?? "—"}</Typography>
               {data.fixesNote && <Typography>Fixes Note: {data.fixesNote}</Typography>}
+              <Typography>Status: {data.status}</Typography>
             </Stack>
 
             {data.payments?.length > 0 && (
