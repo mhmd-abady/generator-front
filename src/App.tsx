@@ -16,6 +16,7 @@ import ExchangeRatePage from "./pages/Settings/ExchangeRatePage";
 import SettingsPage from "./pages/Settings/SettingsPage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
 import ReportsPage from "./pages/Reports/ReportsPage";
+import UnpaidClientsPage from "./pages/UnpaidClients/UnpaidClientsPage";
 import CollectorTasksPage from "./pages/Collectors/CollectorTasksPage";
 import AmperePricingPage from "./pages/AmperePricing/AmperePricingPage";
 import StaffPage from "./pages/Staff";
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/payments" element={<PaymentsPage />} />
         <Route path="/staff" element={<StaffPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/reports/unpaid-clients" element={<UnpaidClientsPage />} />
         <Route path="/settings/exchange-rate" element={<ExchangeRatePage />} />
         <Route path="/settings/ampere-pricing" element={<AmperePricingPage />} />
         <Route path="/collector-tasks" element={<CollectorTasksPage />} />

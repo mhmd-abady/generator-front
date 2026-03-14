@@ -14,6 +14,7 @@ import { useMeters } from "../../hooks/useMeters";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSubscribers } from "../../api/subscribers";
 import { fetchBoxes } from "../../api/boxes"; // if exists
+import { fetchRegions } from "../../api/locations";
 
 export default function MeterFormDialog({
   open,
@@ -40,6 +41,20 @@ export default function MeterFormDialog({
     queryKey: ["boxes"],
     queryFn: fetchBoxes, // must exist or be added
   });
+
+  const regionsQuery = useQuery({
+    queryKey: ["regions"],
+    queryFn: fetchRegions,
+  });
+
+  const getBoxLabel = (option: { code: string; regionId?: number }) => {
+    const regionName =
+      regionsQuery.data?.find((r) => r.id === option.regionId)?.name;
+
+    if (regionName) return `${option.code} (${regionName})`;
+    if (option.regionId) return `${option.code} (Region #${option.regionId})`;
+    return option.code;
+  };
 
   const submit = () => {
     createMeter.mutate(form, {
@@ -94,7 +109,7 @@ export default function MeterFormDialog({
                 boxId: value ? value.id : 0,
               })
             }
-            getOptionLabel={(option) => option.code}
+            getOptionLabel={getBoxLabel}
             isOptionEqualToValue={(option, value) =>
               option.id === value.id
             }

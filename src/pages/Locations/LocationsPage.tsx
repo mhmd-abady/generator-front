@@ -35,7 +35,6 @@ import { useMeters } from "../../hooks/useMeters";
 import type { Meter } from "../../api/meters";
 import MetersTable from "../Meters/MetersTable";
 import { useBoxMeters } from "../../hooks/useBoxMeters";
-import MeterFormDialog from "../Meters/MeterFormDialog";
 
 export default function LocationsPage() {
   const { regions, createRegion, updateRegion, deleteRegion } = useRegions();
@@ -59,7 +58,6 @@ export default function LocationsPage() {
   const [editingBox, setEditingBox] = useState<Box | null>(null);
   const [boxCode, setBoxCode] = useState("");
   const [selectedBox, setSelectedBox] = useState<Box | null>(null);
-  const [meterDialogOpen, setMeterDialogOpen] = useState(false);
   const [meterSearch, setMeterSearch] = useState("");
 
   const { boxes, isLoading: boxesLoading, createBox, updateBox, deleteBox } =
@@ -382,10 +380,9 @@ export default function LocationsPage() {
       {/* =============== METERS TABLE (filtered by selected region/hood/box) =============== */}
       <Paper sx={{ mt: 2, p: 2 }}>
         <Stack
-          direction={{ xs: "column", md: "row" }}
-          justifyContent="space-between"
-          alignItems={{ xs: "stretch", md: "center" }}
-          spacing={2}
+          direction={{ xs: "column", lg: "row" }}
+          alignItems={{ xs: "stretch", lg: "center" }}
+          spacing={1.5}
           mb={1}
         >
           <Typography fontWeight={600}>
@@ -398,39 +395,26 @@ export default function LocationsPage() {
               ? ` - Region ${selectedRegion.name}`
               : ""}
           </Typography>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1}
-            alignItems={{ xs: "stretch", sm: "start" }}
-          >
-            {metersLoading && <CircularProgress size={20} />}
-            <TextField
-              size="small"
-              label="Search"
-              placeholder="Box, meter, subscriber, phone, ampere"
-              value={meterSearch}
-              onChange={(e) => setMeterSearch(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon fontSize="small" />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ minWidth: { sm: 280 }, width: { xs: "100%", sm: "auto" } }}
-            />
-            <Button
-              variant="contained"
-              size="small"
-              startIcon={<Add />}
-              onClick={() => setMeterDialogOpen(true)}
-              sx={{ width: { xs: "100%", sm: "auto" } }}
-            >
-              Add Meter
-            </Button>
-          </Stack>
+
+          {metersLoading && <CircularProgress size={20} />}
+
+          <TextField
+            size="small"
+            label="Search"
+            placeholder="Box, meter, subscriber, phone, ampere"
+            value={meterSearch}
+            onChange={(e) => setMeterSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ minWidth: { lg: 320 }, width: { xs: "100%", lg: "auto" } }}
+          />
         </Stack>
-        <MetersTable rows={filteredMeters} disablePaper />
+        <MetersTable rows={filteredMeters} disablePaper compactOnSmallScreens />
       </Paper>
 
       {/* ================= DIALOGS ================= */}
@@ -486,11 +470,6 @@ export default function LocationsPage() {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <MeterFormDialog
-        open={meterDialogOpen}
-        onClose={() => setMeterDialogOpen(false)}
-      />
 
     </DashboardLayout>
   );

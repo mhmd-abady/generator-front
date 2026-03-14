@@ -22,6 +22,7 @@ import {
   Settings,
   AssignmentTurnedIn,
   ManageAccounts,
+  WarningAmber,
   Close,
   Login as LoginIcon,
   Logout as LogoutIcon,
@@ -56,6 +57,7 @@ export default function Sidebar({
     { label: "Staff", icon: <ManageAccounts />, path: "/staff" },
     { label: "Collector Tasks", icon: <AssignmentTurnedIn />, path: "/collector-tasks" },
     { label: "Reports", icon: <BarChart />, path: "/reports" },
+    { label: "Unpaid Clients", icon: <WarningAmber />, path: "/reports/unpaid-clients" },
     { label: "Exchange Rate", icon: <Settings />, path: "/settings" },
     { label: "Ampere Pricing", icon: <Settings />, path: "/settings/ampere-pricing" }
   ];

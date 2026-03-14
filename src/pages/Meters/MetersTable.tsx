@@ -1,4 +1,5 @@
 import {
+  Box,
   Paper,
   Table,
   TableContainer,
@@ -9,6 +10,8 @@ import {
   Chip,
   Button,
   Stack,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useState } from "react";
 import type { Meter, MeterStatus } from "../../api/meters";
@@ -19,16 +22,77 @@ export default function MetersTable({
   rows,
   disablePaper = false,
   onUpdateStatus,
+  compactOnSmallScreens = false,
 }: {
   rows: Meter[];
   disablePaper?: boolean;
   onUpdateStatus?: (meterId: number, status: MeterStatus) => void;
+  compactOnSmallScreens?: boolean;
 }) {
   const [selectedMeterId, setSelectedMeterId] = useState<number | null>(null);
+  const isCompactView = compactOnSmallScreens && useMediaQuery("(max-width:1024px)");
 
   const selectedMeter = selectedMeterId
     ? rows.find((m) => m.id === selectedMeterId)
     : null;
+
+  const cards = (
+    <Stack spacing={1.25}>
+      {rows.map((m) => (
+        <Paper
+          key={m.id}
+          variant="outlined"
+          sx={{ p: 1.5, borderRadius: 2, borderColor: "divider" }}
+        >
+          <Stack spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              flexWrap="wrap"
+              gap={1}
+            >
+              <Typography fontWeight={700}>{m.number}</Typography>
+              <Chip
+                size="small"
+                label={m.status ?? "UNKNOWN"}
+                color={meterStatusColor(m.status)}
+                sx={meterStatusChipSx}
+              />
+            </Stack>
+
+            <Typography variant="body2" color="text.secondary">
+              {m.subscriber?.fullName ?? "-"}
+            </Typography>
+
+            <Box
+              sx={{
+                display: "grid",
+                gap: 0.75,
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+              }}
+            >
+              <Typography variant="body2">Phone: {m.subscriber?.phone ?? "-"}</Typography>
+              <Typography variant="body2">Box: {m.box?.code ?? "-"}</Typography>
+              <Typography variant="body2">Ampere: {m.ampere ?? "-"}</Typography>
+            </Box>
+
+            {onUpdateStatus && (
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => setSelectedMeterId(m.id)}
+                >
+                  Change Status
+                </Button>
+              </Box>
+            )}
+          </Stack>
+        </Paper>
+      ))}
+    </Stack>
+  );
 
   const table = (
     <TableContainer sx={{ overflowX: "auto" }}>
@@ -79,11 +143,13 @@ export default function MetersTable({
     </TableContainer>
   );
 
-  if (disablePaper) return table;
+  const content = isCompactView ? cards : table;
+
+  if (disablePaper) return content;
 
   return (
     <>
-      <Paper sx={{ p: 2 }}>{table}</Paper>
+      <Paper sx={{ p: 2 }}>{content}</Paper>
       {selectedMeter && (
         <ChangeStatusDialog
           open={!!selectedMeterId}
