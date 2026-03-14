@@ -1,5 +1,5 @@
 import {
-  Table, TableHead, TableRow, TableCell, TableBody,
+  Table, TableHead, TableRow, TableCell, TableBody, TableContainer,
   IconButton, Paper
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -14,7 +14,8 @@ export default function TariffsTable({
 }) {
   return (
     <Paper sx={{ p: 2 }}>
-      <Table size="small">
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 520 }}>
         <TableHead>
           <TableRow>
             <TableCell>Period</TableCell>
@@ -49,7 +50,8 @@ export default function TariffsTable({
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 }

@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -27,7 +28,8 @@ export default function SubscribersTable({
 }) {
   return (
     <Paper sx={{ p: 2 }}>
-      <Table size="small">
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 900 }}>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
@@ -112,7 +114,8 @@ export default function SubscribersTable({
             );
           })}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 }

@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableContainer,
   TableBody,
   TableCell,
   TableHead,
@@ -24,7 +25,8 @@ export default function AmperePricingTable({
 }) {
   return (
     <Paper sx={{ p: 2 }}>
-      <Table size="small">
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 720 }}>
         <TableHead>
           <TableRow>
             <TableCell>ID</TableCell>
@@ -65,7 +67,8 @@ export default function AmperePricingTable({
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 }

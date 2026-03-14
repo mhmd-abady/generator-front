@@ -73,9 +73,10 @@ export default function SubscribersPage() {
     <DashboardLayout>
       <Paper sx={{ p: 2 }}>
         <Stack
-          direction="row"
+          direction={{ xs: "column", sm: "row" }}
           justifyContent="space-between"
-          alignItems="center"
+          alignItems={{ xs: "stretch", sm: "center" }}
+          spacing={2}
         >
           <Typography variant="h6" fontWeight={600}>
             Subscribers
@@ -94,7 +95,12 @@ export default function SubscribersPage() {
       </Paper>
 
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" spacing={2}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          flexWrap="wrap"
+          alignItems={{ xs: "stretch", sm: "center" }}
+        >
           <TextField
             select
             size="small"
@@ -106,7 +112,7 @@ export default function SubscribersPage() {
               setNeighborhoodId(undefined);
               setBoxId(undefined);
             }}
-            sx={{ minWidth: 180 }}
+            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
           >
             <MenuItem value="all">All Regions</MenuItem>
             {regionsQuery.data?.map((r) => (
@@ -136,7 +142,7 @@ export default function SubscribersPage() {
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId}
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
           />
           <Autocomplete
             size="small"
@@ -151,7 +157,7 @@ export default function SubscribersPage() {
               <TextField {...params} label="Box" />
             )}
             disabled={boxesLoading || (!regionId && !neighborhoodId)}
-            sx={{ minWidth: 180 }}
+            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
           />
           <TextField
             size="small"
@@ -159,7 +165,7 @@ export default function SubscribersPage() {
             placeholder="Type name, phone, region, or box..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            sx={{ minWidth: 260 }}
+            sx={{ minWidth: { sm: 260 }, width: { xs: "100%", sm: "auto" } }}
           />
         </Stack>
       </Paper>

@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -21,7 +22,12 @@ export default function AgingTable({ data }: { data: AgingReportResponse }) {
   return (
     <Paper sx={{ p: 2 }}>
       {/* SUMMARY */}
-      <Stack direction="row" spacing={3} mb={2}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        flexWrap="wrap"
+        mb={2}
+      >
         <Typography>
           Subscribers: <b>{data.totals.subscribers}</b>
         </Typography>
@@ -46,53 +52,55 @@ export default function AgingTable({ data }: { data: AgingReportResponse }) {
       </Stack>
 
       {/* TABLE */}
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Subscriber</TableCell>
-            <TableCell>Phone</TableCell>
-            <TableCell>Region</TableCell>
-            <TableCell>Neighborhood</TableCell>
-            <TableCell align="right">Prev Balance</TableCell>
-            <TableCell align="right">0â€“30</TableCell>
-            <TableCell align="right">31â€“60</TableCell>
-            <TableCell align="right">61â€“90</TableCell>
-            <TableCell align="right">90+</TableCell>
-            <TableCell align="right">Total</TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {data.rows.map((r) => (
-            <TableRow key={r.subscriber.id} hover>
-              <TableCell>{r.subscriber.fullName}</TableCell>
-              <TableCell>{r.subscriber.phone}</TableCell>
-              <TableCell>{r.region.name}</TableCell>
-              <TableCell>{r.neighborhood.name}</TableCell>
-              <TableCell align="right">
-                {r.totalPreviousBalance ?? "—"}
-              </TableCell>
-
-              <TableCell align="right">
-                {r.buckets["0_30"]}
-              </TableCell>
-              <TableCell align="right">
-                {r.buckets["31_60"]}
-              </TableCell>
-              <TableCell align="right">
-                {r.buckets["61_90"]}
-              </TableCell>
-              <TableCell align="right">
-                {r.buckets["90_plus"]}
-              </TableCell>
-
-              <TableCell align="right">
-                <b>{r.totalOwed}</b>
-              </TableCell>
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 980 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Subscriber</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Region</TableCell>
+              <TableCell>Neighborhood</TableCell>
+              <TableCell align="right">Prev Balance</TableCell>
+              <TableCell align="right">0â€“30</TableCell>
+              <TableCell align="right">31â€“60</TableCell>
+              <TableCell align="right">61â€“90</TableCell>
+              <TableCell align="right">90+</TableCell>
+              <TableCell align="right">Total</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+
+          <TableBody>
+            {data.rows.map((r) => (
+              <TableRow key={r.subscriber.id} hover>
+                <TableCell>{r.subscriber.fullName}</TableCell>
+                <TableCell>{r.subscriber.phone}</TableCell>
+                <TableCell>{r.region.name}</TableCell>
+                <TableCell>{r.neighborhood.name}</TableCell>
+                <TableCell align="right">
+                  {r.totalPreviousBalance ?? "—"}
+                </TableCell>
+
+                <TableCell align="right">
+                  {r.buckets["0_30"]}
+                </TableCell>
+                <TableCell align="right">
+                  {r.buckets["31_60"]}
+                </TableCell>
+                <TableCell align="right">
+                  {r.buckets["61_90"]}
+                </TableCell>
+                <TableCell align="right">
+                  {r.buckets["90_plus"]}
+                </TableCell>
+
+                <TableCell align="right">
+                  <b>{r.totalOwed}</b>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 }

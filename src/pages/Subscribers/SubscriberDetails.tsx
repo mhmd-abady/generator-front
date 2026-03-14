@@ -11,6 +11,7 @@ import {
   MenuItem,
   Box,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -226,12 +227,12 @@ const statement = useSubscriberStatement(subscriberId, {
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
+              flexDirection: { xs: "column", lg: "row" },
+              alignItems: { xs: "stretch", lg: "center" },
               gap: 2,
-              flexWrap: "wrap",
             }}
           >
-            <Box sx={{ minWidth: 200 }}>
+            <Box sx={{ minWidth: { lg: 200 } }}>
               <Stack spacing={0.5} alignItems="flex-start">
                 <Typography variant="h6" fontWeight={600}>
                   {subscriber?.fullName}
@@ -258,16 +259,16 @@ const statement = useSubscriberStatement(subscriberId, {
               </Stack>
             </Box>
 
-            <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
+            <Box sx={{ flex: 1, minWidth: 0, display: "flex", justifyContent: "center" }}>
               <Grid
                 container
                 spacing={1.5}
                 justifyContent="center"
                 alignItems="center"
-                sx={{ maxWidth: 800 }}
-                wrap="nowrap"
+                sx={{ width: "100%", maxWidth: 800 }}
+                wrap="wrap"
               >
-                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Total Invoiced"
                     value={stats.totalDue}
@@ -275,7 +276,7 @@ const statement = useSubscriberStatement(subscriberId, {
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Total Paid"
                     value={stats.totalPaid}
@@ -283,7 +284,7 @@ const statement = useSubscriberStatement(subscriberId, {
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Outstanding"
                     value={stats.outstanding}
@@ -291,7 +292,7 @@ const statement = useSubscriberStatement(subscriberId, {
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 3, sm: 3, md: 3, lg: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Invoices Count"
                     value={stats.invoicesCount}
@@ -323,7 +324,12 @@ const statement = useSubscriberStatement(subscriberId, {
       {tab === 0 && (
         <Stack spacing={2}>
           <Paper sx={{ p: 2 }}>
-            <Stack direction="row" spacing={2} flexWrap="wrap">
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              flexWrap="wrap"
+              alignItems={{ xs: "stretch", sm: "center" }}
+            >
               <TextField
                 type="date"
                 size="small"
@@ -331,6 +337,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               />
               <TextField
                 type="date"
@@ -339,11 +346,13 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               />
               <Button
                 variant="outlined"
                 href={getSubscriberStatementPdfUrl(subscriberId)}
                 target="_blank"
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               >
                 PDF
               </Button>
@@ -381,7 +390,12 @@ const statement = useSubscriberStatement(subscriberId, {
       {tab === 2 && (
         <Stack spacing={2}>
           <Paper sx={{ p: 2 }}>
-            <Stack direction="row" spacing={2} flexWrap="wrap">
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              flexWrap="wrap"
+              alignItems={{ xs: "stretch", sm: "center" }}
+            >
               <TextField
                 type="date"
                 size="small"
@@ -389,6 +403,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={paymentFrom}
                 onChange={(e) => setPaymentFrom(e.target.value)}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               />
               <TextField
                 type="date"
@@ -397,6 +412,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={paymentTo}
                 onChange={(e) => setPaymentTo(e.target.value)}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               />
             </Stack>
           </Paper>
@@ -412,14 +428,19 @@ const statement = useSubscriberStatement(subscriberId, {
       {tab === 3 && (
         <Stack spacing={2}>
           <Paper sx={{ p: 2 }}>
-            <Stack direction="row" spacing={2} flexWrap="wrap">
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              flexWrap="wrap"
+              alignItems={{ xs: "stretch", sm: "center" }}
+            >
               <TextField
                 select
                 size="small"
                 label="Status"
                 value={invoiceStatus}
                 onChange={(e) => setInvoiceStatus(e.target.value)}
-                sx={{ minWidth: 200 }}
+                sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
               >
                 <MenuItem value="">All Status</MenuItem>
                 <MenuItem value="ISSUED">ISSUED</MenuItem>
@@ -436,6 +457,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={invoiceFrom}
                 onChange={(e) => setInvoiceFrom(e.target.value)}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               />
               <TextField
                 type="date"
@@ -444,6 +466,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={invoiceTo}
                 onChange={(e) => setInvoiceTo(e.target.value)}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               />
             </Stack>
           </Paper>
@@ -457,26 +480,28 @@ const statement = useSubscriberStatement(subscriberId, {
 
       {tab === 4 && (
         <Paper sx={{ p: 2 }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Invoice #</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Received</TableCell>
-                <TableCell align="right">Remaining</TableCell>
-                <TableCell>Receiver</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell colSpan={7} align="center">
-                  No data yet — waiting for backend fields (date, receiver, history).
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <TableContainer sx={{ overflowX: "auto" }}>
+            <Table size="small" sx={{ minWidth: 720 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Invoice #</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell align="right">Amount</TableCell>
+                  <TableCell align="right">Received</TableCell>
+                  <TableCell align="right">Remaining</TableCell>
+                  <TableCell>Receiver</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={7} align="center">
+                    No data yet — waiting for backend fields (date, receiver, history).
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Paper>
       )}
       <SubscriberReassignMeterDialog

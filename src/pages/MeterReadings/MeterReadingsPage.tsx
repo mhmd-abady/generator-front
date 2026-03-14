@@ -91,18 +91,43 @@ export default function MeterReadingsPage() {
   return (
     <DashboardLayout>
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-          <Typography variant="h6" fontWeight={600}>
-            Meter Readings
-          </Typography>
+        <Stack spacing={2}>
+          <Stack
+            direction={{ xs: "column", lg: "row" }}
+            spacing={2}
+            alignItems={{ xs: "stretch", lg: "center" }}
+            justifyContent="space-between"
+          >
+            <Typography variant="h6" fontWeight={600}>
+              Meter Readings
+            </Typography>
 
-          <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1, mx: 2 }}>
+            <Button
+              variant="contained"
+              color={unlocked ? "error" : "success"}
+              onClick={() => {
+                if (unlocked) setUnlocked(false);
+                else setPasswordOpen(true);
+              }}
+              sx={{ width: { xs: "100%", sm: "auto" } }}
+            >
+              {unlocked ? "Lock 🔒" : "Unlock 🔓"}
+            </Button>
+          </Stack>
+
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            alignItems={{ xs: "stretch", sm: "center" }}
+            flexWrap="wrap"
+          >
             <TextField
               select
               size="small"
               label="Month"
               value={month}
               onChange={(e) => setMonth(Number(e.target.value))}
+              sx={{ width: { xs: "100%", sm: 140 } }}
             >
               {Array.from({ length: 12 }).map((_, i) => (
                 <MenuItem key={i + 1} value={i + 1}>
@@ -116,6 +141,7 @@ export default function MeterReadingsPage() {
               label="Year"
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
+              sx={{ width: { xs: "100%", sm: 120 } }}
             />
 
             <TextField
@@ -129,7 +155,7 @@ export default function MeterReadingsPage() {
                 setNeighborhoodId(undefined);
                 setBoxId(undefined);
               }}
-              sx={{ minWidth: 180 }}
+              sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
             >
               <MenuItem value="all">All Regions</MenuItem>
               {regionsQuery.data?.map((r) => (
@@ -159,7 +185,7 @@ export default function MeterReadingsPage() {
                 <TextField {...params} label="Neighborhood" />
               )}
               disabled={!regionId}
-              sx={{ minWidth: 200 }}
+              sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
             />
 
             <Autocomplete
@@ -175,7 +201,7 @@ export default function MeterReadingsPage() {
                 <TextField {...params} label="Box" />
               )}
               disabled={boxesLoading || (!regionId && !neighborhoodId)}
-              sx={{ minWidth: 180 }}
+              sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
             />
 
             <TextField
@@ -184,24 +210,18 @@ export default function MeterReadingsPage() {
               placeholder="Meter, subscriber, box, region"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              sx={{ minWidth: 260 }}
+              sx={{ minWidth: { sm: 260 }, width: { xs: "100%", sm: "auto" } }}
             />
 
             {isPeriodClosed && (
-              <Chip label="Period Closed" color="error" size="small" />
+              <Chip
+                label="Period Closed"
+                color="error"
+                size="small"
+                sx={{ alignSelf: { xs: "flex-start", sm: "center" } }}
+              />
             )}
           </Stack>
-
-          <Button
-            variant="contained"
-            color={unlocked ? "error" : "success"}
-            onClick={() => {
-              if (unlocked) setUnlocked(false);
-              else setPasswordOpen(true);
-            }}
-          >
-            {unlocked ? "Lock 🔒" : "Unlock 🔓"}
-          </Button>
         </Stack>
       </Paper>
 

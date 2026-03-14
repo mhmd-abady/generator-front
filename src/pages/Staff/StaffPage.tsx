@@ -48,12 +48,17 @@ export default function StaffPage() {
   return (
     <DashboardLayout>
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          alignItems={{ xs: "stretch", sm: "center" }}
+          justifyContent="space-between"
+          spacing={2}
+        >
           <Typography variant="h6" fontWeight={600}>
             Staff
           </Typography>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
             <Button
               variant="outlined"
               onClick={() => setChangePassOpen(true)}
@@ -84,14 +89,19 @@ export default function StaffPage() {
       ) : (
         <>
           <Paper sx={{ p: 2 }}>
-            <Stack direction="row" spacing={2} flexWrap="wrap">
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              flexWrap="wrap"
+              alignItems={{ xs: "stretch", sm: "center" }}
+            >
               <TextField
                 size="small"
                 label="Search"
                 placeholder="Username, email, role"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                sx={{ minWidth: 240 }}
+                sx={{ minWidth: { sm: 240 }, width: { xs: "100%", sm: "auto" } }}
               />
 
               <TextField
@@ -102,7 +112,7 @@ export default function StaffPage() {
                 onChange={(e) =>
                   setRoleFilter(e.target.value as UserRole | "all")
                 }
-                sx={{ minWidth: 160 }}
+                sx={{ minWidth: { sm: 160 }, width: { xs: "100%", sm: "auto" } }}
               >
                 <MenuItem value="all">All Roles</MenuItem>
                 {ROLE_OPTIONS.map((role) => (

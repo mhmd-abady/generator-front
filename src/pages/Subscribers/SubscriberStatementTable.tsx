@@ -2,6 +2,7 @@ import {
   Paper,
   Typography,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -27,7 +28,8 @@ export default function SubscriberStatementTable({
         Opening Balance (USD): {openingBalanceUsd.toLocaleString()}
       </Typography>
 
-      <Table size="small">
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 860 }}>
         <TableHead>
           <TableRow>
             <TableCell>Date</TableCell>
@@ -67,7 +69,8 @@ export default function SubscriberStatementTable({
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
 
       <Typography sx={{ mt: 2 }} fontWeight={600}>
         Final Balance: {finalUsd.toLocaleString()} USD /{" "}

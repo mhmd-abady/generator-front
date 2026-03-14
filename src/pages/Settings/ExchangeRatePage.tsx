@@ -4,6 +4,7 @@ import {
   Stack,
   Button,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -104,7 +105,8 @@ export default function ExchangeRatePage() {
           Set New Rate
         </Button>
 
-        <Table size="small">
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small" sx={{ minWidth: 640 }}>
           <TableHead>
             <TableRow>
               <TableCell>Rate</TableCell>
@@ -149,7 +151,8 @@ export default function ExchangeRatePage() {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+          </Table>
+        </TableContainer>
       </Stack>
 
       <Dialog open={open} onClose={() => setOpen(false)}>

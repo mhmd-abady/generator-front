@@ -2,6 +2,7 @@ import {
   Paper,
   Typography,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -81,7 +82,8 @@ export default function SubscriberMeters({
             {showActiveOnly ? "No active meters" : "No meters assigned"}
           </Typography>
         ) : (
-          <Table size="small">
+          <TableContainer sx={{ overflowX: "auto" }}>
+            <Table size="small" sx={{ minWidth: 760 }}>
             <TableHead>
               <TableRow>
                 <TableCell>Meter Number</TableCell>
@@ -127,7 +129,8 @@ export default function SubscriberMeters({
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+            </Table>
+          </TableContainer>
         )}
       </Paper>
 

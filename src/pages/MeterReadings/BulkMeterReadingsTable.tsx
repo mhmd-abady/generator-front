@@ -1,6 +1,7 @@
 ﻿import {
   Paper,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -43,7 +44,8 @@ export default function BulkMeterReadingsTable({
 
   return (
     <Paper sx={{ p: 2 }}>
-      <Table size="small">
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 760 }}>
         <TableHead>
           <TableRow>
             <TableCell>Meter</TableCell>
@@ -115,7 +117,8 @@ export default function BulkMeterReadingsTable({
             );
           })}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
 
       <Button
         variant="contained"

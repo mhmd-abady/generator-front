@@ -2,6 +2,7 @@ import {
   Paper,
   Typography,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -52,7 +53,8 @@ export default function DashboardRegions({
           No regional data available
         </Typography>
       ) : (
-        <Table size="small">
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small" sx={{ minWidth: 640 }}>
           <TableHead>
             <TableRow>
               <TableCell>Region</TableCell>
@@ -81,7 +83,8 @@ export default function DashboardRegions({
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+          </Table>
+        </TableContainer>
       )}
     </Paper>
   );

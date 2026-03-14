@@ -57,7 +57,7 @@ type PayContext = {
 export default function CollectorTasksPage() {
   const now = new Date();
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("lg"));
 
   const { user } = useAuth();
   const [month, setMonth] = useState(now.getMonth() + 1);
@@ -294,13 +294,13 @@ export default function CollectorTasksPage() {
                   </Button>
                 </Stack>
 
-                <Stack direction="row" spacing={1.5}>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                   <TextField
                     size="small"
                     label="Year"
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
-                    sx={{ minWidth: "50%" }}
+                    sx={{ width: { xs: "100%", sm: "50%" } }}
                     type="number"
                   />
                   <TextField
@@ -309,7 +309,7 @@ export default function CollectorTasksPage() {
                     label="Month"
                     value={month}
                     onChange={(e) => setMonth(Number(e.target.value))}
-                    sx={{ minWidth: "50%" }}
+                    sx={{ width: { xs: "100%", sm: "50%" } }}
                   >
                     {Array.from({ length: 12 }).map((_, i) => (
                       <MenuItem key={i + 1} value={i + 1}>
@@ -329,9 +329,10 @@ export default function CollectorTasksPage() {
           sx={{
             display: "grid",
             gridTemplateColumns: {
-              xs: "repeat(2, 1fr)",
-              sm: "repeat(3, 1fr)",
-              md: "repeat(6, 1fr)",
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+              lg: "repeat(6, 1fr)",
             },
             gap: 1.5,
           }}
@@ -488,8 +489,11 @@ export default function CollectorTasksPage() {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns:
-                  "repeat(2, minmax(0, 1fr))",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, minmax(0, 1fr))",
+                  md: "repeat(3, minmax(0, 1fr))",
+                },
                 gap: 2,
               }}
             >
@@ -574,7 +578,11 @@ export default function CollectorTasksPage() {
                 component={Link}
                 to="/reports"
                 variant="outlined"
-                sx={{ height: 40, width: "100%", gridColumn: "span 2" }}
+                sx={{
+                  height: 40,
+                  width: "100%",
+                  gridColumn: { xs: "auto", sm: "span 2", md: "span 3" },
+                }}
               >
                 View Reports
               </Button>
@@ -750,7 +758,7 @@ function NeighborhoodCard({
   onFixes: (invoiceId: number) => void;
 }) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isCompact = useMediaQuery(theme.breakpoints.down("md"));
   const { neighborhoodName, subscribers, totalToCollect, totalPreviousBalance } =
     neighborhood;
 
@@ -788,7 +796,7 @@ function NeighborhoodCard({
         </Stack>
       </Stack>
 
-      {isMobile ? (
+      {isCompact ? (
         <Stack spacing={1.5}>
           {subscribers.map((s) => (
             <SubscriberMobileCard

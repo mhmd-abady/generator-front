@@ -8,6 +8,8 @@ import {
   Box,
   IconButton,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import {
   Dashboard,
@@ -39,6 +41,8 @@ export default function Sidebar({
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, logout } = useAuth();
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const items = [
     { label: "Dashboard", icon: <Dashboard />, path: "/" },
@@ -58,8 +62,10 @@ export default function Sidebar({
 
   return (
     <Drawer
-      variant="persistent"
+      variant={isLargeScreen ? "persistent" : "temporary"}
       open={open}
+      onClose={onClose}
+      ModalProps={{ keepMounted: true }}
       sx={{
         width: drawerWidth,
         flexShrink: 0,
@@ -82,7 +88,12 @@ export default function Sidebar({
           <ListItemButton
             key={item.path}
             selected={location.pathname.startsWith(item.path)}
-            onClick={() => navigate(item.path)}
+            onClick={() => {
+              navigate(item.path);
+              if (!isLargeScreen) {
+                onClose();
+              }
+            }}
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
             <ListItemText primary={item.label} />
@@ -99,6 +110,9 @@ export default function Sidebar({
               logout();
             }
             navigate("/login");
+            if (!isLargeScreen) {
+              onClose();
+            }
           }}
         >
           <ListItemIcon>

@@ -96,7 +96,12 @@ export default function ReportsPage() {
 
       {/* FILTERS */}
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" spacing={2} flexWrap="wrap">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          flexWrap="wrap"
+          alignItems={{ xs: "stretch", sm: "center" }}
+        >
           {useRange ? (
             <>
               <TextField
@@ -106,7 +111,7 @@ export default function ReportsPage() {
                 value={from ?? defaultFrom}
                 onChange={(e) => setFrom(e.target.value)}
                 InputLabelProps={{ shrink: true }}
-                sx={{ minWidth: 150 }}
+                sx={{ minWidth: { sm: 150 }, width: { xs: "100%", sm: "auto" } }}
               />
               <TextField
                 size="small"
@@ -115,7 +120,7 @@ export default function ReportsPage() {
                 value={to ?? defaultTo}
                 onChange={(e) => setTo(e.target.value)}
                 InputLabelProps={{ shrink: true }}
-                sx={{ minWidth: 150 }}
+                sx={{ minWidth: { sm: 150 }, width: { xs: "100%", sm: "auto" } }}
               />
             </>
           ) : (
@@ -134,7 +139,7 @@ export default function ReportsPage() {
                       setMonth(undefined); // Auto-select All Months
                     }
                   }}
-                sx={{ minWidth: 140 }}
+                sx={{ minWidth: { sm: 140 }, width: { xs: "100%", sm: "auto" } }}
               >
                 <MenuItem value="">All Years</MenuItem>
                 {Array.from({ length: 5 }).map((_, i) => {
@@ -161,7 +166,7 @@ export default function ReportsPage() {
                       setYear(undefined); // Auto-select All Years
                     }
                   }}
-                sx={{ minWidth: 140 }}
+                sx={{ minWidth: { sm: 140 }, width: { xs: "100%", sm: "auto" } }}
               >
                 <MenuItem value="">All Months</MenuItem>
                 {Array.from({ length: 12 }).map((_, i) => (
@@ -183,7 +188,7 @@ export default function ReportsPage() {
               setRegionId(v ? Number(v) : undefined);
               setNeighborhoodId(undefined);
             }}
-            sx={{ minWidth: 180 }}
+            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
           >
             <MenuItem value="">All Regions</MenuItem>
             {regionsQuery.data?.map((r) => (
@@ -212,7 +217,7 @@ export default function ReportsPage() {
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId}
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
           />
 
           <TextField
@@ -225,7 +230,7 @@ export default function ReportsPage() {
                 e.target.value ? Number(e.target.value) : undefined
               )
             }
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
           >
             <MenuItem value="">All Collectors</MenuItem>
            {/* {collectorsQuery.data?.map((u) => (
@@ -263,7 +268,7 @@ export default function ReportsPage() {
 
       {/* TABS */}
       <Paper sx={{ p: 2 }}>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)}>
+        <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" scrollButtons="auto">
           <Tab label="Aging" />
           <Tab label="Payments" />
           <Tab label="Summary" />

@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -69,7 +70,8 @@ export default function SubscriberPaymentsTable({
           No payments yet
         </Typography>
       ) : (
-        <Table size="small">
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small" sx={{ minWidth: 900 }}>
           <TableHead>
             <TableRow>
               <TableCell>Date</TableCell>
@@ -161,7 +163,8 @@ export default function SubscriberPaymentsTable({
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+          </Table>
+        </TableContainer>
       )}
     </Paper>
   );

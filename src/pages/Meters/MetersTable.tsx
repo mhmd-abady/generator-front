@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -30,50 +31,52 @@ export default function MetersTable({
     : null;
 
   const table = (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell>Number</TableCell>
-          <TableCell>Subscriber</TableCell>
-          <TableCell>Phone</TableCell>
-          <TableCell>Box</TableCell>
-          <TableCell>Ampere</TableCell>
-          <TableCell align="center">Status</TableCell>
-          {onUpdateStatus && <TableCell align="right">Actions</TableCell>}
-        </TableRow>
-      </TableHead>
-
-      <TableBody>
-        {rows.map((m) => (
-          <TableRow key={m.id}>
-            <TableCell>{m.number}</TableCell>
-            <TableCell>{m.subscriber?.fullName}</TableCell>
-            <TableCell>{m.subscriber?.phone}</TableCell>
-            <TableCell>{m.box?.code}</TableCell>
-            <TableCell>{m.ampere ?? "-"}</TableCell>
-            <TableCell align="center">
-              <Chip
-                size="medium"
-                label={m.status ?? "UNKNOWN"}
-                color={meterStatusColor(m.status)}
-                sx={meterStatusChipSx}
-              />
-            </TableCell>
-            {onUpdateStatus && (
-              <TableCell align="right">
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => setSelectedMeterId(m.id)}
-                >
-                  Change Status
-                </Button>
-              </TableCell>
-            )}
+    <TableContainer sx={{ overflowX: "auto" }}>
+      <Table size="small" sx={{ minWidth: 760 }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>Number</TableCell>
+            <TableCell>Subscriber</TableCell>
+            <TableCell>Phone</TableCell>
+            <TableCell>Box</TableCell>
+            <TableCell>Ampere</TableCell>
+            <TableCell align="center">Status</TableCell>
+            {onUpdateStatus && <TableCell align="right">Actions</TableCell>}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+
+        <TableBody>
+          {rows.map((m) => (
+            <TableRow key={m.id}>
+              <TableCell>{m.number}</TableCell>
+              <TableCell>{m.subscriber?.fullName}</TableCell>
+              <TableCell>{m.subscriber?.phone}</TableCell>
+              <TableCell>{m.box?.code}</TableCell>
+              <TableCell>{m.ampere ?? "-"}</TableCell>
+              <TableCell align="center">
+                <Chip
+                  size="medium"
+                  label={m.status ?? "UNKNOWN"}
+                  color={meterStatusColor(m.status)}
+                  sx={meterStatusChipSx}
+                />
+              </TableCell>
+              {onUpdateStatus && (
+                <TableCell align="right">
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => setSelectedMeterId(m.id)}
+                  >
+                    Change Status
+                  </Button>
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 
   if (disablePaper) return table;

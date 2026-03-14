@@ -63,7 +63,12 @@ export default function MetersPage() {
   return (
     <DashboardLayout>
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" justifyContent="space-between">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems={{ xs: "stretch", sm: "center" }}
+          spacing={2}
+        >
           <Typography variant="h6" fontWeight={600}>
             Meters
           </Typography>
@@ -73,12 +78,18 @@ export default function MetersPage() {
           </Button>
         </Stack>
 
-        <Stack direction="row" spacing={2} mt={2} flexWrap="wrap">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          mt={2}
+          flexWrap="wrap"
+          alignItems={{ xs: "stretch", sm: "center" }}
+        >
           <TextField
             select
             size="small"
             label="Region"
-            sx={{ minWidth: 180 }}
+            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
             value={regionId ?? "all"}
             onChange={(e) => {
               const v = e.target.value;
@@ -112,7 +123,7 @@ export default function MetersPage() {
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId || hoodsLoading}
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
           />
 
           <Autocomplete
@@ -128,7 +139,7 @@ export default function MetersPage() {
               <TextField {...params} label="Box" />
             )}
             disabled={boxesLoading || (!regionId && !neighborhoodId)}
-            sx={{ minWidth: 180 }}
+            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
           />
 
           <TextField
@@ -144,7 +155,7 @@ export default function MetersPage() {
                 </InputAdornment>
               ),
             }}
-            sx={{ minWidth: 260 }}
+            sx={{ minWidth: { sm: 260 }, width: { xs: "100%", sm: "auto" } }}
           />
         </Stack>
       </Paper>

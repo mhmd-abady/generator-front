@@ -111,13 +111,13 @@ export default function PaymentsPage() {
               </InputAdornment>
             ),
           }}
-          sx={{ minWidth: 280 }}
+          sx={{ minWidth: { sm: 280 }, width: { xs: "100%", sm: "auto" } }}
         />
         <TextField
           select
           size="small"
           label="Region"
-          sx={{ minWidth: 160 }}
+          sx={{ minWidth: { sm: 160 }, width: { xs: "100%", sm: "auto" } }}
           value={regionId ?? "all"}
           onChange={(e) => {
             const v = e.target.value;
@@ -151,7 +151,7 @@ export default function PaymentsPage() {
             <TextField {...params} label="Neighborhood" />
           )}
           disabled={!regionId || hoodsLoading}
-          sx={{ minWidth: 200 }}
+          sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
         />
         <TextField
           type="date"
@@ -160,6 +160,7 @@ export default function PaymentsPage() {
           InputLabelProps={{ shrink: true }}
           value={from}
           onChange={(e) => setFrom(e.target.value)}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
         />
         <TextField
           type="date"
@@ -168,6 +169,7 @@ export default function PaymentsPage() {
           InputLabelProps={{ shrink: true }}
           value={to}
           onChange={(e) => setTo(e.target.value)}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
         />
       </Stack>
 

@@ -1,5 +1,6 @@
 import {
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -48,7 +49,8 @@ export default function MeterReadingsTable({
 }: Props) {
   return (
     <Paper sx={{ p: 2 }}>
-      <Table size="small">
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 980 }}>
         <TableHead>
           <TableRow>
             <TableCell>Meter</TableCell>
@@ -77,7 +79,8 @@ export default function MeterReadingsTable({
             />
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 }

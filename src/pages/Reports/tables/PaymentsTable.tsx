@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -21,7 +22,12 @@ export default function PaymentsTable({
   return (
     <Paper sx={{ p: 2 }}>
       {/* SUMMARY */}
-      <Stack direction="row" spacing={3} mb={2}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        flexWrap="wrap"
+        mb={2}
+      >
         <Typography>
           Payments Count: <b>{data.count}</b>
         </Typography>
@@ -31,48 +37,50 @@ export default function PaymentsTable({
       </Stack>
 
       {/* TABLE */}
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Subscriber</TableCell>
-            <TableCell>Phone</TableCell>
-            <TableCell align="center">Receiver</TableCell>
-            <TableCell align="right">Amount</TableCell>
-            <TableCell>Paid At</TableCell>
-            <TableCell>Region</TableCell>
-            <TableCell>Neighborhood</TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {data.rows.map((p) => (
-            <TableRow key={p.id} hover>
-              <TableCell>{p.id}</TableCell>
-              <TableCell>{p.subscriber.fullName}</TableCell>
-              <TableCell>{p.subscriber.phone}</TableCell>
-              <TableCell align="center">
-                <Chip
-                  size="small"
-                  label={p.receiver?.username ?? "-"}
-                  color={receiverRoleColor(undefined)}
-                  sx={receiverChipSx}
-                />
-              </TableCell>
-              <TableCell align="right">{p.amount}</TableCell>
-              <TableCell>
-                {formatDisplayDate(p.paidAt)}
-              </TableCell>
-              <TableCell>
-                {p.invoice?.meter.box.neighborhood.region.name ?? "-"}
-              </TableCell>
-              <TableCell>
-                {p.invoice?.meter.box.neighborhood.name ?? "-"}
-              </TableCell>
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 900 }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Subscriber</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell align="center">Receiver</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell>Paid At</TableCell>
+              <TableCell>Region</TableCell>
+              <TableCell>Neighborhood</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+
+          <TableBody>
+            {data.rows.map((p) => (
+              <TableRow key={p.id} hover>
+                <TableCell>{p.id}</TableCell>
+                <TableCell>{p.subscriber.fullName}</TableCell>
+                <TableCell>{p.subscriber.phone}</TableCell>
+                <TableCell align="center">
+                  <Chip
+                    size="small"
+                    label={p.receiver?.username ?? "-"}
+                    color={receiverRoleColor(undefined)}
+                    sx={receiverChipSx}
+                  />
+                </TableCell>
+                <TableCell align="right">{p.amount}</TableCell>
+                <TableCell>
+                  {formatDisplayDate(p.paidAt)}
+                </TableCell>
+                <TableCell>
+                  {p.invoice?.meter.box.neighborhood.region.name ?? "-"}
+                </TableCell>
+                <TableCell>
+                  {p.invoice?.meter.box.neighborhood.name ?? "-"}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 }

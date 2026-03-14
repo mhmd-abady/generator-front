@@ -62,7 +62,11 @@ export default function SubscriberStatementPage() {
       </Paper>
 
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" spacing={2}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          alignItems={{ xs: "stretch", sm: "center" }}
+        >
           <TextField
             type="date"
             size="small"
@@ -70,6 +74,7 @@ export default function SubscriberStatementPage() {
             InputLabelProps={{ shrink: true }}
             value={from}
             onChange={(e) => setFrom(e.target.value)}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
           />
           <TextField
             type="date"
@@ -78,11 +83,13 @@ export default function SubscriberStatementPage() {
             InputLabelProps={{ shrink: true }}
             value={to}
             onChange={(e) => setTo(e.target.value)}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
           />
           <Button
             variant="outlined"
             href={getSubscriberStatementPdfUrl(subscriberId)}
             target="_blank"
+            sx={{ width: { xs: "100%", sm: "auto" } }}
           >
             PDF
           </Button>

@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -51,7 +52,8 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
 
   return (
     <Paper sx={{ p: 2 }}>
-      <Table size="small">
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table size="small" sx={{ minWidth: 1040 }}>
         <TableHead>
           <TableRow>
             <TableCell>ID</TableCell>
@@ -132,7 +134,8 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
             );
           })}
         </TableBody>
-      </Table>
+        </Table>
+      </TableContainer>
 
       {/* View dialog */}
       {viewId !== null && (

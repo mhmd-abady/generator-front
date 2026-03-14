@@ -9,6 +9,7 @@ import {
   Divider,
   IconButton,
   Table,
+  TableContainer,
   TableHead,
   TableRow,
   TableCell,
@@ -153,9 +154,9 @@ export default function LocationsPage() {
 
   return (
     <DashboardLayout>
-      <Stack direction="row" spacing={2}>
+      <Stack direction={{ xs: "column", lg: "row" }} spacing={2}>
         {/* ================= REGIONS ================= */}
-        <Paper sx={{ width: 280, p: 2 }}>
+        <Paper sx={{ width: { xs: "100%", lg: 280 }, p: 2 }}>
           <Stack direction="row" justifyContent="space-between">
             <Typography fontWeight={600}>Regions</Typography>
             <IconButton
@@ -217,8 +218,13 @@ export default function LocationsPage() {
         </Paper>
 
         {/* ================= NEIGHBORHOODS ================= */}
-        <Paper sx={{ flex: 1, p: 2 }}>
-          <Stack direction="row" justifyContent="space-between">
+        <Paper sx={{ flex: 1, width: "100%", p: 2 }}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent="space-between"
+            alignItems={{ xs: "stretch", sm: "center" }}
+            spacing={2}
+          >
             <Typography fontWeight={600}>
               Neighborhoods {selectedRegion && `- ${selectedRegion.name}`}
             </Typography>
@@ -243,66 +249,68 @@ export default function LocationsPage() {
               Select a region to manage neighborhoods
             </Typography>
           ) : (
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {neighborhoods
-                  .filter((n) => n.regionId === selectedRegion.id)
-                  .map((n) => (
-                    <TableRow
-                      key={n.id}
-                      hover
-                      selected={n.id === selectedNeighborhood?.id}
-                      onClick={() => {
-                        setSelectedNeighborhood(n);
-                        setSelectedBox(null);
-                        resetBoxDialog();
-                      }}
-                    >
-                      <TableCell>{n.name}</TableCell>
-                      <TableCell align="right">
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditing(n);
-                            setName(n.name);
-                            setOpen("hood");
-                          }}
-                        >
-                          <Edit fontSize="small" />
-                        </IconButton>
+            <TableContainer sx={{ overflowX: "auto" }}>
+              <Table size="small" sx={{ minWidth: 420 }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align="right">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {neighborhoods
+                    .filter((n) => n.regionId === selectedRegion.id)
+                    .map((n) => (
+                      <TableRow
+                        key={n.id}
+                        hover
+                        selected={n.id === selectedNeighborhood?.id}
+                        onClick={() => {
+                          setSelectedNeighborhood(n);
+                          setSelectedBox(null);
+                          resetBoxDialog();
+                        }}
+                      >
+                        <TableCell>{n.name}</TableCell>
+                        <TableCell align="right">
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditing(n);
+                              setName(n.name);
+                              setOpen("hood");
+                            }}
+                          >
+                            <Edit fontSize="small" />
+                          </IconButton>
 
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteNeighborhood.mutate(n.id);
-                            setSelectedNeighborhood((prev) =>
-                              prev?.id === n.id ? null : prev
-                            );
-                            setSelectedBox(null);
-                            resetBoxDialog();
-                          }}
-                        >
-                          <Delete fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteNeighborhood.mutate(n.id);
+                              setSelectedNeighborhood((prev) =>
+                                prev?.id === n.id ? null : prev
+                              );
+                              setSelectedBox(null);
+                              resetBoxDialog();
+                            }}
+                          >
+                            <Delete fontSize="small" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
         </Paper>
 
         {/* ================= BOXES ================= */}
-        <Paper sx={{ width: 320, p: 2 }}>
+        <Paper sx={{ width: { xs: "100%", lg: 320 }, p: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography fontWeight={600}>
               Boxes {selectedNeighborhood && `- ${selectedNeighborhood.name}`}
@@ -374,9 +382,10 @@ export default function LocationsPage() {
       {/* =============== METERS TABLE (filtered by selected region/hood/box) =============== */}
       <Paper sx={{ mt: 2, p: 2 }}>
         <Stack
-          direction="row"
+          direction={{ xs: "column", md: "row" }}
           justifyContent="space-between"
-          alignItems="center"
+          alignItems={{ xs: "stretch", md: "center" }}
+          spacing={2}
           mb={1}
         >
           <Typography fontWeight={600}>
@@ -389,7 +398,11 @@ export default function LocationsPage() {
               ? ` - Region ${selectedRegion.name}`
               : ""}
           </Typography>
-          <Stack direction="row" spacing={1} alignItems="start">
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1}
+            alignItems={{ xs: "stretch", sm: "start" }}
+          >
             {metersLoading && <CircularProgress size={20} />}
             <TextField
               size="small"
@@ -404,13 +417,14 @@ export default function LocationsPage() {
                   </InputAdornment>
                 ),
               }}
-              sx={{ minWidth: 280 }}
+              sx={{ minWidth: { sm: 280 }, width: { xs: "100%", sm: "auto" } }}
             />
             <Button
               variant="contained"
               size="small"
               startIcon={<Add />}
               onClick={() => setMeterDialogOpen(true)}
+              sx={{ width: { xs: "100%", sm: "auto" } }}
             >
               Add Meter
             </Button>

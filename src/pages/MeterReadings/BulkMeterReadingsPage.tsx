@@ -111,13 +111,19 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
 
       {/* Filters */}
       <Paper sx={{ p: 2 }}>
-        <Stack direction="row" spacing={2}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          flexWrap="wrap"
+          alignItems={{ xs: "stretch", sm: "center" }}
+        >
           <TextField
             select
             size="small"
             label="Month"
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
+            sx={{ width: { xs: "100%", sm: 140 } }}
           >
             {Array.from({ length: 12 }).map((_, i) => (
               <MenuItem key={i + 1} value={i + 1}>
@@ -131,6 +137,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
             label="Year"
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
+            sx={{ width: { xs: "100%", sm: 120 } }}
           />
 
           <TextField
@@ -143,7 +150,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
               setRegionId(v === "all" ? undefined : Number(v));
               setNeighborhoodId(undefined);
             }}
-            sx={{ minWidth: 180 }}
+            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
           >
             <MenuItem value="all">All Regions</MenuItem>
             {regionsQuery.data?.map((r) => (
@@ -172,7 +179,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId}
-            sx={{ minWidth: 200 }}
+            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
           />
         </Stack>
       </Paper>
