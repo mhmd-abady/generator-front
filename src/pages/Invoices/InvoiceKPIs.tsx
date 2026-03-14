@@ -81,7 +81,7 @@ export default function InvoiceKPIs({
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid item xs={6} sm={6} md={3}>
         <KPIBox
           label="Total Invoiced"
           value={totalInvoiced}
@@ -89,7 +89,7 @@ export default function InvoiceKPIs({
           icon={ReceiptIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid item xs={6} sm={6} md={3}>
         <KPIBox
           label="Total Paid"
           value={totalPaid}
@@ -97,7 +97,7 @@ export default function InvoiceKPIs({
           icon={CheckCircleIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid item xs={6} sm={6} md={3}>
         <KPIBox
           label="Total Outstanding"
           value={totalOutstanding}
@@ -105,7 +105,7 @@ export default function InvoiceKPIs({
           icon={PendingActionsIcon}
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={3}>
+      <Grid item xs={6} sm={6} md={3}>
         <KPIBox
           label="Prev Balance"
           value={totalPrevBalance}

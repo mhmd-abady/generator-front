@@ -3,6 +3,7 @@ import {
   Typography,
   Skeleton,
   Stack,
+  Box,
   TextField,
   InputAdornment,
   Autocomplete,
@@ -92,12 +93,16 @@ export default function PaymentsPage() {
         <PaymentKPIs payments={data ?? []} loading={isLoading} />
       )}
 
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        alignItems={{ xs: "stretch", sm: "center" }}
-        flexWrap="wrap"
-        sx={{ mt: 2 }}
+      <Box
+        sx={{
+          mt: 2,
+          display: "grid",
+          gap: 1.5,
+          gridTemplateColumns: {
+            xs: "repeat(2, minmax(0, 1fr))",
+            md: "repeat(3, minmax(0, 1fr))",
+          },
+        }}
       >
         <TextField
           size="small"
@@ -111,13 +116,13 @@ export default function PaymentsPage() {
               </InputAdornment>
             ),
           }}
-          sx={{ minWidth: { sm: 280 }, width: { xs: "100%", sm: "auto" } }}
+          sx={{ width: "100%", gridColumn: { xs: "span 2", md: "span 1" } }}
         />
         <TextField
           select
           size="small"
           label="Region"
-          sx={{ minWidth: { sm: 160 }, width: { xs: "100%", sm: "auto" } }}
+          sx={{ width: "100%" }}
           value={regionId ?? "all"}
           onChange={(e) => {
             const v = e.target.value;
@@ -151,7 +156,7 @@ export default function PaymentsPage() {
             <TextField {...params} label="Neighborhood" />
           )}
           disabled={!regionId || hoodsLoading}
-          sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
+          sx={{ width: "100%" }}
         />
         <TextField
           type="date"
@@ -160,7 +165,7 @@ export default function PaymentsPage() {
           InputLabelProps={{ shrink: true }}
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          sx={{ width: { xs: "100%", sm: "auto" } }}
+          sx={{ width: "100%" }}
         />
         <TextField
           type="date"
@@ -169,9 +174,9 @@ export default function PaymentsPage() {
           InputLabelProps={{ shrink: true }}
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          sx={{ width: { xs: "100%", sm: "auto" } }}
+          sx={{ width: "100%" }}
         />
-      </Stack>
+      </Box>
 
       {isLoading ? (
         <Skeleton height={300} />

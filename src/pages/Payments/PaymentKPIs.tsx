@@ -104,7 +104,7 @@ export default function PaymentKPIs({
         display: "grid",
         gap: 2,
         gridTemplateColumns: {
-          xs: "1fr",
+          xs: "repeat(2, 1fr)",
           sm: "repeat(2, 1fr)",
           md: "repeat(3, 1fr)",
           lg: "repeat(5, 1fr)",

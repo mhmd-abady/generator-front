@@ -120,7 +120,7 @@ export default function SummaryCards({ data }: { data: SummaryReportResponse }) 
   return (
     <Grid container columns={12} spacing={1.5}>
       {stats.map((stat, idx) => (
-        <Grid key={idx} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+        <Grid key={idx} size={{ xs: 6, sm: 6, md: 4, lg: 3 }}>
           <Card stat={stat} />
         </Grid>
       ))}

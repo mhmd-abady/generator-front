@@ -1,6 +1,7 @@
 import {
   Paper,
   Stack,
+  Box,
   Typography,
   TextField,
   MenuItem,
@@ -94,12 +95,17 @@ export default function InvoicesPage() {
           <Typography variant="h6" fontWeight={600}>
             Invoices
           </Typography>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            flexWrap="wrap"
-            alignItems={{ xs: "stretch", sm: "center" }}
-            sx={{ flex: 1 }}
+          <Box
+            sx={{
+              flex: 1,
+              display: "grid",
+              gap: 1.5,
+              gridTemplateColumns: {
+                xs: "repeat(2, minmax(0, 1fr))",
+                md: "repeat(3, minmax(0, 1fr))",
+                lg: "repeat(4, minmax(0, 1fr))",
+              },
+            }}
           >
           <TextField
             select
@@ -109,7 +115,7 @@ export default function InvoicesPage() {
             onChange={(e) =>
               setYear(e.target.value ? Number(e.target.value) : undefined)
             }
-            sx={{ minWidth: { sm: 140 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           >
             <MenuItem value="">All Years</MenuItem>
             {Array.from({ length: 5 }).map((_, i) => {
@@ -130,7 +136,7 @@ export default function InvoicesPage() {
             onChange={(e) =>
               setMonth(e.target.value ? Number(e.target.value) : undefined)
             }
-            sx={{ minWidth: { sm: 140 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           >
             <MenuItem value="">All Months</MenuItem>
             {Array.from({ length: 12 }).map((_, i) => (
@@ -146,7 +152,7 @@ export default function InvoicesPage() {
             label="Status"
             value={status ?? ""}
             onChange={(e) => setStatus(e.target.value || undefined)}
-            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           >
             <MenuItem value="">All Status</MenuItem>
             {statusOptions.map((s) => (
@@ -167,7 +173,7 @@ export default function InvoicesPage() {
               setNeighborhoodId(undefined);
               setBoxId(undefined);
             }}
-            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           >
             <MenuItem value="">All Regions</MenuItem>
             {regionsQuery.data?.map((r) => (
@@ -197,7 +203,7 @@ export default function InvoicesPage() {
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId}
-            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           />
 
           <Autocomplete
@@ -215,7 +221,7 @@ export default function InvoicesPage() {
               <TextField {...params} label="Box" />
             )}
             disabled={boxesLoading || (!regionId && !neighborhoodId)}
-            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           />
           <FormControlLabel
             control={
@@ -225,9 +231,9 @@ export default function InvoicesPage() {
               />
             }
             label="Only unpaid"
-            sx={{ ml: { sm: 1 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ ml: { sm: 1 }, width: "100%" }}
           />
-          </Stack>
+          </Box>
         </Stack>
       </Paper>
 
@@ -248,7 +254,7 @@ export default function InvoicesPage() {
               placeholder="Subscriber name or invoice ID"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              sx={{ minWidth: { sm: 280 }, width: { xs: "100%", sm: "auto" } }}
+              sx={{ width: { xs: "100%", sm: 360 } }}
             />
           </Stack>
           <InvoicesTable rows={filteredInvoices} />

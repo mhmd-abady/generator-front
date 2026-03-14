@@ -1,6 +1,7 @@
 import {
   Paper,
   Stack,
+  Box,
   Typography,
   TextField,
   MenuItem,
@@ -96,11 +97,16 @@ export default function ReportsPage() {
 
       {/* FILTERS */}
       <Paper sx={{ p: 2 }}>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
-          flexWrap="wrap"
-          alignItems={{ xs: "stretch", sm: "center" }}
+        <Box
+          sx={{
+            display: "grid",
+            gap: 1.5,
+            gridTemplateColumns: {
+              xs: "repeat(2, minmax(0, 1fr))",
+              md: "repeat(3, minmax(0, 1fr))",
+              lg: "repeat(4, minmax(0, 1fr))",
+            },
+          }}
         >
           {useRange ? (
             <>
@@ -111,7 +117,7 @@ export default function ReportsPage() {
                 value={from ?? defaultFrom}
                 onChange={(e) => setFrom(e.target.value)}
                 InputLabelProps={{ shrink: true }}
-                sx={{ minWidth: { sm: 150 }, width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
               <TextField
                 size="small"
@@ -120,7 +126,7 @@ export default function ReportsPage() {
                 value={to ?? defaultTo}
                 onChange={(e) => setTo(e.target.value)}
                 InputLabelProps={{ shrink: true }}
-                sx={{ minWidth: { sm: 150 }, width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
             </>
           ) : (
@@ -139,7 +145,7 @@ export default function ReportsPage() {
                       setMonth(undefined); // Auto-select All Months
                     }
                   }}
-                sx={{ minWidth: { sm: 140 }, width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               >
                 <MenuItem value="">All Years</MenuItem>
                 {Array.from({ length: 5 }).map((_, i) => {
@@ -166,7 +172,7 @@ export default function ReportsPage() {
                       setYear(undefined); // Auto-select All Years
                     }
                   }}
-                sx={{ minWidth: { sm: 140 }, width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               >
                 <MenuItem value="">All Months</MenuItem>
                 {Array.from({ length: 12 }).map((_, i) => (
@@ -188,7 +194,7 @@ export default function ReportsPage() {
               setRegionId(v ? Number(v) : undefined);
               setNeighborhoodId(undefined);
             }}
-            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           >
             <MenuItem value="">All Regions</MenuItem>
             {regionsQuery.data?.map((r) => (
@@ -217,7 +223,7 @@ export default function ReportsPage() {
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId}
-            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           />
 
           <TextField
@@ -230,7 +236,7 @@ export default function ReportsPage() {
                 e.target.value ? Number(e.target.value) : undefined
               )
             }
-            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: "100%" }}
           >
             <MenuItem value="">All Collectors</MenuItem>
            {/* {collectorsQuery.data?.map((u) => (
@@ -260,10 +266,11 @@ export default function ReportsPage() {
                 return next;
               });
             }}
+            sx={{ gridColumn: { xs: "span 2", md: "span 1" } }}
           >
             {useRange ? "Specific" : "From / To"}
           </Button>
-        </Stack>
+        </Box>
       </Paper>
 
       {/* TABS */}

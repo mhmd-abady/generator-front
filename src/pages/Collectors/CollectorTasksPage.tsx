@@ -294,13 +294,13 @@ export default function CollectorTasksPage() {
                   </Button>
                 </Stack>
 
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                <Stack direction="row" spacing={1.5}>
                   <TextField
                     size="small"
                     label="Year"
                     value={year}
                     onChange={(e) => setYear(Number(e.target.value))}
-                    sx={{ width: { xs: "100%", sm: "50%" } }}
+                    sx={{ width: "50%" }}
                     type="number"
                   />
                   <TextField
@@ -309,7 +309,7 @@ export default function CollectorTasksPage() {
                     label="Month"
                     value={month}
                     onChange={(e) => setMonth(Number(e.target.value))}
-                    sx={{ width: { xs: "100%", sm: "50%" } }}
+                    sx={{ width: "50%" }}
                   >
                     {Array.from({ length: 12 }).map((_, i) => (
                       <MenuItem key={i + 1} value={i + 1}>
@@ -329,7 +329,7 @@ export default function CollectorTasksPage() {
           sx={{
             display: "grid",
             gridTemplateColumns: {
-              xs: "1fr",
+              xs: "repeat(2, 1fr)",
               sm: "repeat(2, 1fr)",
               md: "repeat(3, 1fr)",
               lg: "repeat(6, 1fr)",
@@ -490,7 +490,7 @@ export default function CollectorTasksPage() {
               sx={{
                 display: "grid",
                 gridTemplateColumns: {
-                  xs: "1fr",
+                  xs: "repeat(2, minmax(0, 1fr))",
                   sm: "repeat(2, minmax(0, 1fr))",
                   md: "repeat(3, minmax(0, 1fr))",
                 },

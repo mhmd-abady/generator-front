@@ -268,7 +268,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 sx={{ width: "100%", maxWidth: 800 }}
                 wrap="wrap"
               >
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Total Invoiced"
                     value={stats.totalDue}
@@ -276,7 +276,7 @@ const statement = useSubscriberStatement(subscriberId, {
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Total Paid"
                     value={stats.totalPaid}
@@ -284,7 +284,7 @@ const statement = useSubscriberStatement(subscriberId, {
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Outstanding"
                     value={stats.outstanding}
@@ -292,7 +292,7 @@ const statement = useSubscriberStatement(subscriberId, {
                     loading={statsLoading}
                   />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
                   <StatCard
                     label="Invoices Count"
                     value={stats.invoicesCount}
@@ -324,11 +324,15 @@ const statement = useSubscriberStatement(subscriberId, {
       {tab === 0 && (
         <Stack spacing={2}>
           <Paper sx={{ p: 2 }}>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              flexWrap="wrap"
-              alignItems={{ xs: "stretch", sm: "center" }}
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1.5,
+                gridTemplateColumns: {
+                  xs: "repeat(2, minmax(0, 1fr))",
+                  sm: "repeat(3, minmax(0, 1fr))",
+                },
+              }}
             >
               <TextField
                 type="date"
@@ -337,7 +341,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                sx={{ width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
               <TextField
                 type="date"
@@ -346,17 +350,17 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                sx={{ width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
               <Button
                 variant="outlined"
                 href={getSubscriberStatementPdfUrl(subscriberId)}
                 target="_blank"
-                sx={{ width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               >
                 PDF
               </Button>
-            </Stack>
+            </Box>
           </Paper>
 
           {statement.isLoading ? (
@@ -390,11 +394,15 @@ const statement = useSubscriberStatement(subscriberId, {
       {tab === 2 && (
         <Stack spacing={2}>
           <Paper sx={{ p: 2 }}>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              flexWrap="wrap"
-              alignItems={{ xs: "stretch", sm: "center" }}
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1.5,
+                gridTemplateColumns: {
+                  xs: "repeat(2, minmax(0, 1fr))",
+                  sm: "repeat(3, minmax(0, 1fr))",
+                },
+              }}
             >
               <TextField
                 type="date"
@@ -403,7 +411,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={paymentFrom}
                 onChange={(e) => setPaymentFrom(e.target.value)}
-                sx={{ width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
               <TextField
                 type="date"
@@ -412,9 +420,9 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={paymentTo}
                 onChange={(e) => setPaymentTo(e.target.value)}
-                sx={{ width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
-            </Stack>
+            </Box>
           </Paper>
           <SubscriberPaymentsTable
             payments={filteredSubscriberPayments}
@@ -428,11 +436,15 @@ const statement = useSubscriberStatement(subscriberId, {
       {tab === 3 && (
         <Stack spacing={2}>
           <Paper sx={{ p: 2 }}>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={2}
-              flexWrap="wrap"
-              alignItems={{ xs: "stretch", sm: "center" }}
+            <Box
+              sx={{
+                display: "grid",
+                gap: 1.5,
+                gridTemplateColumns: {
+                  xs: "repeat(2, minmax(0, 1fr))",
+                  sm: "repeat(3, minmax(0, 1fr))",
+                },
+              }}
             >
               <TextField
                 select
@@ -440,7 +452,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 label="Status"
                 value={invoiceStatus}
                 onChange={(e) => setInvoiceStatus(e.target.value)}
-                sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               >
                 <MenuItem value="">All Status</MenuItem>
                 <MenuItem value="ISSUED">ISSUED</MenuItem>
@@ -457,7 +469,7 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={invoiceFrom}
                 onChange={(e) => setInvoiceFrom(e.target.value)}
-                sx={{ width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
               <TextField
                 type="date"
@@ -466,9 +478,9 @@ const statement = useSubscriberStatement(subscriberId, {
                 InputLabelProps={{ shrink: true }}
                 value={invoiceTo}
                 onChange={(e) => setInvoiceTo(e.target.value)}
-                sx={{ width: { xs: "100%", sm: "auto" } }}
+                sx={{ width: "100%" }}
               />
-            </Stack>
+            </Box>
           </Paper>
           <SubscriberInvoicesTable
             invoices={filteredSubscriberInvoices}
