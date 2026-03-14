@@ -75,13 +75,14 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
 
         <Box
           sx={{
-            display: "grid",
+            display: { xs: "grid", lg: "flex" },
+            alignItems: { lg: "center" },
+            flexWrap: { lg: "wrap" },
             gap: 1.5,
             width: "100%",
             gridTemplateColumns: {
               xs: "repeat(2, minmax(0, 1fr))",
               md: "repeat(3, minmax(0, 1fr))",
-              lg: "repeat(6, minmax(0, 1fr))",
             },
           }}
         >
@@ -97,7 +98,7 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
                 }
                 InputLabelProps={{ shrink: true }}
                 disabled={loading}
-                sx={{ width: "100%" }}
+                sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 150 } }}
               />
 
               <TextField
@@ -110,7 +111,7 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
                 }
                 InputLabelProps={{ shrink: true }}
                 disabled={loading}
-                sx={{ width: "100%" }}
+                sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 150 } }}
               />
             </>
           ) : (
@@ -124,7 +125,7 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
                   onChange({ ...context, month: Number(e.target.value) })
                 }
                 disabled={loading}
-                sx={{ width: "100%" }}
+                sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 170 } }}
               >
                 {months.map((m, i) => (
                   <MenuItem key={i + 1} value={i + 1}>
@@ -141,7 +142,7 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
                 onChange={(e) =>
                   onChange({ ...context, year: Number(e.target.value) })
                 }
-                sx={{ width: "100%" }}
+                sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 110 } }}
                 disabled={loading}
               />
             </>
@@ -162,7 +163,7 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
       neighborhoodId: undefined,
     })
   }
-  sx={{ width: "100%" }}
+  sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 160 } }}
 >
   <MenuItem value="all">All Regions</MenuItem>
 
@@ -196,7 +197,7 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!context.regionId || neighborhoodsQuery.isLoading}
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 190 } }}
           />
 
 
@@ -227,7 +228,7 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
               });
             }}
             disabled={loading}
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 130 } }}
           >
             {useRange ? "Specific" : "From / To"}
           </Button>

@@ -1,5 +1,7 @@
 import {
   Paper,
+  Box,
+  Typography,
   Table,
   TableContainer,
   TableHead,
@@ -16,6 +18,8 @@ import {
   Button,
   CircularProgress,
   Chip,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -34,6 +38,8 @@ import {
 } from "./invoiceStatus";
 
 export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
+  const theme = useTheme();
+  const isCompactView = useMediaQuery("(max-width:1024px)");
   const [viewId, setViewId] = useState<number | null>(null);
   const [payId, setPayId] = useState<number | null>(null);
   const [fixesId, setFixesId] = useState<number | null>(null);
@@ -52,55 +58,57 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
 
   return (
     <Paper sx={{ p: 2 }}>
-      <TableContainer sx={{ overflowX: "auto" }}>
-        <Table size="small" sx={{ minWidth: 1040 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Subscriber</TableCell>
-            <TableCell>Month</TableCell>
-            <TableCell>Year</TableCell>
-            <TableCell align="center">Status</TableCell>
-            <TableCell>Prev Balance</TableCell>
-            <TableCell>Total</TableCell>
-            <TableCell>Paid</TableCell>
-            <TableCell>Fixes</TableCell>
-            <TableCell>Remaining</TableCell>
-            <TableCell align="right">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
+      {isCompactView ? (
+        <Stack spacing={1.5}>
           {rows.map((i) => {
             const canPay = i.remainingBalance > 0 && i.status !== "CANCELLED";
             const canFix = i.status !== "PAID" && i.status !== "CANCELLED";
 
             return (
-              <TableRow key={i.id} hover>
-                <TableCell>{i.id}</TableCell>
-                <TableCell>{i.meter?.subscriber?.fullName ?? "-"}</TableCell>
-                <TableCell>{i.month}</TableCell>
-                <TableCell>{i.year}</TableCell>
-                <TableCell align="center">
-                  <Chip
-                    size="medium"
-                    label={formatInvoiceStatus(i.status)}
-                    color={invoiceStatusColor(i.status)}
-                    sx={invoiceStatusChipSx}
-                  />
-                </TableCell>
-                <TableCell>{i.previousBalance ?? "�"}</TableCell>
-                <TableCell>{i.totalDue}</TableCell>
-                <TableCell>{i.amountPaid}</TableCell>
-                <TableCell>{i.fixesAmount ?? "—"}</TableCell>
-                <TableCell>{i.remainingBalance}</TableCell>
-                <TableCell align="right">
+              <Paper
+                key={i.id}
+                variant="outlined"
+                sx={{ p: 1.5, borderRadius: 2, borderColor: "divider" }}
+              >
+                <Stack spacing={1.25}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    flexWrap="wrap"
+                    gap={1}
+                  >
+                    <Typography fontWeight={700}>Invoice #{i.id}</Typography>
+                    <Chip
+                      size="small"
+                      label={formatInvoiceStatus(i.status)}
+                      color={invoiceStatusColor(i.status)}
+                      sx={invoiceStatusChipSx}
+                    />
+                  </Stack>
+
+                  <Typography variant="body2" color="text.secondary">
+                    {i.meter?.subscriber?.fullName ?? "-"}
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gap: 1,
+                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                    }}
+                  >
+                    <Typography variant="body2">Period: {i.month}/{i.year}</Typography>
+                    <Typography variant="body2">Prev: {i.previousBalance ?? "—"}</Typography>
+                    <Typography variant="body2">Total: {i.totalDue}</Typography>
+                    <Typography variant="body2">Paid: {i.amountPaid}</Typography>
+                    <Typography variant="body2">Fixes: {i.fixesAmount ?? "—"}</Typography>
+                    <Typography variant="body2" fontWeight={700}>Remaining: {i.remainingBalance}</Typography>
+                  </Box>
+
                   <Stack direction="row" spacing={1} justifyContent="flex-end">
                     <Tooltip title="View">
-                      <IconButton
-                        size="small"
-                        onClick={() => setViewId(i.id)}
-                      >
+                      <IconButton size="small" onClick={() => setViewId(i.id)}>
                         <VisibilityIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -129,13 +137,97 @@ export default function InvoicesTable({ rows }: { rows: Invoice[] }) {
                       </span>
                     </Tooltip>
                   </Stack>
-                </TableCell>
-              </TableRow>
+                </Stack>
+              </Paper>
             );
           })}
-        </TableBody>
-        </Table>
-      </TableContainer>
+        </Stack>
+      ) : (
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small" sx={{ minWidth: 1040 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Subscriber</TableCell>
+                <TableCell>Month</TableCell>
+                <TableCell>Year</TableCell>
+                <TableCell align="center">Status</TableCell>
+                <TableCell>Prev Balance</TableCell>
+                <TableCell>Total</TableCell>
+                <TableCell>Paid</TableCell>
+                <TableCell>Fixes</TableCell>
+                <TableCell>Remaining</TableCell>
+                <TableCell align="right">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {rows.map((i) => {
+                const canPay = i.remainingBalance > 0 && i.status !== "CANCELLED";
+                const canFix = i.status !== "PAID" && i.status !== "CANCELLED";
+
+                return (
+                  <TableRow key={i.id} hover>
+                    <TableCell>{i.id}</TableCell>
+                    <TableCell>{i.meter?.subscriber?.fullName ?? "-"}</TableCell>
+                    <TableCell>{i.month}</TableCell>
+                    <TableCell>{i.year}</TableCell>
+                    <TableCell align="center">
+                      <Chip
+                        size="medium"
+                        label={formatInvoiceStatus(i.status)}
+                        color={invoiceStatusColor(i.status)}
+                        sx={invoiceStatusChipSx}
+                      />
+                    </TableCell>
+                    <TableCell>{i.previousBalance ?? "—"}</TableCell>
+                    <TableCell>{i.totalDue}</TableCell>
+                    <TableCell>{i.amountPaid}</TableCell>
+                    <TableCell>{i.fixesAmount ?? "—"}</TableCell>
+                    <TableCell>{i.remainingBalance}</TableCell>
+                    <TableCell align="right">
+                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Tooltip title="View">
+                          <IconButton
+                            size="small"
+                            onClick={() => setViewId(i.id)}
+                          >
+                            <VisibilityIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Pay">
+                          <span>
+                            <IconButton
+                              size="small"
+                              disabled={!canPay}
+                              onClick={() => setPayId(i.id)}
+                            >
+                              <PaymentIcon fontSize="small" />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+
+                        <Tooltip title="Add Fixes">
+                          <span>
+                            <IconButton
+                              size="small"
+                              disabled={!canFix}
+                              onClick={() => setFixesId(i.id)}
+                            >
+                              <BuildIcon fontSize="small" />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       {/* View dialog */}
       {viewId !== null && (

@@ -98,12 +98,13 @@ export default function InvoicesPage() {
           <Box
             sx={{
               flex: 1,
-              display: "grid",
+              display: { xs: "grid", lg: "flex" },
+              alignItems: { lg: "center" },
+              flexWrap: { lg: "wrap" },
               gap: 1.5,
               gridTemplateColumns: {
                 xs: "repeat(2, minmax(0, 1fr))",
                 md: "repeat(3, minmax(0, 1fr))",
-                lg: "repeat(4, minmax(0, 1fr))",
               },
             }}
           >
@@ -115,7 +116,7 @@ export default function InvoicesPage() {
             onChange={(e) =>
               setYear(e.target.value ? Number(e.target.value) : undefined)
             }
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 130 } }}
           >
             <MenuItem value="">All Years</MenuItem>
             {Array.from({ length: 5 }).map((_, i) => {
@@ -136,7 +137,7 @@ export default function InvoicesPage() {
             onChange={(e) =>
               setMonth(e.target.value ? Number(e.target.value) : undefined)
             }
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 130 } }}
           >
             <MenuItem value="">All Months</MenuItem>
             {Array.from({ length: 12 }).map((_, i) => (
@@ -152,7 +153,7 @@ export default function InvoicesPage() {
             label="Status"
             value={status ?? ""}
             onChange={(e) => setStatus(e.target.value || undefined)}
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 180 } }}
           >
             <MenuItem value="">All Status</MenuItem>
             {statusOptions.map((s) => (
@@ -173,7 +174,7 @@ export default function InvoicesPage() {
               setNeighborhoodId(undefined);
               setBoxId(undefined);
             }}
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 180 } }}
           >
             <MenuItem value="">All Regions</MenuItem>
             {regionsQuery.data?.map((r) => (
@@ -203,7 +204,7 @@ export default function InvoicesPage() {
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId}
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 200 } }}
           />
 
           <Autocomplete
@@ -221,7 +222,7 @@ export default function InvoicesPage() {
               <TextField {...params} label="Box" />
             )}
             disabled={boxesLoading || (!regionId && !neighborhoodId)}
-            sx={{ width: "100%" }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 180 } }}
           />
           <FormControlLabel
             control={
@@ -231,7 +232,7 @@ export default function InvoicesPage() {
               />
             }
             label="Only unpaid"
-            sx={{ ml: { sm: 1 }, width: "100%" }}
+            sx={{ ml: { lg: 1 }, width: { xs: "100%", lg: "auto" } }}
           />
           </Box>
         </Stack>

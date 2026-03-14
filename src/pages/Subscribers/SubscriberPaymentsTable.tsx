@@ -11,6 +11,9 @@ import {
   Skeleton,
   Box,
   IconButton,
+  Stack,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import type { Payment } from "../../api/payments";
 import UndoIcon from "@mui/icons-material/Undo";
@@ -36,6 +39,8 @@ export default function SubscriberPaymentsTable({
 }) {
   const { user } = useAuth();
   const isAdmin = user?.role === "ADMIN";
+  const theme = useTheme();
+  const isCompactView = useMediaQuery(theme.breakpoints.down("lg"));
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -70,101 +75,202 @@ export default function SubscriberPaymentsTable({
           No payments yet
         </Typography>
       ) : (
-        <TableContainer sx={{ overflowX: "auto" }}>
-          <Table size="small" sx={{ minWidth: 900 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Invoice</TableCell>
-              {showSubscriberColumn && <TableCell>Subscriber</TableCell>}
-              {showLocationColumns && <TableCell>Region</TableCell>}
-              {showLocationColumns && <TableCell>Neighborhood</TableCell>}
-              <TableCell align="center">Receiver</TableCell>
-              <TableCell align="center">Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
+        isCompactView ? (
+          <Stack spacing={1.5}>
+            {payments.map((p) => {
+              const regionName =
+                p.invoice?.meter?.box?.neighborhood?.region?.name ??
+                p.invoice?.meter?.box?.region?.name ??
+                "—";
+              const neighborhoodName =
+                p.invoice?.meter?.box?.neighborhood?.name ?? "—";
 
-          <TableBody>
-            {payments.map((p) => (
-              <TableRow key={p.id}>
-                <TableCell>
-                  {formatDisplayDate(p.paidAt)}
-                </TableCell>
-
-                <TableCell
-                  sx={{
-                    color: p.amount >= 0 ? "success.main" : "error.main",
-                    fontWeight: 500,
-                  }}
+              return (
+                <Paper
+                  key={p.id}
+                  variant="outlined"
+                  sx={{ p: 1.5, borderRadius: 2, borderColor: "divider" }}
                 >
-                  {p.amount >= 0 ? "+" : ""}
-                  {p.amount}
-                </TableCell>
-
-                <TableCell>{p.invoiceId ? `#${p.invoiceId}` : "—"}</TableCell>
-
-                {showSubscriberColumn && (
-                  <TableCell>{p.subscriber?.fullName ?? "—"}</TableCell>
-                )}
-                {showLocationColumns && (
-                  <TableCell>
-                    {p.invoice?.meter?.box?.neighborhood?.region?.name ??
-                      p.invoice?.meter?.box?.region?.name ??
-                      "—"}
-                  </TableCell>
-                )}
-                {showLocationColumns && (
-                  <TableCell>
-                    {p.invoice?.meter?.box?.neighborhood?.name ?? "—"}
-                  </TableCell>
-                )}
-
-                <TableCell align="center">
-                  <Chip
-                    size="small"
-                    label={p.receiver?.username ?? "—"}
-                    color={receiverRoleColor(p.receiver?.role)}
-                    sx={receiverChipSx}
-                  />
-                </TableCell>
-
-                <TableCell align="center">
-                  {p.isReversed ? (
-                    <Chip
-                      size="small"
-                      label="REVERSED"
-                      color="error"
-                      sx={{ borderRadius: "6px" }}
-                    />
-                  ) : (
-                    <Chip
-                      size="small"
-                      label="OK"
-                      color="success"
-                      sx={{ borderRadius: "6px" }}
-                    />
-                  )}
-                </TableCell>
-
-                <TableCell align="right">
-                  {isAdmin && !p.isReversed && (
-                    <IconButton
-                      size="small"
-                      color="error"
-                      title="Reverse payment"
-                      onClick={() => onReverse(p.id)}
+                  <Stack spacing={1.25}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      flexWrap="wrap"
+                      gap={1}
                     >
-                      <UndoIcon fontSize="small" />
-                    </IconButton>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          </Table>
-        </TableContainer>
+                      <Typography fontWeight={700}>Payment #{p.id}</Typography>
+                      {p.isReversed ? (
+                        <Chip
+                          size="small"
+                          label="REVERSED"
+                          color="error"
+                          sx={{ borderRadius: "6px" }}
+                        />
+                      ) : (
+                        <Chip
+                          size="small"
+                          label="OK"
+                          color="success"
+                          sx={{ borderRadius: "6px" }}
+                        />
+                      )}
+                    </Stack>
+
+                    {showSubscriberColumn && (
+                      <Typography variant="body2" color="text.secondary">
+                        {p.subscriber?.fullName ?? "—"}
+                      </Typography>
+                    )}
+
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gap: 1,
+                        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                      }}
+                    >
+                      <Typography variant="body2">
+                        Date: {formatDisplayDate(p.paidAt)}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: p.amount >= 0 ? "success.main" : "error.main",
+                          fontWeight: 700,
+                        }}
+                      >
+                        Amount: {p.amount >= 0 ? "+" : ""}
+                        {p.amount}
+                      </Typography>
+                      <Typography variant="body2">
+                        Invoice: {p.invoiceId ? `#${p.invoiceId}` : "—"}
+                      </Typography>
+                      <Typography variant="body2">
+                        Receiver: {p.receiver?.username ?? "—"}
+                      </Typography>
+                      {showLocationColumns && (
+                        <Typography variant="body2">Region: {regionName}</Typography>
+                      )}
+                      {showLocationColumns && (
+                        <Typography variant="body2">
+                          Neighborhood: {neighborhoodName}
+                        </Typography>
+                      )}
+                    </Box>
+
+                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                      {isAdmin && !p.isReversed && (
+                        <IconButton
+                          size="small"
+                          color="error"
+                          title="Reverse payment"
+                          onClick={() => onReverse(p.id)}
+                        >
+                          <UndoIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </Box>
+                  </Stack>
+                </Paper>
+              );
+            })}
+          </Stack>
+        ) : (
+          <TableContainer sx={{ overflowX: "auto" }}>
+            <Table size="small" sx={{ minWidth: 900 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Invoice</TableCell>
+                  {showSubscriberColumn && <TableCell>Subscriber</TableCell>}
+                  {showLocationColumns && <TableCell>Region</TableCell>}
+                  {showLocationColumns && <TableCell>Neighborhood</TableCell>}
+                  <TableCell align="center">Receiver</TableCell>
+                  <TableCell align="center">Status</TableCell>
+                  <TableCell align="right">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {payments.map((p) => (
+                  <TableRow key={p.id}>
+                    <TableCell>{formatDisplayDate(p.paidAt)}</TableCell>
+
+                    <TableCell
+                      sx={{
+                        color: p.amount >= 0 ? "success.main" : "error.main",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {p.amount >= 0 ? "+" : ""}
+                      {p.amount}
+                    </TableCell>
+
+                    <TableCell>{p.invoiceId ? `#${p.invoiceId}` : "—"}</TableCell>
+
+                    {showSubscriberColumn && (
+                      <TableCell>{p.subscriber?.fullName ?? "—"}</TableCell>
+                    )}
+                    {showLocationColumns && (
+                      <TableCell>
+                        {p.invoice?.meter?.box?.neighborhood?.region?.name ??
+                          p.invoice?.meter?.box?.region?.name ??
+                          "—"}
+                      </TableCell>
+                    )}
+                    {showLocationColumns && (
+                      <TableCell>
+                        {p.invoice?.meter?.box?.neighborhood?.name ?? "—"}
+                      </TableCell>
+                    )}
+
+                    <TableCell align="center">
+                      <Chip
+                        size="small"
+                        label={p.receiver?.username ?? "—"}
+                        color={receiverRoleColor(p.receiver?.role)}
+                        sx={receiverChipSx}
+                      />
+                    </TableCell>
+
+                    <TableCell align="center">
+                      {p.isReversed ? (
+                        <Chip
+                          size="small"
+                          label="REVERSED"
+                          color="error"
+                          sx={{ borderRadius: "6px" }}
+                        />
+                      ) : (
+                        <Chip
+                          size="small"
+                          label="OK"
+                          color="success"
+                          sx={{ borderRadius: "6px" }}
+                        />
+                      )}
+                    </TableCell>
+
+                    <TableCell align="right">
+                      {isAdmin && !p.isReversed && (
+                        <IconButton
+                          size="small"
+                          color="error"
+                          title="Reverse payment"
+                          onClick={() => onReverse(p.id)}
+                        >
+                          <UndoIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )
       )}
     </Paper>
   );

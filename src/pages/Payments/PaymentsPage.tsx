@@ -96,7 +96,9 @@ export default function PaymentsPage() {
       <Box
         sx={{
           mt: 2,
-          display: "grid",
+          display: { xs: "grid", lg: "flex" },
+          alignItems: { lg: "center" },
+          flexWrap: { lg: "wrap" },
           gap: 1.5,
           gridTemplateColumns: {
             xs: "repeat(2, minmax(0, 1fr))",
@@ -116,13 +118,16 @@ export default function PaymentsPage() {
               </InputAdornment>
             ),
           }}
-          sx={{ width: "100%", gridColumn: { xs: "span 2", md: "span 1" } }}
+          sx={{
+            width: { xs: "100%", lg: 320 },
+            gridColumn: { xs: "span 2", md: "span 1" },
+          }}
         />
         <TextField
           select
           size="small"
           label="Region"
-          sx={{ width: "100%" }}
+          sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 170 } }}
           value={regionId ?? "all"}
           onChange={(e) => {
             const v = e.target.value;
@@ -156,7 +161,7 @@ export default function PaymentsPage() {
             <TextField {...params} label="Neighborhood" />
           )}
           disabled={!regionId || hoodsLoading}
-          sx={{ width: "100%" }}
+          sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 200 } }}
         />
         <TextField
           type="date"
@@ -165,7 +170,7 @@ export default function PaymentsPage() {
           InputLabelProps={{ shrink: true }}
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          sx={{ width: "100%" }}
+          sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 150 } }}
         />
         <TextField
           type="date"
@@ -174,7 +179,7 @@ export default function PaymentsPage() {
           InputLabelProps={{ shrink: true }}
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          sx={{ width: "100%" }}
+          sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 150 } }}
         />
       </Box>
 
