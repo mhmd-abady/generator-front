@@ -8,6 +8,7 @@ import {
   Typography,
   Divider,
   CircularProgress,
+  Box,
 } from "@mui/material";
 import { useInvoice } from "../../hooks/useInvoices";
 import { formatDisplayDate } from "../../utils/date";
@@ -44,6 +45,10 @@ export default function InvoiceViewDialog({
   };
 
   const consumption = calcConsumption();
+  const formatNumber = (value: number | null | undefined) =>
+    value == null ? "—" : value.toLocaleString();
+  const formatUsd = (value: number | null | undefined) =>
+    value == null ? "—" : `${value.toLocaleString()} $`;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -66,7 +71,9 @@ export default function InvoiceViewDialog({
               </Typography>
               <Typography>
                 Neighborhood: {data.meter.box?.neighborhood?.name ?? "—"} | Region:{" "}
-                {data.meter.box?.neighborhood?.region?.name ?? data.meter.box?.region?.name ?? "—"}
+                {data.meter.box?.neighborhood?.region?.name ??
+                  data.meter.box?.region?.name ??
+                  "—"}
               </Typography>
               <Typography>
                 Meter Number: {data.meter.number} | Box Number:{" "}
@@ -101,15 +108,53 @@ export default function InvoiceViewDialog({
             <Divider />
 
             <Stack spacing={0.5}>
-              <Typography>
-                Previous Balance: {data.previousBalance ?? "�"}
-              </Typography>
-              <Typography>This Month Due: {data.thisMonthDue ?? "—"}</Typography>
-              <Typography>Fixes Amount: {data.fixesAmount ?? "—"}</Typography>
-              <Typography>-------------------------------------------------------</Typography>
-              <Typography>Total Due: {data.totalDue}</Typography>
-              <Typography>Amount Paid: {data.amountPaid}</Typography>
-              <Typography>Remaining Balance: {data.remainingBalance}</Typography>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "max-content max-content",
+                  columnGap: 1,
+                  rowGap: 0.25,
+                  alignItems: "baseline",
+                }}
+              >
+                <Typography>Previous Balance:</Typography>
+                <Typography sx={{ textAlign: "right" }}>
+                  {formatNumber(data.lbp?.previousBalance)} |{" "}
+                  {formatUsd(data.previousBalance)}
+                </Typography>
+
+                <Typography>This Month Due:</Typography>
+                <Typography sx={{ textAlign: "right" }}>
+                  {formatNumber(data.lbp?.thisMonthDue)} |{" "}
+                  {formatUsd(data.thisMonthDue)}
+                </Typography>
+
+                <Typography>Fixes Amount:</Typography>
+                <Typography sx={{ textAlign: "right" }}>
+                  {formatNumber(data.lbp?.fixesAmount)} |{" "}
+                  {formatUsd(data.fixesAmount)}
+                </Typography>
+
+                <Divider sx={{ gridColumn: "1 / -1", my: 0.25 }} />
+
+                <Typography>Total Due:</Typography>
+                <Typography sx={{ textAlign: "right" }}>
+                  {formatNumber(data.lbp?.totalDue)} |{" "}
+                  {formatUsd(data.totalDue)}
+                </Typography>
+
+                <Typography>Amount Paid:</Typography>
+                <Typography sx={{ textAlign: "right" }}>
+                  {formatNumber(data.lbp?.amountPaid)} |{" "}
+                  {formatUsd(data.amountPaid)}
+                </Typography>
+
+                <Typography>Remaining Balance:</Typography>
+                <Typography sx={{ textAlign: "right" }}>
+                  {formatNumber(data.lbp?.remainingBalance)} |{" "}
+                  {formatUsd(data.remainingBalance)}
+                </Typography>
+              </Box>
               {data.fixesNote && <Typography>Fixes Note: {data.fixesNote}</Typography>}
               <Typography>Status: {data.status}</Typography>
             </Stack>

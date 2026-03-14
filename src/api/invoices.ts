@@ -64,6 +64,7 @@ export type InvoiceDetails = {
   id: number;
   month: number;
   year: number;
+  thisMonthDue?: number;
   totalDue: number;
   amountPaid: number;
   remainingBalance: number;
@@ -114,6 +115,15 @@ export type InvoiceDetails = {
     paidAt: string;
     receiver?: { username: string };
   }[];
+
+  lbp?: {
+    previousBalance?: number;
+    thisMonthDue?: number;
+    fixesAmount?: number;
+    totalDue?: number;
+    amountPaid?: number;
+    remainingBalance?: number;
+  };
 
   tariffDetails?: {
     id: number;
