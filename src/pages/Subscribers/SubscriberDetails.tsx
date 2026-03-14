@@ -4,7 +4,6 @@ import {
   Stack,
   Skeleton,
   Button,
-  Grid,
   Tabs,
   Tab,
   TextField,
@@ -259,48 +258,43 @@ const statement = useSubscriberStatement(subscriberId, {
               </Stack>
             </Box>
 
-            <Box sx={{ flex: 1, minWidth: 0, display: "flex", justifyContent: "center" }}>
-              <Grid
-                container
-                spacing={1.5}
-                justifyContent="center"
-                alignItems="center"
-                sx={{ width: "100%", maxWidth: 800 }}
-                wrap="wrap"
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Box
+                sx={{
+                  display: "grid",
+                  gap: 1.5,
+                  gridTemplateColumns: {
+                    xs: "repeat(2, minmax(0, 1fr))",
+                    md: "repeat(2, minmax(0, 1fr))",
+                    lg: "repeat(4, minmax(0, 1fr))",
+                  },
+                }}
               >
-                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
-                  <StatCard
-                    label="Total Invoiced"
-                    value={stats.totalDue}
-                    icon={<RequestQuote />}
-                    loading={statsLoading}
-                  />
-                </Grid>
-                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
-                  <StatCard
-                    label="Total Paid"
-                    value={stats.totalPaid}
-                    icon={<Paid />}
-                    loading={statsLoading}
-                  />
-                </Grid>
-                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
-                  <StatCard
-                    label="Outstanding"
-                    value={stats.outstanding}
-                    icon={<WarningAmber />}
-                    loading={statsLoading}
-                  />
-                </Grid>
-                <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
-                  <StatCard
-                    label="Invoices Count"
-                    value={stats.invoicesCount}
-                    icon={<ReceiptLong />}
-                    loading={statsLoading}
-                  />
-                </Grid>
-              </Grid>
+                <StatCard
+                  label="Total Invoiced"
+                  value={stats.totalDue}
+                  icon={<RequestQuote />}
+                  loading={statsLoading}
+                />
+                <StatCard
+                  label="Total Paid"
+                  value={stats.totalPaid}
+                  icon={<Paid />}
+                  loading={statsLoading}
+                />
+                <StatCard
+                  label="Outstanding"
+                  value={stats.outstanding}
+                  icon={<WarningAmber />}
+                  loading={statsLoading}
+                />
+                <StatCard
+                  label="Invoices Count"
+                  value={stats.invoicesCount}
+                  icon={<ReceiptLong />}
+                  loading={statsLoading}
+                />
+              </Box>
             </Box>
           </Box>
         )}

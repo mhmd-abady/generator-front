@@ -1,7 +1,7 @@
 import {
+  Box,
   Paper,
   Typography,
-  Stack,
   TextField,
   MenuItem,
   Autocomplete,
@@ -111,11 +111,18 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
 
       {/* Filters */}
       <Paper sx={{ p: 2 }}>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
-          flexWrap="wrap"
-          alignItems={{ xs: "stretch", sm: "center" }}
+        <Box
+          sx={{
+            display: { xs: "grid", lg: "flex" },
+            gap: 1.5,
+            alignItems: "center",
+            flexWrap: "wrap",
+            gridTemplateColumns: {
+              xs: "repeat(2, minmax(0, 1fr))",
+              md: "repeat(3, minmax(0, 1fr))",
+              lg: "none",
+            },
+          }}
         >
           <TextField
             select
@@ -123,7 +130,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
             label="Month"
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            sx={{ width: { xs: "100%", sm: 140 } }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 130 } }}
           >
             {Array.from({ length: 12 }).map((_, i) => (
               <MenuItem key={i + 1} value={i + 1}>
@@ -137,7 +144,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
             label="Year"
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            sx={{ width: { xs: "100%", sm: 120 } }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 110 } }}
           />
 
           <TextField
@@ -150,7 +157,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
               setRegionId(v === "all" ? undefined : Number(v));
               setNeighborhoodId(undefined);
             }}
-            sx={{ minWidth: { sm: 180 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 170 } }}
           >
             <MenuItem value="all">All Regions</MenuItem>
             {regionsQuery.data?.map((r) => (
@@ -179,9 +186,9 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
               <TextField {...params} label="Neighborhood" />
             )}
             disabled={!regionId}
-            sx={{ minWidth: { sm: 200 }, width: { xs: "100%", sm: "auto" } }}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 200 } }}
           />
-        </Stack>
+        </Box>
       </Paper>
 
       {/* Table */}
