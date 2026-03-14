@@ -64,10 +64,10 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
   return (
     <Paper sx={{ p: 2 }}>
       <Stack
-        direction={{ xs: "column", lg: "row" }}
-        alignItems={{ xs: "stretch", lg: "center" }}
+        direction={{ xs: "column", md: "row" }}
+        alignItems={{ xs: "stretch", md: "center" }}
         justifyContent="space-between"
-        spacing={2}
+        spacing={{ xs: 1, md: 1.25 }}
       >
         <Typography variant="h6" fontWeight={600}>
           Dashboard
@@ -75,11 +75,11 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
 
         <Box
           sx={{
-            display: { xs: "grid", lg: "flex" },
-            alignItems: { lg: "center" },
-            flexWrap: { lg: "wrap" },
+            display: { xs: "grid", md: "flex" },
+            alignItems: { md: "center" },
+            flexWrap: { md: "wrap" },
             gap: 1.5,
-            width: "100%",
+            width: { xs: "100%", md: "auto" },
             gridTemplateColumns: {
               xs: "repeat(2, minmax(0, 1fr))",
               md: "repeat(3, minmax(0, 1fr))",
@@ -228,7 +228,11 @@ const neighborhoodsQuery = useQuery<Neighborhood[]>({
               });
             }}
             disabled={loading}
-            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 130 } }}
+            sx={{
+              width: { xs: "100%", md: "auto" },
+              minWidth: { md: 104, lg: 118 },
+              px: { md: 1.25, lg: 1.5 },
+            }}
           >
             {useRange ? "Specific" : "From / To"}
           </Button>
