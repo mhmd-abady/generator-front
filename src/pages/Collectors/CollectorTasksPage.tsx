@@ -817,6 +817,7 @@ function NeighborhoodCard({
                 <TableCell>Contact</TableCell>
                 <TableCell>Address</TableCell>
                 <TableCell>Invoice</TableCell>
+                <TableCell>Invoice Month</TableCell>
                 <TableCell>Box</TableCell>
                 <TableCell>Consumption</TableCell>
                 <TableCell>Prev Balance</TableCell>
@@ -896,6 +897,7 @@ function SubscriberRow({
           </Typography>
         </Stack>
       </TableCell>
+      <TableCell>{`${invoice.month}/${invoice.year}`}</TableCell>
       <TableCell>
         <Stack spacing={0.3}>
           <Typography variant="body2">

@@ -53,15 +53,13 @@ export default function Sidebar({
     { label: "Meters", icon: <Speed />, path: "/meters" },
     { label: "Meter Readings", icon: <Receipt />, path: "/meter-readings" },
     { label: "Invoices", icon: <Receipt />, path: "/invoices" },
-    { label: "Tariffs", icon: <Receipt />, path: "/tariffs" },
     { label: "Payments", icon: <Payments />, path: "/payments" },
     { label: "Expenses", icon: <RequestQuote />, path: "/expenses" },
     { label: "Staff", icon: <ManageAccounts />, path: "/staff" },
     { label: "Collector Tasks", icon: <AssignmentTurnedIn />, path: "/collector-tasks" },
     { label: "Reports", icon: <BarChart />, path: "/reports" },
     { label: "Unpaid Clients", icon: <WarningAmber />, path: "/reports/unpaid-clients" },
-    { label: "Exchange Rate", icon: <Settings />, path: "/settings" },
-    { label: "Ampere Pricing", icon: <Settings />, path: "/settings/ampere-pricing" }
+    { label: "Settings", icon: <Settings />, path: "/settings" }
   ];
 
   return (

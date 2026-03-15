@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   MenuItem,
   Paper,
@@ -6,6 +7,8 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useState } from "react";
 import DashboardLayout from "../Dashboard/DashboardLayout";
@@ -14,7 +17,9 @@ import { useAmperePricing } from "../../hooks/useAmperePricing";
 import AmperePricingTable from "./AmperePricingTable";
 import AmperePricingFormDialog from "./AmperePricingFormDialog";
 
-export default function AmperePricingPage() {
+export function AmperePricingContent() {
+  const theme = useTheme();
+  const isPhone = useMediaQuery(theme.breakpoints.down("sm"));
   const [activeOnly, setActiveOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -41,7 +46,7 @@ export default function AmperePricingPage() {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <Paper sx={{ p: 2 }}>
         <Stack
           direction="row"
@@ -54,38 +59,81 @@ export default function AmperePricingPage() {
             Ampere Pricing
           </Typography>
 
-          <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
-            <TextField
-              select
-              size="small"
-              label="View"
-              value={activeOnly ? "active" : "all"}
-              onChange={(e) => setActiveOnly(e.target.value === "active")}
-              sx={{ minWidth: 160 }}
-            >
-              <MenuItem value="all">All</MenuItem>
-              <MenuItem value="active">Active Only</MenuItem>
-            </TextField>
-
-            <TextField
-              size="small"
-              label="Search"
-              placeholder="ID or ampere"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              sx={{ minWidth: 180 }}
-            />
-
-            <Button
-              variant="contained"
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
+          {isPhone ? (
+            <Box
+              sx={{
+                width: "100%",
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: 1,
               }}
             >
-              Add Pricing
-            </Button>
-          </Stack>
+              <TextField
+                select
+                size="small"
+                label="View"
+                value={activeOnly ? "active" : "all"}
+                onChange={(e) => setActiveOnly(e.target.value === "active")}
+                sx={{ width: "100%" }}
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="active">Active Only</MenuItem>
+              </TextField>
+
+              <TextField
+                size="small"
+                label="Search"
+                placeholder="ID or ampere"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                sx={{ width: "100%" }}
+              />
+
+              <Button
+                variant="contained"
+                sx={{ gridColumn: "span 2" }}
+                onClick={() => {
+                  setEditing(null);
+                  setOpen(true);
+                }}
+              >
+                Add Pricing
+              </Button>
+            </Box>
+          ) : (
+            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+              <TextField
+                select
+                size="small"
+                label="View"
+                value={activeOnly ? "active" : "all"}
+                onChange={(e) => setActiveOnly(e.target.value === "active")}
+                sx={{ minWidth: 160 }}
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="active">Active Only</MenuItem>
+              </TextField>
+
+              <TextField
+                size="small"
+                label="Search"
+                placeholder="ID or ampere"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                sx={{ minWidth: 180 }}
+              />
+
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setEditing(null);
+                  setOpen(true);
+                }}
+              >
+                Add Pricing
+              </Button>
+            </Stack>
+          )}
         </Stack>
       </Paper>
 
@@ -131,6 +179,14 @@ export default function AmperePricingPage() {
           });
         }}
       />
+    </>
+  );
+}
+
+export default function AmperePricingPage() {
+  return (
+    <DashboardLayout>
+      <AmperePricingContent />
     </DashboardLayout>
   );
 }

@@ -45,6 +45,8 @@ type ReceiverCard = {
 
 type ReportRow = {
   invoiceId: number;
+  invoiceMonth: number;
+  invoiceYear: number;
   customerName: string;
   regionName: string;
   neighborhoodName: string;
@@ -217,6 +219,8 @@ export function CollectorReportsContent() {
 
         return {
           invoiceId: invoice.id,
+          invoiceMonth: invoice.month,
+          invoiceYear: invoice.year,
           customerName: invoice.meter?.subscriber?.fullName ?? "-",
           regionName,
           neighborhoodName,
@@ -276,6 +280,7 @@ export function CollectorReportsContent() {
       }
 
       const invoiceText = String(row.invoiceId);
+      const invoiceMonthText = `${row.invoiceMonth}/${row.invoiceYear}`;
       const totalText = String(row.total);
       const collectedText = String(row.collected);
       const remainingText = String(row.remaining);
@@ -284,6 +289,7 @@ export function CollectorReportsContent() {
 
       return (
         invoiceText.includes(q) ||
+        invoiceMonthText.includes(q) ||
         row.customerName.toLowerCase().includes(q) ||
         row.regionName.toLowerCase().includes(q) ||
         row.neighborhoodName.toLowerCase().includes(q) ||
@@ -627,6 +633,9 @@ export function CollectorReportsContent() {
                     />
                   </Stack>
                   <Typography variant="body2">Customer: {row.customerName}</Typography>
+                  <Typography variant="body2">
+                    Invoice Month: {row.invoiceMonth}/{row.invoiceYear}
+                  </Typography>
                   <Typography variant="body2">Region: {row.regionName}</Typography>
                   <Typography variant="body2">Neighborhood: {row.neighborhoodName}</Typography>
                   <Typography variant="body2">Meter: {row.meter}</Typography>
@@ -649,6 +658,7 @@ export function CollectorReportsContent() {
               <TableHead>
                 <TableRow>
                   <TableCell>Inv Nb</TableCell>
+                  <TableCell>Invoice Month</TableCell>
                   <TableCell>Customer</TableCell>
                   <TableCell>Region</TableCell>
                   <TableCell>Neighborhood</TableCell>
@@ -664,6 +674,7 @@ export function CollectorReportsContent() {
                 {filteredRows.map((row) => (
                   <TableRow key={row.invoiceId} hover>
                     <TableCell>{row.invoiceId}</TableCell>
+                    <TableCell>{`${row.invoiceMonth}/${row.invoiceYear}`}</TableCell>
                     <TableCell>{row.customerName}</TableCell>
                     <TableCell>{row.regionName}</TableCell>
                     <TableCell>{row.neighborhoodName}</TableCell>

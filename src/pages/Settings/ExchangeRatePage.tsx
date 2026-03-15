@@ -16,6 +16,8 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { useState } from "react";
@@ -29,6 +31,8 @@ import {
 import { formatDisplayDate } from "../../utils/date";
 
 export default function ExchangeRatePage() {
+  const theme = useTheme();
+  const isPhone = useMediaQuery(theme.breakpoints.down("sm"));
   const { data: active } = useActiveExchangeRate();
   const { data: history } = useExchangeRateHistory();
   const setRate = useSetExchangeRate();
@@ -105,54 +109,89 @@ export default function ExchangeRatePage() {
           Set New Rate
         </Button>
 
-        <TableContainer sx={{ overflowX: "auto" }}>
-          <Table size="small" sx={{ minWidth: 640 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Rate</TableCell>
-              <TableCell>Note</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
+        {isPhone ? (
+          <Stack spacing={1.25}>
             {history?.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell>{r.usdToLbp.toLocaleString()}</TableCell>
-                <TableCell>{r.note || "-"}</TableCell>
-                <TableCell>
-                  {r.isActive ? (
-                    <Chip label="ACTIVE" color="success" size="small" />
-                  ) : (
-                    <Chip label="OLD" size="small" />
-                  )}
-                </TableCell>
-                <TableCell>
-                  {formatDisplayDate(r.createdAt)}
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    size="small"
-                    onClick={() => openEditDialog(r.id, r.usdToLbp, r.note)}
-                  >
-                    <Edit fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    color="error"
-                    disabled={r.isActive}
-                    onClick={() => handleDeleteRate(r.id)}
-                  >
-                    <Delete fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+              <Paper key={r.id} variant="outlined" sx={{ p: 1.25 }}>
+                <Stack spacing={0.75}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Typography fontWeight={700}>Rate: {r.usdToLbp.toLocaleString()}</Typography>
+                    {r.isActive ? (
+                      <Chip label="ACTIVE" color="success" size="small" />
+                    ) : (
+                      <Chip label="OLD" size="small" />
+                    )}
+                  </Stack>
+                  <Typography variant="body2">Note: {r.note || "-"}</Typography>
+                  <Typography variant="body2">Date: {formatDisplayDate(r.createdAt)}</Typography>
+                  <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                    <IconButton
+                      size="small"
+                      onClick={() => openEditDialog(r.id, r.usdToLbp, r.note)}
+                    >
+                      <Edit fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      disabled={r.isActive}
+                      onClick={() => handleDeleteRate(r.id)}
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  </Stack>
+                </Stack>
+              </Paper>
             ))}
-          </TableBody>
-          </Table>
-        </TableContainer>
+          </Stack>
+        ) : (
+          <TableContainer sx={{ overflowX: "auto" }}>
+            <Table size="small" sx={{ minWidth: 640 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Rate</TableCell>
+                  <TableCell>Note</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell align="right">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {history?.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell>{r.usdToLbp.toLocaleString()}</TableCell>
+                    <TableCell>{r.note || "-"}</TableCell>
+                    <TableCell>
+                      {r.isActive ? (
+                        <Chip label="ACTIVE" color="success" size="small" />
+                      ) : (
+                        <Chip label="OLD" size="small" />
+                      )}
+                    </TableCell>
+                    <TableCell>{formatDisplayDate(r.createdAt)}</TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        size="small"
+                        onClick={() => openEditDialog(r.id, r.usdToLbp, r.note)}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        disabled={r.isActive}
+                        onClick={() => handleDeleteRate(r.id)}
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Stack>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
