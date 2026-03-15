@@ -28,6 +28,7 @@ import AgingTable from "./tables/AgingTable";
 import PaymentsTable from "./tables/PaymentsTable";
 import SummaryCards from "./tables/SummaryCards";
 import CollectionsTable from "./tables/CollectionsTable";
+import { CollectorReportsContent } from "../Collectors/CollectorReportsPage";
 
 export default function ReportsPage() {
   const [tab, setTab] = useState(0);
@@ -282,6 +283,7 @@ export default function ReportsPage() {
           <Tab label="Payments" />
           <Tab label="Summary" />
           <Tab label="Collections" />
+          <Tab label="Collection Reports" />
         </Tabs>
       </Paper>
 
@@ -313,6 +315,8 @@ export default function ReportsPage() {
         ) : (
           <CollectionsTable data={collections.data!} />
         ))}
+
+      {tab === 4 && <CollectorReportsContent />}
     </DashboardLayout>
   );
 }

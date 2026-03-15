@@ -13,6 +13,7 @@ import DashboardLayout from "../Dashboard/DashboardLayout";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRegions, fetchNeighborhoodsByRegion } from "../../api/locations";
 import { useMeterReadings } from "../../hooks/useMeterReadings";
+import { useBoxes } from "../../hooks/useBoxes";
 import BulkMeterReadingsTable from "./BulkMeterReadingsTable";
 import { fetchPeriodStatus } from "../../api/dashboard";
 import type { MeterReading } from "../../api/meter-readings";
@@ -24,6 +25,8 @@ export default function BulkMeterReadingsPage() {
   const [year, setYear] = useState(now.getFullYear());
   const [regionId, setRegionId] = useState<number | undefined>();
   const [neighborhoodId, setNeighborhoodId] = useState<number | undefined>();
+  const [boxId, setBoxId] = useState<number | undefined>();
+  const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const regionsQuery = useQuery({
@@ -42,17 +45,42 @@ const periodStatusQuery = useQuery({
   queryFn: () => fetchPeriodStatus({ month, year }),
 });
 const isPeriodClosed = periodStatusQuery.data?.isClosed;
+  const { boxes, isLoading: boxesLoading } = useBoxes(neighborhoodId, regionId);
+
   const readings = useMeterReadings({
     month,
     year,
+    regionId,
     neighborhoodId,
+    boxId,
   });
 
   const meters = readings.meters ?? [];
+  const filteredMeters = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return meters;
+
+    return meters.filter((m) => {
+      const meterNumber = m.number?.toLowerCase() ?? "";
+      const subscriber = m.subscriber?.fullName?.toLowerCase() ?? "";
+      const box = m.box?.code?.toLowerCase() ?? "";
+      const region =
+        m.box?.region?.name?.toLowerCase() ??
+        m.box?.neighborhood?.region?.name?.toLowerCase() ??
+        "";
+
+      return (
+        meterNumber.includes(q) ||
+        subscriber.includes(q) ||
+        box.includes(q) ||
+        region.includes(q)
+      );
+    });
+  }, [meters, search]);
 
   const rows = useMemo(
     () =>
-      meters
+      filteredMeters
         .map((meter): MeterReading => {
           const latestReading = meter.readings?.[0];
           const reading =
@@ -85,11 +113,19 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
                     phone: meter.subscriber.phone,
                   }
                 : undefined,
+              box: meter.box
+                ? {
+                    id: meter.box.id,
+                    code: meter.box.code,
+                    region: meter.box.region,
+                    neighborhood: meter.box.neighborhood,
+                  }
+                : undefined,
             },
             invoice: reading?.invoice,
           };
         }),
-    [meters, month, year]
+    [filteredMeters, month, year]
   );
 
   const visibleRows = useMemo(
@@ -156,6 +192,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
               const v = e.target.value;
               setRegionId(v === "all" ? undefined : Number(v));
               setNeighborhoodId(undefined);
+              setBoxId(undefined);
             }}
             sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 170 } }}
           >
@@ -177,6 +214,7 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
             }
             onChange={(_, value) => {
               setNeighborhoodId(value ? value.id : undefined);
+              setBoxId(undefined);
             }}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) =>
@@ -187,6 +225,27 @@ const isPeriodClosed = periodStatusQuery.data?.isClosed;
             )}
             disabled={!regionId}
             sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 200 } }}
+          />
+
+          <Autocomplete
+            size="small"
+            options={boxes}
+            value={boxes.find((b) => b.id === boxId) ?? null}
+            onChange={(_, value) => setBoxId(value ? value.id : undefined)}
+            getOptionLabel={(option) => option.code}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => <TextField {...params} label="Box" />}
+            disabled={boxesLoading || (!regionId && !neighborhoodId)}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 170 } }}
+          />
+
+          <TextField
+            size="small"
+            label="Search"
+            placeholder="Meter, subscriber, box, region"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{ width: { xs: "100%", lg: "auto" }, minWidth: { lg: 260 } }}
           />
         </Box>
       </Paper>

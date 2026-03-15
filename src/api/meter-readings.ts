@@ -28,6 +28,22 @@ export type MeterReading = {
       fullName: string;
       phone: string;
     };
+    box?: {
+      id: number;
+      code: string;
+      region?: {
+        id: number;
+        name: string;
+      };
+      neighborhood?: {
+        id: number;
+        name: string;
+        region?: {
+          id: number;
+          name: string;
+        };
+      };
+    };
   };
 
   invoice?: {

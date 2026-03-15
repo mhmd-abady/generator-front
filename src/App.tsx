@@ -18,6 +18,7 @@ import PaymentsPage from "./pages/Payments/PaymentsPage";
 import ReportsPage from "./pages/Reports/ReportsPage";
 import UnpaidClientsPage from "./pages/UnpaidClients/UnpaidClientsPage";
 import CollectorTasksPage from "./pages/Collectors/CollectorTasksPage";
+import CollectorReportsPage from "./pages/Collectors/CollectorReportsPage";
 import AmperePricingPage from "./pages/AmperePricing/AmperePricingPage";
 import StaffPage from "./pages/Staff";
 // check invoices pages
@@ -54,6 +55,10 @@ export default function App() {
         <Route path="/settings/exchange-rate" element={<ExchangeRatePage />} />
         <Route path="/settings/ampere-pricing" element={<AmperePricingPage />} />
         <Route path="/collector-tasks" element={<CollectorTasksPage />} />
+        <Route
+          path="/collector-tasks/reports"
+          element={<CollectorReportsPage />}
+        />
       </Route>
     </Routes>
   );

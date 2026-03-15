@@ -54,9 +54,16 @@ export default function BulkMeterReadingsTable({
           {rows.map((r) => {
             const current = values[r.meterId];
             const consumption =
-              current !== undefined ? current - r.previousReading : undefined;
+              current !== undefined
+                ? Math.max(0, current - r.previousReading)
+                : undefined;
             const meterInactive =
               r.meter?.status && r.meter.status !== "ACTIVE";
+            const regionName =
+              r.meter?.box?.region?.name ??
+              r.meter?.box?.neighborhood?.region?.name ??
+              "-";
+            const boxCode = r.meter?.box?.code ?? "-";
 
             return (
               <Paper
@@ -106,9 +113,11 @@ export default function BulkMeterReadingsTable({
                       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
                     }}
                   >
+                    <Typography variant="body2">Region: {regionName}</Typography>
+                    <Typography variant="body2">Box: {boxCode}</Typography>
                     <Typography variant="body2">Previous: {r.previousReading}</Typography>
                     <Typography variant="body2" fontWeight={700}>
-                      Consumption: {consumption !== undefined ? consumption.toFixed(2) : "-"}
+                      Consumption: {consumption !== undefined ? consumption : "-"}
                     </Typography>
                     <Box
                       sx={{
@@ -148,6 +157,8 @@ export default function BulkMeterReadingsTable({
               <TableRow>
                 <TableCell>Meter</TableCell>
                 <TableCell>Subscriber</TableCell>
+                <TableCell>Region</TableCell>
+                <TableCell>Box</TableCell>
                 <TableCell align="right">Previous</TableCell>
                 <TableCell align="right">Current</TableCell>
                 <TableCell align="right">Consumption</TableCell>
@@ -159,9 +170,16 @@ export default function BulkMeterReadingsTable({
               {rows.map((r) => {
                 const current = values[r.meterId];
                 const consumption =
-                  current !== undefined ? current - r.previousReading : undefined;
+                  current !== undefined
+                    ? Math.max(0, current - r.previousReading)
+                    : undefined;
                 const meterInactive =
                   r.meter?.status && r.meter.status !== "ACTIVE";
+                const regionName =
+                  r.meter?.box?.region?.name ??
+                  r.meter?.box?.neighborhood?.region?.name ??
+                  "-";
+                const boxCode = r.meter?.box?.code ?? "-";
 
                 return (
                   <TableRow
@@ -170,6 +188,8 @@ export default function BulkMeterReadingsTable({
                   >
                     <TableCell>{r.meter?.number}</TableCell>
                     <TableCell>{r.meter?.subscriber?.fullName}</TableCell>
+                    <TableCell>{regionName}</TableCell>
+                    <TableCell>{boxCode}</TableCell>
 
                     <TableCell align="right">{r.previousReading}</TableCell>
 
@@ -191,7 +211,7 @@ export default function BulkMeterReadingsTable({
                     </TableCell>
 
                     <TableCell align="right">
-                      {consumption !== undefined ? consumption.toFixed(2) : "-"}
+                      {consumption !== undefined ? consumption : "-"}
                     </TableCell>
 
                     <TableCell align="center">

@@ -475,7 +475,7 @@ export default function CollectorTasksPage() {
 
             <Button
               component={Link}
-              to="/reports"
+              to="/collector-tasks/reports"
               variant="outlined"
               sx={{ height: 40 }}
             >
@@ -576,7 +576,7 @@ export default function CollectorTasksPage() {
 
               <Button
                 component={Link}
-                to="/reports"
+                to="/collector-tasks/reports"
                 variant="outlined"
                 sx={{
                   height: 40,
