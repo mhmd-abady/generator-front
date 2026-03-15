@@ -15,6 +15,7 @@ import TariffsPage from "./pages/Tarrifs/TarrifsPage";
 import ExchangeRatePage from "./pages/Settings/ExchangeRatePage";
 import SettingsPage from "./pages/Settings/SettingsPage";
 import PaymentsPage from "./pages/Payments/PaymentsPage";
+import ExpensesPage from "./pages/Expenses/ExpensesPage";
 import ReportsPage from "./pages/Reports/ReportsPage";
 import UnpaidClientsPage from "./pages/UnpaidClients/UnpaidClientsPage";
 import CollectorTasksPage from "./pages/Collectors/CollectorTasksPage";
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/tariffs" element={<TariffsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/expenses" element={<ExpensesPage />} />
         <Route path="/staff" element={<StaffPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/reports/unpaid-clients" element={<UnpaidClientsPage />} />
